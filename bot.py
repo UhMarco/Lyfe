@@ -31,6 +31,7 @@ async def on_ready():
     bot.inventories = Document(bot.db, "inventories")
     bot.balances = Document(bot.db, "balances")
     bot.items = Document(bot.db, "items")
+    bot.trades = Document(bot.db, "trades")
     print("Initialized database\n-----")
 
 @bot.event

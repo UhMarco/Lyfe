@@ -38,6 +38,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":scales: Trading Commands", description="**Note:** items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="trading command list")
             embed.add_field(name=f"`{self.bot.prefix}trade (user) (owned item) (desired item)`", value="Offer to trade with another player", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}tradeaccept (tradeid)`", value="Accepts a trade", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}give (user) (item)`", value="Give an item to another player", inline=False)
             return await ctx.send(embed=embed)
 
