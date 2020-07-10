@@ -24,6 +24,7 @@ bot.maintenancemode = False
 @bot.event
 async def on_ready():
     print(f"-----\n{bot.user.name} Online\n-----\nPrefix: {bot.prefix}\n-----")
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"))
 
     bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
     bot.db = bot.mongo["lyfe"]

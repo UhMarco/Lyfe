@@ -24,23 +24,6 @@ class Help(commands.Cog):
     async def help(self, ctx, section=None):
         if section is None:
             pass
-        elif section.lower() == "bot":
-            m, s = divmod(time.time() - self.bot.upsince, 60)
-            h, m = divmod(m, 60)
-            if int(h) == 0 and int(m) == 0:
-                uptime = f"{int(s)} seconds"
-            elif int(h) == 0 and int(m) != 0:
-                uptime = f"{int(m)} minutes and {int(s)} seconds"
-            else:
-                uptime = f"{int(h)} hours, {int(m)} minutes and {int(s)} seconds"
-
-            embed = discord.Embed(
-                title=":robot: Bot Info",
-                description=f"I need a head of marketing for a description lol\nUptime: `{uptime}`\n<:github:731220198539133040> [Github](https://github.com/UhMarco)\n<:trello:731219464758231080> [Trello](https://trello.com/b/vY8Vx2PW/lyfe-bot)",
-                color=discord.Color.purple()
-            )
-            embed.set_footer(text="built by NotStealthy#0001")
-            return await ctx.send(embed=embed)
 
         elif section.lower() == "basic":
             embed = discord.Embed(title=":page_facing_up: Basic Commands", description="**Note:** items in commands don't contain spaces", color=discord.Color.purple())
@@ -66,12 +49,49 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}unlock (item)`", value="Allow an item to be traded or stolen, requires :key: Key", inline=False)
             return await ctx.send(embed=embed)
 
+        elif section.lower() == "bot":
+            m, s = divmod(time.time() - self.bot.upsince, 60)
+            h, m = divmod(m, 60)
+            if int(h) == 0 and int(m) == 0:
+                uptime = f"{int(s)} seconds"
+            elif int(h) == 0 and int(m) != 0:
+                uptime = f"{int(m)} minutes and {int(s)} seconds"
+            else:
+                uptime = f"{int(h)} hours, {int(m)} minutes and {int(s)} seconds"
+
+            embed = discord.Embed(
+                title=":robot: Bot Info",
+                description=f"""
+                            I need a head of marketing for a description lol
+                            Lyfé is a discord bot to bring some fun to your server with a unique inventory system and interactions with others\n
+                            Uptime: `{uptime}`
+                            Running: `python {platform.python_version()}`, `dpy {discord.__version__}`
+                            Servers: `{len(self.bot.guilds)}`\n
+                            <:github:731220198539133040> [Github](https://github.com/UhMarco)
+                            <:trello:731219464758231080> [Trello](https://trello.com/b/vY8Vx2PW/lyfe-bot)
+                            :mailbox_with_mail: [Invite](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)
+                            """,
+                color=discord.Color.purple()
+            )
+            embed.set_footer(text="built by NotStealthy#0001")
+            return await ctx.send(embed=embed)
+
         embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
-        embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
         embed.add_field(name=":page_facing_up: Basic", value=f"`{self.bot.prefix}help basic`", inline=False)
         embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
         embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
+        embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
         return await ctx.send(embed=embed)
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- INVITE -------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command()
+    async def invite(self, ctx):
+        embed = discord.Embed(description=":mailbox_with_mail: [Invite me to other servers](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)", color=discord.Color.purple())
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Help(bot))
