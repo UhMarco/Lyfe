@@ -30,6 +30,8 @@ class Locking(commands.Cog):
         items = items["items"]
         if item.lower() not in items:
             return await ctx.send("That item does not exist.")
+        elif item.lower() == "lock":
+            return await ctx.send("You can't lock this item.")
 
         inventory = data["inventory"]
         # Check if a lock is owned
