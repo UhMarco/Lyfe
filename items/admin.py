@@ -83,7 +83,7 @@ class Admin(commands.Cog):
         for i in inventory:
             if i["name"] == name:
                 i["quantity"] += 1
-                await self.bot.inventories.update_by_id({"_id": ctx.author.id, "inventory": data})
+                await self.bot.inventories.update_by_id({"_id": ctx.author.id, "inventory": inventory})
                 return await ctx.send(f"Given **{emoji} {name}** to **{user.name}**")
 
         del item["emoji"], item["value"], item["description"]
