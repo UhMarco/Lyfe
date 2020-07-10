@@ -83,6 +83,8 @@ class Basic(commands.Cog):
     @commands.command(aliases=['disconnect', 'stop', 's'])
     @commands.is_owner()
     async def logout(self, ctx):
+        if self.bot.maintenancemode:
+            return
         await ctx.send("Stopping.")
         await self.bot.logout()
 
