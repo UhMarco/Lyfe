@@ -69,7 +69,7 @@ class Shop(commands.Cog):
     @commands.command()
     async def shop(self, ctx):
         embed = discord.Embed(title=":shopping_cart: **Shop**", color=discord.Color.gold())
-        embed.add_field(name=":bank: **BANKS**", value="Protects your money from theives when deposited.", inline=False)
+        embed.add_field(name=":bank: **BANKS**", value="Protects your money from theives", inline=False)
         embed.add_field(name=":bank: Small Bank Slot", value=f"Store $`500` in the bank.\nCosts $`150`\n`{self.bot.prefix}buy small bank slot`", inline=False)
         embed.add_field(name=":bank: Medium Bank Slot", value=f"Store $`1000` in the bank.\nCosts $`300`\n`{self.bot.prefix}buy medium bank slot`", inline=False)
         embed.add_field(name=":bank: Large Bank Slot", value=f"Store $`10000` in the bank.\nCosts $`2500`\n`{self.bot.prefix}buy large bank slot`", inline=False)

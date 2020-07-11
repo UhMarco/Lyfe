@@ -25,7 +25,11 @@ class Banking(commands.Cog):
         try:
             amount = int(amount)
         except Exception:
-            return await ctx.send(f"Usage: `{self.bot.prefix}deposit (amount)`")
+            amount.lower()
+            if amount == "all":
+                pass
+            else:
+                return await ctx.send(f"Usage: `{self.bot.prefix}deposit (amount)`")
 
         data = await self.bot.inventories.find(ctx.author.id)
 
@@ -35,6 +39,8 @@ class Banking(commands.Cog):
         balance = data["balance"]
         bankbalance = data["bankbalance"]
         banklimit = data["banklimit"]
+        if amount == "all":
+            amount = int(balance)
 
         if banklimit == 0:
             return await ctx.send(f"A **:bank: Bank Slot** hasn't been bought yet. Do `{self.bot.prefix}shop`.")
@@ -75,7 +81,11 @@ class Banking(commands.Cog):
         try:
             amount = int(amount)
         except Exception:
-            return await ctx.send(f"Usage: `{self.bot.prefix}withdraw (amount)`")
+            amount.lower()
+            if amount == "all":
+                pass
+            else:
+                return await ctx.send(f"Usage: `{self.bot.prefix}withdraw (amount)`")
 
         data = await self.bot.inventories.find(ctx.author.id)
 
@@ -85,6 +95,8 @@ class Banking(commands.Cog):
         balance = data["balance"]
         bankbalance = data["bankbalance"]
         banklimit = data["banklimit"]
+        if amount == "all":
+            amount = int(bankbalance)
 
         if banklimit == 0:
             return await ctx.send(f"A **:bank: Bank Slot** hasn't been bought yet. Do `{self.bot.prefix}shop`.")
