@@ -21,7 +21,12 @@ class Inventories(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['inv'])
-    async def inventory(self, ctx, page=1):
+    async def inventory(self, ctx, page="1"):
+        try:
+            page = int(page)
+        except Exception:
+            return await ctx.send("Not a valid page number.")
+
         data = await self.bot.inventories.find(ctx.author.id)
         items = await self.bot.items.find("items")
         items = items["items"]
@@ -75,7 +80,12 @@ class Inventories(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['invsee'])
-    async def inventorysee(self, ctx, user: discord.Member, page=1):
+    async def inventorysee(self, ctx, user: discord.Member, page="1"):
+        try:
+            page = int(page)
+        except Exception:
+            return await ctx.send("Not a valid page number.")
+
         data = await self.bot.inventories.find(user.id)
 
         if data is None:
@@ -92,7 +102,7 @@ class Inventories(commands.Cog):
 
         if page > pagelimit:
             if page == 1:
-                return await ctx.send("Your inventory is empty!")
+                return await ctx.send(f"**{user.name}'s** inventory is empty!")
             return await ctx.send(f"**{user.name}** doesn't have that many pages!")
 
         embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"**Balance:** $`{bal}`", color=discord.Color.red())
@@ -116,7 +126,7 @@ class Inventories(commands.Cog):
     @inventorysee.error
     async def inventorysee_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.sendf(f"Usage: `{self.bot.prefix}inventorysee (user) [page]`")
+            await ctx.send(f"Usage: `{self.bot.prefix}inventorysee (user) [page]`")
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
