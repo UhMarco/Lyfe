@@ -26,16 +26,17 @@ class Help(commands.Cog):
             pass
 
         elif section.lower() == "basic":
-            embed = discord.Embed(title=":page_facing_up: Basic Commands", description="**Note:** items in commands don't contain spaces", color=discord.Color.purple())
+            embed = discord.Embed(title=":page_facing_up: Basic Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="basic command list")
             embed.add_field(name=f"`{self.bot.prefix}inv [page]`", value="Open your inventory", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}invsee (user) [page]`", value="See other people's Inventories", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}iteminfo (item)`", value=f"Look up information about an item", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}claim`", value="Claim your hourly reward", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}sell (item)`", value="Sell an item for its value to the shop", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "trading":
-            embed = discord.Embed(title=":scales: Trading Commands", description="**Note:** items in commands don't contain spaces", color=discord.Color.purple())
+            embed = discord.Embed(title=":scales: Trading Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="trading command list")
             embed.add_field(name=f"`{self.bot.prefix}trade (user) (owned item) (desired item)`", value="Offer to trade with another player", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}taccept (tradeid)`", value="Accepts a trade offer", inline=False)
@@ -44,7 +45,7 @@ class Help(commands.Cog):
             return await ctx.send(embed=embed)
 
         elif section.lower() == "robbery":
-            embed = discord.Embed(title=":moneybag: Robbery Commands", description="**Note:** items in commands don't contain spaces", color=discord.Color.purple())
+            embed = discord.Embed(title=":moneybag: Robbery Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="robbery command list")
             embed.add_field(name=f"`{self.bot.prefix}rob (user) (tool) (desired item)`", value="Rob another player of an item, requires a tool, leave blank to see owned tools", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}lock (item)`", value="Prevent an item from being traded or stolen, requires :lock: Lock", inline=False)
