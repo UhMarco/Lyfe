@@ -153,7 +153,7 @@ class Trading(commands.Cog):
 
         embed = discord.Embed(
                     title=f"Trade Request for **{user.name}** from **{ctx.author.name}**",
-                    description=f"TradeID: `{tradeid}`\n\n**Offering: {emoji1} {name1}**\n**For: {emoji2} {name2}**\n\nTo accept: `{self.bot.prefix}tradeaccept {tradeid}`\nExpires in 10 minutes",
+                    description=f"TradeID: `{tradeid}`\n\n**Offering: {emoji1} {name1}**\n**For: {emoji2} {name2}**\n\nTo accept: `{self.bot.prefix}taccept {tradeid}`\nExpires in 10 minutes",
                     color=discord.Color.gold()
                 )
         await ctx.send(embed=embed)
@@ -175,8 +175,8 @@ class Trading(commands.Cog):
     # ----- TRADE --------------------------------------------------------------
     # --------------------------------------------------------------------------
 
-    @commands.command(aliases=['accepttrade'])
-    async def tradeaccept(self, ctx, tradeid):
+    @commands.command()
+    async def taccept(self, ctx, tradeid):
         trade = await self.bot.trades.find(int(tradeid))
 
         if trade is None:
@@ -294,8 +294,8 @@ class Trading(commands.Cog):
 
     # ----- ERROR HANDLER ------------------------------------------------------
 
-    @tradeaccept.error
-    async def tradeaccept_error(self, ctx, error):
+    @taccept.error
+    async def taccept_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}tradeaccept (tradeid)`")
         elif isinstance(error, commands.CommandInvokeError):
@@ -306,8 +306,8 @@ class Trading(commands.Cog):
     # ----- TRADE --------------------------------------------------------------
     # --------------------------------------------------------------------------
 
-    @commands.command(aliases=['canceltrade'])
-    async def tradecancel(self, ctx, tradeid):
+    @commands.command()
+    async def tcancel(self, ctx, tradeid):
         trade = await self.bot.trades.find(int(tradeid))
 
         if trade is None:
@@ -328,8 +328,8 @@ class Trading(commands.Cog):
 
     # ----- ERROR HANDLER ------------------------------------------------------
 
-    @tradecancel.error
-    async def tradecancel_error(self, ctx, error):
+    @tcancel.error
+    async def tcancel_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}tradecancel (tradeid)`")
         elif isinstance(error, commands.CommandInvokeError):
