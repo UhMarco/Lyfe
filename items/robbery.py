@@ -108,7 +108,7 @@ class Robbery(commands.Cog):
 
             embed = discord.Embed(
                 title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
-                description=f"**Robbery Succeeded**\n**{ctx.author.name}** gained **{itememoji} {itemname}**.\n**{ctx.author.name}** used **{toolemoji} {toolname}** to commit the robbery.\n**{user.name}** lost **{itememoji} {itemname}**.",
+                description=f"**Robbery Succeeded**\n**{ctx.author.name}** gained **{itememoji} {itemname}** from **{user.name}**.\n**{ctx.author.name}** used **{toolemoji} {toolname}** to commit the robbery.",
                 color=discord.Color.green()
             )
             await ctx.send(embed = embed)
