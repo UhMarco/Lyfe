@@ -166,7 +166,7 @@ class Trading(commands.Cog):
     @trade.error
     async def trade_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}trade (user) (owened item) (desired item)`")
+            return await ctx.send(f"Usage: `{self.bot.prefix}trade (user) (owned item) (desired item)`")
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
