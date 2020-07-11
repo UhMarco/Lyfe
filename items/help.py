@@ -29,6 +29,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":page_facing_up: Basic Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="basic command list")
             embed.add_field(name=f"`{self.bot.prefix}inv [page]`", value="Open your inventory", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}bal [user]`", value="See your own or another's balance", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}invsee (user) [page]`", value="See other people's Inventories", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}iteminfo (item)`", value=f"Look up information about an item", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}claim`", value="Claim your hourly reward", inline=False)

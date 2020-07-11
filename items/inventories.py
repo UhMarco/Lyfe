@@ -76,6 +76,32 @@ class Inventories(commands.Cog):
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
+    # ----- BALANCE ------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command(aliases=['bal'])
+    async def balance(self, ctx, user: discord.Member):
+        data = await self.bot.inventories.find(user.id)
+
+        if data is None:
+            return await ctx.send("This user hasn't initialized their inventory yet.")
+
+        balance = data["balance"]
+        await ctx.send(f"**{user.name}'s** balance is $`{balance}`.")
+
+    @balance.error
+    async def balance_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument):
+            data = await self.bot.inventories.find(ctx.author.id)
+
+            if data is None:
+                return await ctx.send("You haven't initialized your inventory yet.")
+
+            balance = data["balance"]
+            await ctx.send(f"Your balance is $`{balance}`.")
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
     # ----- INVENTORY SEE ------------------------------------------------------
     # --------------------------------------------------------------------------
 
