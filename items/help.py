@@ -32,6 +32,11 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}invsee (user) [page]`", value="See other people's Inventories", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}iteminfo (item)`", value=f"Look up information about an item", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}claim`", value="Claim your hourly reward", inline=False)
+            return await ctx.send(embed=embed)
+
+        elif section.lower() == "shop":
+            embed = discord.Embed(title=":shopping_cart: Shop Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
+            embed.set_footer(text="shop command list")
             embed.add_field(name=f"`{self.bot.prefix}sell (item)`", value="Sell an item for its value to the shop", inline=False)
             return await ctx.send(embed=embed)
 
@@ -81,6 +86,7 @@ class Help(commands.Cog):
 
         embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
         embed.add_field(name=":page_facing_up: Basic", value=f"`{self.bot.prefix}help basic`", inline=False)
+        embed.add_field(name=":shopping_cart: Shop", value=f"`{self.bot.prefix}help shop`", inline=False)
         embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
         embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
         embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
