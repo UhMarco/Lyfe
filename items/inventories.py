@@ -26,7 +26,11 @@ class Inventories(commands.Cog):
             page = int(page)
         except Exception:
             return await ctx.send("Not a valid page number.")
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 89f7ee5064b2d6b835d3b9fcf89d9f2a4bbee4d1
         data = await self.bot.inventories.find(ctx.author.id)
         items = await self.bot.items.find("items")
         items = items["items"]
