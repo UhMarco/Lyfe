@@ -153,10 +153,13 @@ class Trading(commands.Cog):
 
         embed = discord.Embed(
                     title=f"Trade Request for **{user.name}** from **{ctx.author.name}**",
-                    description=f"TradeID: `{tradeid}`\n\n**Offering: {emoji1} {name1}**\n**For: {emoji2} {name2}**\n\nTo accept: `{self.bot.prefix}tradeaccept {tradeid}`",
+                    description=f"TradeID: `{tradeid}`\n\n**Offering: {emoji1} {name1}**\n**For: {emoji2} {name2}**\n\nTo accept: `{self.bot.prefix}tradeaccept {tradeid}`\nExpires in 10 minutes",
                     color=discord.Color.gold()
                 )
         await ctx.send(embed=embed)
+        await asyncio.sleep(60 * 10)
+        dict["completed"] = True
+        await self.bot.trades.upsert({"_id": int(tradeid), "trade": dict})
 
     # ----- ERROR HANDLER ------------------------------------------------------
 
@@ -181,7 +184,7 @@ class Trading(commands.Cog):
 
         trade = trade["trade"]
         if trade["completed"]:
-            return await ctx.send("Trade has already been completed or it was cancelled by the offerer.")
+            return await ctx.send("Trade has already been completed, it was cancelled by the offerer or it has expired.")
 
         items = await self.bot.items.find("items")
         items = items["items"]
@@ -288,6 +291,50 @@ class Trading(commands.Cog):
             color=discord.Color.gold()
         )
         await ctx.send(embed=embed)
+
+    # ----- ERROR HANDLER ------------------------------------------------------
+
+    @tradeaccept.error
+    async def tradeaccept_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}tradeaccept (tradeid)`")
+        elif isinstance(error, commands.CommandInvokeError):
+            return await ctx.send("That is not a valid TradeID.")
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- TRADE --------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command(aliases=['canceltrade'])
+    async def tradecancel(self, ctx, tradeid):
+        trade = await self.bot.trades.find(int(tradeid))
+
+        if trade is None:
+            return await ctx.send("That is not a valid TradeID.")
+
+        trade = trade["trade"]
+
+        if trade["offerer"] != ctx.author.id:
+            return await ctx.send("You did not offer this trade.")
+
+        if trade["completed"]:
+            return await ctx.send("Trade has already been completed, it was cancelled by the offerer or it has expired.")
+
+        trade["completed"] = True
+        await self.bot.trades.upsert({"_id": int(tradeid), "trade": trade})
+        embed = discord.Embed(title=f"Trade {tradeid} Cancelled", color=discord.Color.gold())
+        await ctx.send(embed=embed)
+
+    # ----- ERROR HANDLER ------------------------------------------------------
+
+    @tradecancel.error
+    async def tradecancel_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}tradecancel (tradeid)`")
+        elif isinstance(error, commands.CommandInvokeError):
+            return await ctx.send("That is not a valid TradeID.")
+
 
 def setup(bot):
     bot.add_cog(Trading(bot))
