@@ -75,7 +75,7 @@ class Banking(commands.Cog):
         try:
             amount = int(amount)
         except Exception:
-            return await ctx.send(f"Usage: `{self.bot.prefix}deposit (amount)`")
+            return await ctx.send(f"Usage: `{self.bot.prefix}withdraw (amount)`")
 
         data = await self.bot.inventories.find(ctx.author.id)
 
