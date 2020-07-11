@@ -38,7 +38,9 @@ class Help(commands.Cog):
         elif section.lower() == "shop":
             embed = discord.Embed(title=":shopping_cart: Shop Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="shop command list")
-            embed.add_field(name=f"`{self.bot.prefix}sell (item)`", value="Sell an item for its value to the shop", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}shop`", value="Shows the shop", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}buy (item)`", value="Buy something from the shop, you can have spaces!", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}sell (item)`", value="Sell any item for its value to the shop", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "trading":

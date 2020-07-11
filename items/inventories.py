@@ -40,6 +40,8 @@ class Inventories(commands.Cog):
             item["quantity"] = 1
             data.append(item)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": 100})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "bankbalance": 0})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": 0})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": data})
 
         # Reset variables
@@ -87,7 +89,9 @@ class Inventories(commands.Cog):
             return await ctx.send("This user hasn't initialized their inventory yet.")
 
         balance = data["balance"]
-        await ctx.send(f"**{user.name}'s** balance is $`{balance}`.")
+        bankbalance = data["bankbalance"]
+        banklimit = data["banklimit"]
+        await ctx.send(f"**{user.name}'s** balance is $`{balance}` and $`{bankbalance}`/`{banklimit}` is stored in their bank.")
 
     @balance.error
     async def balance_error(self, ctx, error):
@@ -98,7 +102,9 @@ class Inventories(commands.Cog):
                 return await ctx.send("You haven't initialized your inventory yet.")
 
             balance = data["balance"]
-            await ctx.send(f"Your balance is $`{balance}`.")
+            bankbalance = data["bankbalance"]
+            banklimit = data["banklimit"]
+            await ctx.send(f"Your balance is $`{balance}` and $`{bankbalance}`/`{banklimit}` is stored in your bank.")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
