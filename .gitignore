@@ -3,3 +3,4 @@
 /cogs/__pycache__/
 /items/__pycache__/
 /utils/__pycache__/
+/items/upload.py

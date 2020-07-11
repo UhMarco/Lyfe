@@ -15,15 +15,6 @@ class Admin(commands.Cog):
     async def on_ready(self):
         print("+ Admin Cog loaded")
 
-    @commands.command()
-    @commands.is_owner()
-    async def uploaditems(self, ctx):
-        if self.bot.maintenancemode:
-            return
-        items = utils.json.read_json("items")
-        await self.bot.items.update({"_id": "items", "items": items})
-        await ctx.send("Uploaded.")
-
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
     # ----- ITEM LIST ----------------------------------------------------------
@@ -101,7 +92,7 @@ class Admin(commands.Cog):
             await ctx.send(f"Usage: `{self.bot.prefix}spawnitem (item) (user)`")
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
-            
+
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
     # ----- REMOVE ITEM --------------------------------------------------------
