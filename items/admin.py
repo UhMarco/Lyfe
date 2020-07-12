@@ -41,8 +41,8 @@ class Admin(commands.Cog):
             item = items[item]
             count += 1
             if count > page * 5 - 5:
-                name, desc, emoji, value = item["name"], item["description"], item["emoji"], item["value"]
-                embed.add_field(name=f"{emoji} {name}", value=f"**Description:** `{desc}`\n**Value:** $`{value}`", inline=False)
+                name, desc, emoji, value, rarity = item["name"], item["description"], item["emoji"], item["value"], item["rarity"]
+                embed.add_field(name=f"{emoji} {name}", value=f"**Description:** `{desc}`\n**Rarity:** `{rarity}`\n**Value:** $`{value}`", inline=False)
 
             if count == page * 5:
                 break
@@ -77,7 +77,7 @@ class Admin(commands.Cog):
                 await self.bot.inventories.update_by_id({"_id": ctx.author.id, "inventory": inventory})
                 return await ctx.send(f"Given **{emoji} {name}** to **{user.name}**")
 
-        del item["emoji"], item["value"], item["description"]
+        del item["emoji"], item["value"], item["description"], item["rarity"]
         item["locked"] = False
         item["quantity"] = 1
         inventory.append(item)
