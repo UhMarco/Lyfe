@@ -41,7 +41,6 @@ class Claiming(commands.Cog):
 
         while True:
             item = items[random.choice(list(items))]
-            print(item)
             if item["rarity"] == randomrarity:
                 daily = item
                 break
