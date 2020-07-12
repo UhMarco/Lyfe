@@ -50,6 +50,8 @@ class Inventories(commands.Cog):
         items = items["items"]
         inventory = data["inventory"]
         bal = data["balance"]
+        bankbal = data["bankbalance"]
+        banklimit = data["banklimit"]
 
         pagelimit = 5 * round(len(inventory) / 5)
         if pagelimit < len(inventory): pagelimit += 5
@@ -60,7 +62,7 @@ class Inventories(commands.Cog):
                 return await ctx.send("Your inventory is empty!")
             return await ctx.send("You don't have that many pages!")
 
-        embed = discord.Embed(title=f":desktop: **{ctx.author.name}'s Inventory**", description=f"**Balance:** $`{bal}`", color=discord.Color.blue())
+        embed = discord.Embed(title=f":desktop: **{ctx.author.name}'s Inventory**", description=f"**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=discord.Color.blue())
         count = 0
         for i in inventory:
             count += 1
@@ -127,6 +129,8 @@ class Inventories(commands.Cog):
         bal = data["balance"]
         items = await self.bot.items.find("items")
         items = items["items"]
+        bankbal = data["bankbalance"]
+        banklimit = data["banklimit"]
 
         pagelimit = 5 * round(len(inventory) / 5)
         if pagelimit < len(inventory): pagelimit += 5
@@ -137,7 +141,7 @@ class Inventories(commands.Cog):
                 return await ctx.send(f"**{user.name}'s** inventory is empty!")
             return await ctx.send(f"**{user.name}** doesn't have that many pages!")
 
-        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"**Balance:** $`{bal}`", color=discord.Color.red())
+        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=discord.Color.red())
         count = 0
         for i in inventory:
             count += 1
