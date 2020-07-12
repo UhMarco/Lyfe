@@ -35,7 +35,7 @@ class Inventories(commands.Cog):
             data = []
             await ctx.send("It seems this is your first time checking your inventory, I'll give you a shopping cart and $`100` to get started!")
             item = items["shoppingcart"]
-            del item["emoji"], item["value"], item["description"]
+            del item["emoji"], item["value"], item["description"], item["rarity"]
             item["locked"] = False
             item["quantity"] = 1
             data.append(item)
@@ -176,10 +176,10 @@ class Inventories(commands.Cog):
             return await ctx.send(embed=embed)
         item = items[item.lower()]
 
-        name, desc, emoji, value = item["name"], item["description"], item["emoji"], item["value"]
+        name, desc, emoji, value, rarity = item["name"], item["description"], item["emoji"], item["value"], item["rarity"]
         embed = discord.Embed(
             title=f"{emoji} **{name}**",
-            description=f"**Description:** `{desc}`\n**Value:** $`{value}`",
+            description=f"**Description:** `{desc}`\n**Rarity:** `{rarity}`\n**Value:** $`{value}`",
             color=discord.Colour.purple()
         )
         await ctx.send(embed=embed)

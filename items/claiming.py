@@ -31,20 +31,20 @@ class Claiming(commands.Cog):
         items = await self.bot.items.find("items")
         items = items["items"]
 
-        rand = random.randint(1, len(items) - 1)
+        randomrarity = random.randint(1, 100)
+        if 0 < randomrarity <= 50:
+            randomrarity = "common"
+        elif 50 < randomrarity <= 80:
+            randomrarity = "uncommon"
+        else:
+            randomrarity = "rare"
 
-        c = 0
-        confirm = False
-        for item in items:
-            item = items[item]
-            c += 1
-            if c == rand:
+        while True:
+            item = items[random.choice(list(items))]
+            print(item)
+            if item["rarity"] == randomrarity:
                 daily = item
-                confirm = True
                 break
-
-        if not confirm:
-            return await ctx.send("Something went wrong.")
 
         name, emoji = daily["name"], daily["emoji"]
 
@@ -55,7 +55,7 @@ class Claiming(commands.Cog):
                 given = True
 
         if not given:
-            del daily["emoji"], daily["value"], daily["description"]
+            del daily["emoji"], daily["value"], daily["description"], daily["rarity"]
             daily["locked"] = False
             daily["quantity"] = 1
             inventory.append(daily)

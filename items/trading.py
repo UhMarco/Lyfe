@@ -67,7 +67,7 @@ class Trading(commands.Cog):
                 given = True
 
         if not given:
-            del item["emoji"], item["value"], item["description"]
+            del item["emoji"], item["value"], item["description"], item["rarity"]
             item["locked"] = False
             item["quantity"] = 1
             yourinventory.append(item)

@@ -101,7 +101,7 @@ class Robbery(commands.Cog):
                     given = True
 
             if not given:
-                del item["emoji"], item["value"]
+                del item["emoji"], item["value"], item["description"], item["rarity"]
                 item["locked"] = False
                 item["quantity"] = 1
                 myinventory.append(item)
