@@ -25,6 +25,7 @@ class Claiming(commands.Cog):
     async def claim(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
 
         inventory = data["inventory"]
