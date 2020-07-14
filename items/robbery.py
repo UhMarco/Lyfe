@@ -6,7 +6,7 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 
-robberytools = ['Gun', 'Hammer', 'Knife']
+robberytools = ['gun', 'hammer', 'knife']
 
 class Robbery(commands.Cog):
 
@@ -43,6 +43,12 @@ class Robbery(commands.Cog):
             return await ctx.send("That item does not exist.")
         if tool.lower() not in items:
             return await ctx.send("That tool does not exist.")
+
+        if tool.lower() not in robberytools:
+            return await ctx.send("That is not a vaid tool.")
+
+        if tool.lower() == item.lower():
+            return await ctx.send("That's pointless.")
 
         item = items[item.lower()]
         tool = items[tool.lower()]
