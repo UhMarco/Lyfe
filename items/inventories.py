@@ -172,13 +172,14 @@ class Inventories(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['ii', 'getinfo'])
-    async def iteminfo(self, ctx, item):
+    async def iteminfo(self, ctx, *, item):
+        item = item.replace(" ", "").lower()
         items = await self.bot.items.find("items")
         items = items["items"]
-        if item.lower() not in items:
+        if item not in items:
             embed = discord.Embed(title="Item Doesn't Exist", color=discord.Colour.purple())
             return await ctx.send(embed=embed)
-        item = items[item.lower()]
+        item = items[item]
 
         name, desc, emoji, value, rarity = item["name"], item["description"], item["emoji"], item["value"], item["rarity"]
         embed = discord.Embed(

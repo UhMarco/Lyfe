@@ -21,14 +21,16 @@ class Shop(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    async def sell(self, ctx, item):
+    async def sell(self, ctx, *, item):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
             return await ctx.send("You haven't initialized your inventory yet.")
 
+        item = item.replace(" ", "").lower()
+        print(item)
         items = await self.bot.items.find("items")
         items = items["items"]
-        if item.lower() not in items:
+        if item not in items:
             return await ctx.send("That item does not exist.")
 
         inventory = data["inventory"]
