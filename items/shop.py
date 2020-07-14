@@ -27,7 +27,6 @@ class Shop(commands.Cog):
             return await ctx.send("You haven't initialized your inventory yet.")
 
         item = item.replace(" ", "").lower()
-        print(item)
         items = await self.bot.items.find("items")
         items = items["items"]
         if item not in items:
