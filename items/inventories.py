@@ -42,6 +42,7 @@ class Inventories(commands.Cog):
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": 100})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "bankbalance": 0})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": 0})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "job": None})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": data})
 
         # Reset variables
