@@ -71,12 +71,14 @@ class Shop(commands.Cog):
     async def shop(self, ctx, *, section=None):
         if not section:
             pass
+
         elif section.lower() == "bank" or section.lower() == "banking" or section.lower() == "banks":
             embed = discord.Embed(title=":bank: Banks", description="Protects your money from theives", color=discord.Color.gold())
             embed.add_field(name=":bank: Small Bank Slot", value=f"Store $`500` in the bank.\nCosts $`150`\n`{self.bot.prefix}buy small bank slot`", inline=False)
             embed.add_field(name=":bank: Medium Bank Slot", value=f"Store $`1000` in the bank.\nCosts $`300`\n`{self.bot.prefix}buy medium bank slot`", inline=False)
             embed.add_field(name=":bank: Large Bank Slot", value=f"Store $`10000` in the bank.\nCosts $`2500`\n`{self.bot.prefix}buy large bank slot`", inline=False)
             return await ctx.send(embed=embed)
+
         elif section.lower() == "item" or section.lower() == "items":
             embed = discord.Embed(title=":shopping_cart: Items", description="The place to buy your useful items", color=discord.Color.gold())
             embed.add_field(name=":card_index: ID", value=f"Prove you're almost human with one of these.\nCosts $`500`\n`{self.bot.prefix}buy id`", inline=False)
@@ -98,10 +100,15 @@ class Shop(commands.Cog):
         if data is None:
             return await ctx.send("You haven't initialized your inventory yet.")
 
+        inventory = data["inventory"]
         bal = data["balance"]
         banklimit = data["banklimit"]
-
         item = item.replace(" ", "").lower()
+        items = await self.bot.items.find("items")
+        items = items["items"]
+
+        # BANKS
+
         if item == "smallbankslot" or item == "smallbank":
             cost = 150
             if banklimit != 0:
@@ -146,6 +153,35 @@ class Shop(commands.Cog):
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
             embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Large Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
+
+        # ITEMS
+
+        elif item == "id" or item == "idcard":
+            cost = 500
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            item = items["id"]
+            name, emoji = item["name"], item["emoji"]
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
 
         else:
             await ctx.send("I couldn't find that item in the shop.")
