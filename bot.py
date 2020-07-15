@@ -29,7 +29,6 @@ async def on_ready():
     bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
     bot.db = bot.mongo["lyfe"]
     bot.inventories = Document(bot.db, "inventories")
-    bot.balances = Document(bot.db, "balances")
     bot.items = Document(bot.db, "items")
     bot.trades = Document(bot.db, "trades")
     print("Initialized database\n-----")
