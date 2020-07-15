@@ -82,6 +82,7 @@ class Shop(commands.Cog):
         elif section.lower() == "item" or section.lower() == "items":
             embed = discord.Embed(title=":shopping_cart: Items", description="The place to buy your useful items", color=discord.Color.gold())
             embed.add_field(name=":card_index: ID", value=f"Prove you're almost human with one of these.\nCosts $`500`\n`{self.bot.prefix}buy id`", inline=False)
+            embed.add_field(name=":frog: Frog", value=f"Slippery, jumpy boi.\nCosts $`10`\n`{self.bot.prefix}buy frog`", inline=False)
             return await ctx.send(embed=embed)
 
         embed = discord.Embed(title=":shopping_cart: Shop", color=discord.Color.gold())
