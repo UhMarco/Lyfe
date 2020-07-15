@@ -40,7 +40,7 @@ class Help(commands.Cog):
             embed.set_footer(text="shop command list")
             embed.add_field(name=f"`{self.bot.prefix}shop`", value="Shows the shop", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}buy (item)`", value="Buy something from the shop, you can have spaces!", inline=False)
-            embed.add_field(name=f"`{self.bot.prefix}sell (item)`", value="Sell any item for its value to the shop", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}sell (item)`", value="Sell any item for 75% of its value to the shop", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "trading":

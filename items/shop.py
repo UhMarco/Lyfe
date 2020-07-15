@@ -50,6 +50,7 @@ class Shop(commands.Cog):
 
         value = item["value"]
         balance = data["balance"]
+        value = int(value * 0.75)
         balance += value
         await ctx.send(f"You sold **{emoji} {name}** for $`{value}`. Your balance is now $`{balance}`.")
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
