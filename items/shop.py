@@ -68,12 +68,23 @@ class Shop(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    async def shop(self, ctx):
-        embed = discord.Embed(title=":shopping_cart: **Shop**", color=discord.Color.gold())
-        embed.add_field(name=":bank: **BANKS**", value="Protects your money from theives", inline=False)
-        embed.add_field(name=":bank: Small Bank Slot", value=f"Store $`500` in the bank.\nCosts $`150`\n`{self.bot.prefix}buy small bank slot`", inline=False)
-        embed.add_field(name=":bank: Medium Bank Slot", value=f"Store $`1000` in the bank.\nCosts $`300`\n`{self.bot.prefix}buy medium bank slot`", inline=False)
-        embed.add_field(name=":bank: Large Bank Slot", value=f"Store $`10000` in the bank.\nCosts $`2500`\n`{self.bot.prefix}buy large bank slot`", inline=False)
+    async def shop(self, ctx, *, section=None):
+        if not section:
+            pass
+        elif section.lower() == "bank" or section.lower() == "banking" or section.lower() == "banks":
+            embed = discord.Embed(title=":bank: Banks", description="Protects your money from theives", color=discord.Color.gold())
+            embed.add_field(name=":bank: Small Bank Slot", value=f"Store $`500` in the bank.\nCosts $`150`\n`{self.bot.prefix}buy small bank slot`", inline=False)
+            embed.add_field(name=":bank: Medium Bank Slot", value=f"Store $`1000` in the bank.\nCosts $`300`\n`{self.bot.prefix}buy medium bank slot`", inline=False)
+            embed.add_field(name=":bank: Large Bank Slot", value=f"Store $`10000` in the bank.\nCosts $`2500`\n`{self.bot.prefix}buy large bank slot`", inline=False)
+            return await ctx.send(embed=embed)
+        elif section.lower() == "item" or section.lower() == "items":
+            embed = discord.Embed(title=":shopping_cart: Items", description="The place to buy your useful items", color=discord.Color.gold())
+            embed.add_field(name=":card_index: ID", value=f"Prove you're almost human with one of these.\nCosts $`500`\n`{self.bot.prefix}buy id`", inline=False)
+            return await ctx.send(embed=embed)
+
+        embed = discord.Embed(title=":shopping_cart: Shop", color=discord.Color.gold())
+        embed.add_field(name=":bank: Bank", value=f"`{self.bot.prefix}shop banks`", inline=False)
+        embed.add_field(name=":shopping_cart: Items", value=f"`{self.bot.prefix}shop items`", inline=False)
         await ctx.send(embed=embed)
 
     # --------------------------------------------------------------------------
