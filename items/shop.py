@@ -81,14 +81,26 @@ class Shop(commands.Cog):
             return await ctx.send(embed=embed)
 
         elif section.lower() == "item" or section.lower() == "items":
-            embed = discord.Embed(title=":shopping_cart: Items", description="The place to buy your useful items", color=discord.Color.gold())
-            embed.add_field(name=":card_index: ID", value=f"Prove you're almost human with one of these.\nCosts $`500`\n`{self.bot.prefix}buy id`", inline=False)
-            embed.add_field(name=":frog: Frog", value=f"Slippery, jumpy boi.\nCosts $`10`\n`{self.bot.prefix}buy frog`", inline=False)
+            embed = discord.Embed(title=":shopping_bags: Items", description="The place to buy your useful items", color=discord.Color.gold())
+            embed.add_field(name=":card_index: ID", value=f"Prove you're almost human with one of these \nCosts $`500`\n`{self.bot.prefix}buy id`", inline=False)
+            embed.add_field(name=":dragon: Dragon O.o", value=f"Cheap Fire-breathing dude \nCosts $`10`\n`{self.bot.prefix}buy dragon`", inline=False)
+            embed.add_field(name=":jeans: Jeans", value=f"Keep your dignity \nCosts $`10`\n`{self.bot.prefix}buy jeans`", inline=False)
+            embed.add_field(name=":gem: Crystal", value=f"Shinyyyyy \nCosts $`500`\n`{self.bot.prefix}buy crystal`", inline=False)
+            embed.add_field(name=":sponge: Sponge", value=f"To clean ppl \nCosts $`10`\n`{self.bot.prefix}buy sponge`", inline=False)
+            embed.add_field(name=":cheese: Cheese", value=f"Cheesy \nCosts $`10`\n`{self.bot.prefix}buy cheese`", inline=False)
+            embed.add_field(name=":firecracker: Dynamite", value=f"Bang! \nCosts $`1000`\n`{self.bot.prefix}buy firecracker`", inline=False)
+            embed.add_field(name=":jack_o_lantern: Pumpkin", value=f"The creepiest fruit \nCosts $`10`\n`{self.bot.prefix}buy pumpkin`", inline=False)
+            embed.add_field(name=":fire_extinguisher: Fire Extinguisher", value=f"\nCosts $`500`\n`{self.bot.prefix}buy fire extinguisher`", inline=False)
+            embed.add_field(name=":fire: Fire", value=f"Sets things on fire \nCosts $`sets things on fire`\n`{self.bot.prefix}buy fire`", inline=False)
+            embed.add_field(name=":hammer: Hammer", value=f"50% chance of committing a robbery \nCosts $`1500`\n`{self.bot.prefix}buy hammer`", inline=False)
+            embed.add_field(name=":lock: Lock", value=f"Locks items \nCosts $`2000`\n`{self.bot.prefix}buy lock`", inline=False)
+            embed.add_field(name=":key: Key", value=f"Unlocks items \nCosts $`500`\n`{self.bot.prefix}buy key`", inline=False)
+            embed.add_field(name=":sunflower: Plant", value=f"Plant that stares at the sun all day so it's probably blind \nCosts $`10`\n`{self.bot.prefix}buy plant`", inline=False)
             return await ctx.send(embed=embed)
 
         embed = discord.Embed(title=":shopping_cart: Shop", color=discord.Color.gold())
-        embed.add_field(name=":bank: Bank", value=f"`{self.bot.prefix}shop banks`", inline=False)
-        embed.add_field(name=":shopping_cart: Items", value=f"`{self.bot.prefix}shop items`", inline=False)
+        embed.add_field(name=":shopping_bags: Items", value=f"`{self.bot.prefix}shop items`", inline=False)
+        embed.add_field(name=":bank: Banks", value=f"`{self.bot.prefix}shop banks`", inline=False)
         await ctx.send(embed=embed)
 
     # --------------------------------------------------------------------------
