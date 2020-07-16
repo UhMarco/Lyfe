@@ -27,7 +27,6 @@ class Inventories(commands.Cog):
                 page = 1
             else:
                 if self.bot.get_user(int(user)) == None:
-                    print("none")
                     page = user
                     user = ctx.author
                 else:
