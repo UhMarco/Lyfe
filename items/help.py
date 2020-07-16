@@ -95,6 +95,7 @@ class Help(commands.Cog):
                             <:github:731220198539133040> [Github](https://github.com/UhMarco)
                             <:trello:731219464758231080> [Trello](https://trello.com/b/vY8Vx2PW/lyfe-bot)
                             :mailbox_with_mail: [Invite](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)
+                            :envelope: [Lyfe Support Server](https://discord.gg/zAZ3vKJ)
                             """,
                 color=discord.Color.purple()
             )
