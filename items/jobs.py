@@ -8,7 +8,7 @@ import utils.json
 
 # Custom cooldown variables
 on_cooldown = {}
-cooldown = {"fastfoodworker": 600, "janitor": 3600, "thief": 3600, "mage": 2700}
+cooldown = {"fastfoodworker": 600, "janitor": 1800, "thief": 3600, "mage": 3600}
 
 class Jobs(commands.Cog):
 
@@ -29,9 +29,9 @@ class Jobs(commands.Cog):
             color=discord.Color.greyple(),
         )
         embed.add_field(name=":hamburger: Fast Food Worker", value=f"Just repeat the ice cream machine is broken and you'll do great\n**Earns:** $`20` every `10 minutes`\n`{self.bot.prefix}apply fast food worker`", inline=False)
-        embed.add_field(name=":broom: Janitor", value=f"Make some floors shiny\n**Earns:** $`100` every `1 hour`\n`{self.bot.prefix}apply janitor`", inline=False)
+        embed.add_field(name=":broom: Janitor", value=f"Make some floors shiny\n**Earns:** $`100` every `30 minutes`\n`{self.bot.prefix}apply janitor`", inline=False)
         embed.add_field(name=":gun: Thief", value=f"Borrowing without permission for a living\n**Earns:** $`10-200` every `1 hour`\n`{self.bot.prefix}apply thief`", inline=False)
-        embed.add_field(name=":mage: Mage", value=f"You'll encounter many weird words called spells\n**Earns:** $`150` every `45 minutes`.\n`{self.bot.prefix}apply mage`", inline=False)
+        embed.add_field(name=":mage: Mage", value=f"You'll encounter many weird words called spells\n**Earns:** $`150` every `1 hour`.\n`{self.bot.prefix}apply mage`", inline=False)
         await ctx.send(embed=embed)
 
     @commands.command()
