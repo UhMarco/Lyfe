@@ -42,6 +42,15 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}sell (item)`", value="Sell any item for 75% of its value to the shop", inline=False)
             return await ctx.send(embed=embed)
 
+        elif section.lower() == "jobs":
+            embed = discord.Embed(title=":card_box: Job Commands", color=discord.Color.purple())
+            embed.set_footer(text="job command list")
+            embed.add_field(name=f"`{self.bot.prefix}jobs`", value="Shows the list of jobs", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}apply (job)`", value="You can apply for work here", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}resign`", value="Promoting yourself to customer", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}work`", value="Do your job!", inline=False)
+            return await ctx.send(embed=embed)
+
         elif section.lower() == "trading":
             embed = discord.Embed(title=":scales: Trading Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="trading command list")
@@ -57,6 +66,12 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}rob (user) (tool) (desired item)`", value="Rob another player of an item, requires a tool, leave blank to see owned tools", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}lock (item)`", value="Prevent an item from being traded or stolen, requires :lock: Lock", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}unlock (item)`", value="Allow an item to be traded or stolen, requires :key: Key", inline=False)
+            return await ctx.send(embed=embed)
+
+        elif section.lower() == "utilities" or section.lower() == "utility":
+            embed = discord.Embed(title=":tools: Utility Commands", color=discord.Color.purple())
+            embed.set_footer(text="Utility command list")
+            embed.add_field(name=f"`{self.bot.prefix}avatar [user]`", value="Display the avatar of a user in full size", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "bot":
@@ -89,8 +104,10 @@ class Help(commands.Cog):
         embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
         embed.add_field(name=":page_facing_up: Basic", value=f"`{self.bot.prefix}help basic`", inline=False)
         embed.add_field(name=":shopping_cart: Shop", value=f"`{self.bot.prefix}help shop`", inline=False)
+        embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
         embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
         embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
+        embed.add_field(name=":tools: Utilities", value=f"`{self.bot.prefix}help utilities`", inline=False)
         embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
         return await ctx.send(embed=embed)
 
