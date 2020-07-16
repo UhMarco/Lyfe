@@ -20,7 +20,7 @@ class Inventories(commands.Cog):
     # ----- INVENTORY ----------------------------------------------------------
     # --------------------------------------------------------------------------
 
-    @commands.command(aliases=['inv', 'inventorysee',  'invsee'])
+    @commands.command(aliases=['inv', 'inventorysee', 'invsee'])
     async def inventory(self, ctx, user=None, page="1"):
         if len(ctx.message.mentions) == 0:
             if user is None:
@@ -32,7 +32,6 @@ class Inventories(commands.Cog):
                     user = ctx.author
                 else:
                     user = self.bot.get_user(int(user))
-            pass
         else:
             user = ctx.message.mentions[0]
 
