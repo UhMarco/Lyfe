@@ -25,6 +25,7 @@ class Inventories(commands.Cog):
         if len(ctx.message.mentions) == 0:
             if user is None:
                 page = 1
+                user = ctx.author
             else:
                 if self.bot.get_user(int(user)) == None:
                     page = user
