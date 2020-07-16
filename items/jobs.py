@@ -35,12 +35,15 @@ class Jobs(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.cooldown(1, 86400, commands.BucketType.user)
     async def apply(self, ctx, *, job):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
         check = data["job"]
         if check is not None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("Please resign from your current job before applying elsewhere.")
 
         job = job.replace(" ", "").lower()
@@ -66,6 +69,7 @@ class Jobs(commands.Cog):
             await ctx.send(embed=embed)
 
         else:
+            ctx.command.reset_cooldown(ctx)
             await ctx.send("That's not a job.")
 
     @commands.command()
@@ -116,22 +120,56 @@ class Jobs(commands.Cog):
             on_cooldown[author] = time.time()
 
         if job == "fastfoodworker":
-            job = "Fast Food Worker"
-            emoji = ":hamburger:"
+            localcooldown = cooldown["fastfoodworker"]
 
-            # WORK
+            if last_command is None or last_command > localcooldown:
+                job = "Fast Food Worker"
+                emoji = ":hamburger:"
 
-            # PAY
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+                # WORK
+
+                # PAY
+                balance += 20
+                embed = discord.Embed(title=f"You went to work as a {emoji} **{job}** and earned $`20`", color=discord.Color.greyple())
+                await ctx.send(embed=embed)
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+
+            else:
+                m, s = divmod(localcooldown - last_command, 60)
+                h, m = divmod(m, 60)
+                if int(h) == 0 and int(m) == 0:
+                    await ctx.send(f':card_box: You must wait **{int(s)} seconds** to work again.')
+                elif int(h) == 0 and int(m) != 0:
+                    await ctx.send(f':card_box: You must wait **{int(m)} minutes and {int(s)} seconds** to work again.')
+                else:
+                    await ctx.send(f':card_box: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to work again.')
+                return
 
         elif job == "janitor":
-            job = "Janitor"
-            emoji = ":broom:"
+            localcooldown = cooldown["janitor"]
 
-            # WORK
+            if last_command is None or last_command > localcooldown:
+                job = "Janitor"
+                emoji = ":broom:"
 
-            # PAY
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+                # WORK
+
+                # PAY
+                balance += 100
+                embed = discord.Embed(title=f"You went to work as a {emoji} **{job}** and earned $`100`", color=discord.Color.greyple())
+                await ctx.send(embed=embed)
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+
+            else:
+                m, s = divmod(localcooldown - last_command, 60)
+                h, m = divmod(m, 60)
+                if int(h) == 0 and int(m) == 0:
+                    await ctx.send(f':card_box: You must wait **{int(s)} seconds** to work again.')
+                elif int(h) == 0 and int(m) != 0:
+                    await ctx.send(f':card_box: You must wait **{int(m)} minutes and {int(s)} seconds** to work again.')
+                else:
+                    await ctx.send(f':card_box: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to work again.')
+                return
 
         elif job == "thief":
             job = "Thief"
@@ -148,13 +186,31 @@ class Jobs(commands.Cog):
             if last_command is None or last_command > localcooldown:
                 job = "Mage"
                 emoji = ":mage:"
+                pay = 150
 
                 # WORK
+                spells = utils.json.read_json("spells")
+                spell = random.choice(spells["spells"])
+                embed = discord.Embed(title=f"Type the spell `{spell}`", description="You will be rewarded 20% more if you spell it within 3 seconds.", color=discord.Color.greyple())
+                await ctx.send(embed=embed)
+                timer = time.time()
+
+                def check(m):
+                    return m.channel == ctx.channel and m.author == ctx.author
+                message = await self.bot.wait_for('message', check=check)
+
+                if message.content.replace(" ", "").lower() == spell.replace(" ", ""):
+                    if time.time() - timer <= 3:
+                        pay = int(pay * 1.2)
+                        await ctx.send(f"**Correct!** It took you less than 3 seconds to type the spell so you were paid extra and got $`{pay}`")
+                    else:
+                        await ctx.send(f"**Correct!** However you were paid the normal $`{pay} as it took you more than 3 seconds to type the spell")
+                else:
+                    pay = int(pay * 0.5)
+                    await ctx.send(f"**Incorrect!** The lead mage looks upon you with distaste - You were only paid $`{pay}`")
 
                 # PAY
-                balance += 150
-                embed = discord.Embed(title=f"You went to work as a {emoji} **{job}** and earned $`150`", color=discord.Color.greyple())
-                await ctx.send(embed=embed)
+                balance += pay
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
             else:
