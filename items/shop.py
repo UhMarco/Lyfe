@@ -166,8 +166,242 @@ class Shop(commands.Cog):
 
         # ITEMS
 
+        elif item == "jeans" or item == "pants":
+            item = items["jeans"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "Sponge" or item == "sponge":
+            item = items["sponge"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
         elif item == "id" or item == "idcard":
             item = items["id"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "crystal" or item == "gem":
+            item = items["crystal"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "key" or item == "Key":
+            item = items["key"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "fire extinguisher" or item == "extinguisher":
+            item = items["fireextinguisher"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "boomstick" or item == "dynamite":
+            item = items["dynamite"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "hammer" or item == "sledgehammer":
+            item = items["hammer"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "fire" or item == "flame":
+            item = items["fire"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+
+        elif item == "lock" or item == "Lock":
+            item = items["lock"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
             if bal < cost:
