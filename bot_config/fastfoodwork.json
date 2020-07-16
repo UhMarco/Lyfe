@@ -1,0 +1,11 @@
+{
+    ":hotdog:": ["hotdog"],
+    ":cookie:": ["cookie", "cookies"],
+    ":hamburger:": ["burger", "hamburger", "beefburger"],
+    ":fries:": ["fries", "chips"],
+    ":pizza:": ["pizza"],
+    ":pie:": ["pie"],
+    ":bacon:": ["bacon"],
+    ":pancakes:": ["pancakes", "pancake"],
+    ":waffle:": ["waffle", "waffles"]
+}

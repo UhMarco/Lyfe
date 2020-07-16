@@ -46,6 +46,11 @@ class Jobs(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("Please resign from your current job before applying elsewhere.")
 
+        inventory = data["inventory"]
+        if not any("ID" for ele in inventory):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send("You need :card_index: **ID** to get a job.")
+
         job = job.replace(" ", "").lower()
 
         if "fastfood" in job or "worker" in job:
@@ -125,13 +130,34 @@ class Jobs(commands.Cog):
             if last_command is None or last_command > localcooldown:
                 job = "Fast Food Worker"
                 emoji = ":hamburger:"
+                pay = 20
 
                 # WORK
+                work = utils.json.read_json("fastfoodwork")
+                print(work)
+                print(type(work))
+                word = random.choice(list(work))
+                embed = discord.Embed(title=f"Name the emoji {word}", description="You will be rewarded double if you name it within 3 seconds.", color=discord.Color.greyple())
+                await ctx.send(embed=embed)
+                timer = time.time()
+
+                def check(m):
+                    return m.channel == ctx.channel and m.author == ctx.author
+                message = await self.bot.wait_for('message', check=check)
+
+                words = work[word]
+                if any(ele in message.content.replace(" ", "").lower() for ele in words):
+                    if time.time() - timer <= 3:
+                        pay = int(pay * 2)
+                        await ctx.send(f"**Correct!** You were paid $`{pay}` as you named the emoji within 3 seconds")
+                    else:
+                        await ctx.send(f"**Correct!** You were paid $`{pay}`")
+                else:
+                    pay = int(pay * 0.8)
+                    await ctx.send(f"**Incorrect!** The manager doesn't seem happy - You were only paid $`{pay}`")
 
                 # PAY
-                balance += 20
-                embed = discord.Embed(title=f"You went to work as a {emoji} **{job}** and earned $`20`", color=discord.Color.greyple())
-                await ctx.send(embed=embed)
+                balance += pay
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
             else:

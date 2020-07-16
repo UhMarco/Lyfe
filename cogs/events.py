@@ -21,15 +21,14 @@ class Events(commands.Cog):
         if isinstance(error, commands.CommandOnCooldown):
             if ctx.message.content == f"{self.bot.prefix}claim":
                 return
-            await ctx.message.delete()
             m, s = divmod(error.retry_after, 60)
             h, m = divmod(m, 60)
             if int(h) == 0 and int(m) == 0:
-                await ctx.send(f':stopwatch: You must wait **{int(s)} seconds** to use this command again.', delete_after=5)
+                await ctx.send(f':stopwatch: You must wait **{int(s)} seconds** to use this command again.')
             elif int(h) == 0 and int(m) != 0:
-                await ctx.send(f':stopwatch: You must wait **{int(m)} minutes and {int(s)} seconds** to use this command again.', delete_after=5)
+                await ctx.send(f':stopwatch: You must wait **{int(m)} minutes and {int(s)} seconds** to use this command again.')
             else:
-                await ctx.send(f':stopwatch: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to use this command again.', delete_after=5)
+                await ctx.send(f':stopwatch: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to use this command again.')
             return
 
         elif isinstance(error, commands.CheckFailure):
