@@ -35,10 +35,18 @@ class Events(commands.Cog):
             return await ctx.send("Insufficient permissions.")
 
         elif isinstance(error, commands.CommandInvokeError):
-            embed = discord.Embed(title=":x:  **I ran into a problem!**", description="This is likely due to missing permissions.\nIf you believe this was an error, please [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
-            await ctx.send(embed=embed)
-            return print(f"\n===============================================\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
-
+            if str(error.original) == "403 Forbidden (error code: 50013): Missing Permissions":
+                try:
+                    embed = discord.Embed(title=":x: Missing Permissions", description="If you believe this was an error, please [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
+                    await ctx.send(embed=embed)
+                    print(f"\n===============================================\nMISSING PERMISSIONS\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
+                except Exception:
+                    pass
+            else:
+                embed = discord.Embed(title=":x:  **I ran into a problem!**", description="This is likely due to missing permissions.\nIf you believe this was an error, please [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
+                await ctx.send(embed=embed)
+                print(f"\n===============================================\nCOMMAND INVOKE ERROR\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
+            return
 
         print("\n----------\n")
         raise error
