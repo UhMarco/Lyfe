@@ -13,7 +13,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         # Ignored errors
-        ignored = (commands.CommandNotFound, commands.MissingRequiredArgument)#, commands.UserInputError, commands.BadArgument)
+        ignored = (commands.CommandNotFound, commands.MissingRequiredArgument, commands.BadArgument)#, commands.UserInputError
         if isinstance(error, ignored):
             return
 
