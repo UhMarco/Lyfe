@@ -107,7 +107,7 @@ class Help(commands.Cog):
         embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
         embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
         embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
-        embed.add_field(name=":tools: Utilities", value=f"`{self.bot.prefix}help utilities`", inline=False)
+        embed.add_field(name=":tools: Utility", value=f"`{self.bot.prefix}help utility`", inline=False)
         embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
         return await ctx.send(embed=embed)
 
