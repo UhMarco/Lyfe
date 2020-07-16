@@ -303,7 +303,7 @@ class Trading(commands.Cog):
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
-    # ----- TRADE --------------------------------------------------------------
+    # ----- TCANCEL ------------------------------------------------------------
     # --------------------------------------------------------------------------
 
     @commands.command()
@@ -334,6 +334,36 @@ class Trading(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}tradecancel (tradeid)`")
         elif isinstance(error, commands.CommandInvokeError):
             return await ctx.send("That is not a valid TradeID.")
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- PAY ----------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command()
+    async def pay(self, ctx, user: discord.Member, amount=None):
+        try:
+            page = int(page)
+        except Exception:
+            return await ctx.send(f"Enter a valid amount. Usage: `{self.bot.prefix}pay (user) (amount)`")
+
+        author_data = await self.bot.inventories.find(ctx.author.id)
+        if author_data is None:
+            return await ctx.send("You haven't initialized your inventory yet.")
+        author_balance = author_data["balance"]
+        if amount > author_balance:
+            return await ctx.send(f"Insufficient funds, you only have $`{author_balance}`")
+
+        user_data = await self.bot.inventories.find(user.id)
+        if user_data is None:
+            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
+        user_balance = user_data["balance"]
+
+        author_balance -= amount
+        user_balance += amount
+        await ctx.send(f"Paid **{user.name}** $`{amount}`")
+        await self.bot.inventory.upsert({"_id": ctx.author.id, "balance": author_balance})
+        await self.bot.inventory.upsert({"_id": user.id, "balance": user_balance})
 
 
 def setup(bot):
