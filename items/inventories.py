@@ -20,33 +20,45 @@ class Inventories(commands.Cog):
     # ----- INVENTORY ----------------------------------------------------------
     # --------------------------------------------------------------------------
 
-    @commands.command(aliases=['inv'])
-    async def inventory(self, ctx, page="1"):
+    @commands.command(aliases=['inv', 'inventorysee',  'invsee'])
+    async def inventory(self, ctx, user=None, page="1"):
+        if len(ctx.message.mentions) == 0:
+            if user is None:
+                page = 1
+            else:
+                page = user
+            user = ctx.author
+            pass
+        else:
+            user = ctx.message.mentions[0]
+
         try:
             page = int(page)
         except Exception:
             return await ctx.send("Not a valid page number.")
 
-        data = await self.bot.inventories.find(ctx.author.id)
+        data = await self.bot.inventories.find(user.id)
         items = await self.bot.items.find("items")
         items = items["items"]
 
         if data is None:
-            data = []
-            await ctx.send("It seems this is your first time checking your inventory, I'll give you a shopping cart and $`100` to get started!")
-            item = items["shoppingcart"]
-            del item["emoji"], item["value"], item["description"], item["rarity"]
-            item["locked"] = False
-            item["quantity"] = 1
-            data.append(item)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": 100})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "bankbalance": 0})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": 0})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "job": None})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": data})
+            if user == ctx.author:
+                data = []
+                await ctx.send("It seems this is your first time checking your inventory, I'll give you a shopping cart and $`100` to get started!")
+                item = items["shoppingcart"]
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                data.append(item)
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": 100})
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "bankbalance": 0})
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": 0})
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "job": None})
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": data})
+            else:
+                return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
 
-        # Reset variables
-        data = await self.bot.inventories.find(ctx.author.id)
+        data = await self.bot.inventories.find(user.id)
         items = await self.bot.items.find("items")
         items = items["items"]
         inventory = data["inventory"]
@@ -60,10 +72,15 @@ class Inventories(commands.Cog):
 
         if page > pagelimit:
             if page == 1:
-                return await ctx.send("Your inventory is empty!")
-            return await ctx.send("You don't have that many pages!")
+                return await ctx.send(f"**{user.name}'s** inventory is empty!")
+            return await ctx.send(f"**{user.name}** doesn't have that many pages!")
 
-        embed = discord.Embed(title=f":desktop: **{ctx.author.name}'s Inventory**", description=f"**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=discord.Color.blue())
+        if user == ctx.author:
+            color = discord.Color.blue()
+        else:
+            color = discord.Color.red()
+
+        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=color)
         count = 0
         for i in inventory:
             count += 1
@@ -76,7 +93,7 @@ class Inventories(commands.Cog):
             if count == page * 5:
                 break
 
-        embed.set_footer(text=f"{ctx.author.id} | Page: {page}/{pagelimit}")
+        embed.set_footer(text=f"{user.id} | Page: {page}/{pagelimit}")
         await ctx.send(embed=embed)
 
     # --------------------------------------------------------------------------
@@ -108,64 +125,6 @@ class Inventories(commands.Cog):
             bankbalance = data["bankbalance"]
             banklimit = data["banklimit"]
             await ctx.send(f"Your balance is $`{balance}` and $`{bankbalance}`/`{banklimit}` is stored in your bank.")
-
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- INVENTORY SEE ------------------------------------------------------
-    # --------------------------------------------------------------------------
-
-    @commands.command(aliases=['invsee'])
-    async def inventorysee(self, ctx, user: discord.Member, page="1"):
-        try:
-            page = int(page)
-        except Exception:
-            return await ctx.send("Not a valid page number.")
-
-        data = await self.bot.inventories.find(user.id)
-
-        if data is None:
-            return await ctx.send("This user hasn't initialized their inventory yet.")
-
-        inventory = data["inventory"]
-        bal = data["balance"]
-        items = await self.bot.items.find("items")
-        items = items["items"]
-        bankbal = data["bankbalance"]
-        banklimit = data["banklimit"]
-
-        pagelimit = 5 * round(len(inventory) / 5)
-        if pagelimit < len(inventory): pagelimit += 5
-        pagelimit = int(pagelimit / 5)
-
-        if page > pagelimit:
-            if page == 1:
-                return await ctx.send(f"**{user.name}'s** inventory is empty!")
-            return await ctx.send(f"**{user.name}** doesn't have that many pages!")
-
-        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=discord.Color.red())
-        count = 0
-        for i in inventory:
-            count += 1
-            if count > page * 5 - 5:
-                name, locked, quantity = i["name"], i["locked"], i["quantity"]
-                item = items[name.replace(" ", "").lower()]
-                desc, emoji, value = item["description"], item["emoji"], item["value"]
-                embed.add_field(name=f"{emoji} {name}", value=f"**Description:** `{desc}`\n**Locked:** `{locked}`\n**Value:** $`{value}`\n**Quantity:** `{quantity}`", inline=False)
-
-            if count == page * 5:
-                break
-
-        embed.set_footer(text=f"{user.id} | Page: {page}/{pagelimit}")
-        await ctx.send(embed=embed)
-
-    # ----- ERROR HANDLER ------------------------------------------------------
-
-    @inventorysee.error
-    async def inventorysee_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"Usage: `{self.bot.prefix}inventorysee (user) [page]`")
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
