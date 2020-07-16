@@ -134,8 +134,6 @@ class Jobs(commands.Cog):
 
                 # WORK
                 work = utils.json.read_json("fastfoodwork")
-                print(work)
-                print(type(work))
                 word = random.choice(list(work))
                 embed = discord.Embed(title=f"Name the emoji {word}", description="You will be rewarded double if you name it within 3 seconds.", color=discord.Color.greyple())
                 await ctx.send(embed=embed)
