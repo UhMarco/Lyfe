@@ -251,6 +251,5 @@ class Jobs(commands.Cog):
         else:
             return await ctx.send("Error: Job not null but not found.")
 
-
 def setup(bot):
     bot.add_cog(Jobs(bot))
