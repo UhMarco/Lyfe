@@ -192,7 +192,7 @@ class Shop(commands.Cog):
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
 
-        elif item == "Sponge" or item == "sponge":
+        elif item == "sponge":
             item = items["sponge"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
