@@ -35,7 +35,7 @@ class Events(commands.Cog):
             return await ctx.send("Insufficient permissions.")
 
         elif isinstance(error, commands.CommandInvokeError):
-            embed = discord.Embed(title=":x:  **Error**", description="This is likely due to missing permissions.\nIf you believe this was an error, please [report it](https://discord.gg/RGuq3nj).", color=discord.Color.red())
+            embed = discord.Embed(title=":x:  **I ran into a problem!**", description="This is likely due to missing permissions.\nIf you believe this was an error, please [report it](https://discord.gg/RGuq3nj).", color=discord.Color.red())
             await ctx.send(embed=embed)
             return print(f"\n===============================================\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
 
