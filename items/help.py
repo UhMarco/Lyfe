@@ -32,6 +32,7 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}bal [user]`", value="See your own or another's balance", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}iteminfo (item)`", value=f"Look up information about an item", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}claim`", value="Claim your hourly reward", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}daily`", value="Claim your daily reward", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "shop":
