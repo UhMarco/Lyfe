@@ -43,7 +43,7 @@ class Events(commands.Cog):
                 except Exception:
                     pass
             else:
-                embed = discord.Embed(title=":x:  **I ran into a problem!**", description="If you wish, you may [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
+                embed = discord.Embed(title=":x:  **I found an Error!**", description="If you wish, you may [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
                 await ctx.send(embed=embed)
                 print(f"\n===============================================\nCOMMAND INVOKE ERROR\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
             return
