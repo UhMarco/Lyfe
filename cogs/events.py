@@ -19,7 +19,7 @@ class Events(commands.Cog):
         print(f"LEFT {guild.name} - Owner: {guild.owner} - Members: {len(guild.members)} - Now in {len(self.bot.guilds)} guilds.")
 
     @commands.Cog.listener()
-    async def on_command_error(self, error):
+    async def on_command_error(self, ctx, error):
         # Ignored errors
         ignored = (commands.CommandNotFound, commands.MissingRequiredArgument, commands.BadArgument)#, commands.UserInputError
         if isinstance(error, ignored):
