@@ -23,9 +23,14 @@ class Jobs(commands.Cog):
 
     @commands.command(aliases=['job'])
     async def jobs(self, ctx):
+        data = await self.bot.inventories.find(ctx.author.id)
+        if data is not None:
+            job = data["job"]
+        else:
+            job = "none"
         embed = discord.Embed(
             title=":card_box: **Jobs List**",
-            description="Earn varying amounts of money every certain amount of time\nEach job is different so take your pick!\n**Note:** Every job requires an :card_index: **ID**",
+            description=f"**Current Job:** `{job}`\nEarn varying amounts of money every certain amount of time\nEach job is different so take your pick!\n**Note:** Every job requires an :card_index: **ID**",
             color=discord.Color.greyple(),
         )
         embed.add_field(name=":hamburger: Fast Food Worker", value=f"Just repeat the ice cream machine is broken and you'll do great\n**Earns:** $`20` every `10 minutes`\n`{self.bot.prefix}apply fast food worker`", inline=False)
