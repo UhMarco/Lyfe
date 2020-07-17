@@ -131,12 +131,28 @@ class Admin(commands.Cog):
     # ----- ERROR HANDLER ------------------------------------------------------
 
     @removeitem.error
+    @commands.is_owner()
     async def removeitem_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"Usage: `{self.bot.prefix}removeitem (item) (user)`")
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
+    # Abandoning format for this as I honestly can't be bothered
+
+    @commands.command(aliases=['sb'])
+    async def setbalance(self, ctx, user: discord.Member, amount="n"):
+        data = await self.bot.inventories.find(user.id)
+        if data is None:
+            return await ctx.send("This user hasn't initialized their inventory yet.")
+
+        try:
+            amount = int(amount)
+        except Exception:
+            return await ctx.send("Enter a valid amount")
+
+        await self.bot.inventories.upsert({"_id": user.id, "balance": amount})
+        await ctx.send(f"Set **{user.name}'s** balance to $`{amount}`")
 
 
 def setup(bot):
