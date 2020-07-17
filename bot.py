@@ -8,7 +8,7 @@ from utils.mongo import Document
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 
-prefix = '!'
+prefix = ','
 
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, owner_id=259740408462966786)
 bot.remove_command("help")
