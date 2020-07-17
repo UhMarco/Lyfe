@@ -102,15 +102,19 @@ class Help(commands.Cog):
                             Servers: `{len(self.bot.guilds)}`\n
                             <:github:731220198539133040> [Github](https://github.com/UhMarco)
                             <:trello:731219464758231080> [Trello](https://trello.com/b/vY8Vx2PW/lyfe-bot)
-                            :mailbox_with_mail: [Invite](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)
-                            :envelope: [Lyfe Support Server](https://discord.gg/zAZ3vKJ)
+                            :mailbox_with_mail: [Bot Invite](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)
+                            <:discord:733776804904697886> [Lyfé Server](https://discord.gg/zAZ3vKJ)
                             """,
                 color=discord.Color.purple()
             )
             embed.set_footer(text="built by NotStealthy#0001")
             return await ctx.send(embed=embed)
 
-        embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
+        data = await self.bot.inventories.find(ctx.author.id)
+        if data is None:
+            embed = discord.Embed(title=":herb: Lyfé Command List", description=f"**Hey!** Initialize your inventory with `{self.bot.prefix}inv`", color=discord.Color.purple())
+        else:
+            embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
         embed.add_field(name=":page_facing_up: Basic", value=f"`{self.bot.prefix}help basic`", inline=False)
         embed.add_field(name=":shopping_cart: Shop", value=f"`{self.bot.prefix}help shop`", inline=False)
         embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
@@ -128,7 +132,7 @@ class Help(commands.Cog):
 
     @commands.command()
     async def invite(self, ctx):
-        embed = discord.Embed(description=":mailbox_with_mail: [Invite me to other servers](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)", color=discord.Color.purple())
+        embed = discord.Embed(title=":herb: Lyfé Invite Links", description=":mailbox_with_mail: [Invite me to other servers](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)\n<:discord:733776804904697886> [Lyfé Server](https://discord.gg/zAZ3vKJ)", color=discord.Color.purple())
         await ctx.send(embed=embed)
 
 def setup(bot):
