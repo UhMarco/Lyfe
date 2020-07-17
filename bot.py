@@ -8,7 +8,7 @@ from utils.mongo import Document
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 
-prefix = ','
+prefix = '!'
 
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, owner_id=259740408462966786)
 bot.remove_command("help")
@@ -24,7 +24,7 @@ bot.maintenancemode = False
 @bot.event
 async def on_ready():
     print(f"-----\n{bot.user.name} Online\n-----\nPrefix: {bot.prefix}\n-----")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"), status=discord.Status.idle)
 
     bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
     bot.db = bot.mongo["lyfe"]
