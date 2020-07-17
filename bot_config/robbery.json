@@ -1,3 +1,3 @@
 {
-    "FailureReasons": ["You knocked over a vase and got caught. Amateur.", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+    "failureReasons": ["You knocked over a vase and got caught. Amateur!", "You dropped your tool and woke up the owner. What a fool!", "You tripped on the rug and fell over which got you caught.", "You forgot to bring your tool. Muppet!", "You made it far, you got what you came for but didn't realise you were on the 10th floor. Jumping out the window was rather unfortante for you.", "It's not a video game. You can't scream 'YAHOO!' whenever you jump. You got caught, idiot.", "You forgot the bag with the big dollar sign on it."]
 }
