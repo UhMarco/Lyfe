@@ -31,10 +31,13 @@ class Utilities(commands.Cog):
             return await ctx.send("I couldn't find that user.")
 
     @commands.command(name="8ball")
-    async def _8Ball(self, ctx, *, question):
-        responses = ["Outlook not clear, try again later", "Sorry m8, try again", "mhm", "idk, u tell me", "lol", "Absolutely!", "Absolutely not.", "It is yes.", "It is no.", "Do what Jesus would do", "Nahhhh", "Sure I guess...", ]
+    async def _8Ball(self, ctx, *, question=None):
+        if not question:
+            return await ctx.send(":8ball: **8Ball:** Well that's cool but you actually have to ask something.")
+        responses = ["Outlook unclear, try again later", "Sorry m8, try again", "mhm", "I don't know, you tell me", "lol", "Absolutely!", "Absolutely not!", "It's a yes from me", "It's a no from me", "Do what Jesus would do", "Nahhhh", "Sure I guess...", "It's plausible", "I don't think you'll like the answer...", "I think it's best I spare you of the truth."]
         wisdom = random.choice(responses)
-        embed = discord.Embed(title=f'**{ctx.author.name}** asked: "{question}"', description=f'**8ball says:** {wisdom}', color=discord.Color.dark_blue())
-        await ctx.send(embed=embed)
+        await ctx.send(f":8ball: **8Ball:** {wisdom}")
+
+
 def setup(bot):
     bot.add_cog(Utilities(bot))
