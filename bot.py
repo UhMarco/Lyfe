@@ -50,12 +50,10 @@ async def on_message(message):
         return
 
     # Auto responses go here
-    if bot.user.mention_in(message) and message.mention_everyone is False:
+    if bot.user.mentioned_in(message) and message.mention_everyone is False:
         try:
             if "help" in message.content.lower() or "info" in message.content.lower():
-                await message.chanel.send(f"My prefix is `{self.bot.prefix}`")
-            else:
-                await message.add_reaction("👀")
+                await message.channel.send(f"My prefix is `{bot.prefix}`")
         except discord.Forbidden:
             pass
 
@@ -115,7 +113,7 @@ async def extensions(ctx):
     m, s = divmod(time.time() - bot.upsince, 60)
     h, m = divmod(m, 60)
     if int(h) == 0 and int(m) == 0:
-        uptime = f"{int(s)} seconds"
+        uptime = f"{int(s)} seconnds"
     elif int(h) == 0 and int(m) != 0:
         uptime = f"{int(m)} minutes and {int(s)} seconds"
     else:
