@@ -120,9 +120,11 @@ class Robbery(commands.Cog):
             await ctx.send(embed = embed)
 
         else: # Fail
+            FailureReasons = utils.json.read_json("robbery")
+            FailureReason = random.choice(FailureReasons["FailureReasons"])
             embed = discord.Embed(
                 title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
-                description=f"**Robbery Failed**\n**{ctx.author.name}** lost **{toolemoji} {toolname}** while trying to steal **{itememoji} {itemname}** from **{user.name}**.",
+                description=f"{FailureReason}\n**{ctx.author.name}** lost **{toolemoji} {toolname}** while trying to steal **{itememoji} {itemname}** from **{user.name}**.",
                 color=discord.Color.red()
             )
             await ctx.send(embed = embed)
