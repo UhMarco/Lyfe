@@ -41,8 +41,8 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    # Ignore bot
-    if message.author.id == bot.user.id:
+    # Ignore bots
+    if message.author.id == bot.user.id or message.author.bot:
         return
 
     # Blacklist system
@@ -50,6 +50,14 @@ async def on_message(message):
         return
 
     # Auto responses go here
+    if bot.user.mention_in(message) and message.mention_everyone is False:
+        try:
+            if "help" in message.content.lower() or "info" in message.content.lower():
+                await message.chanel.send(f"My prefix is `{self.bot.prefix}`")
+            else:
+                await message.add_reaction("👀")
+        except discord.Forbidden:
+            pass
 
     await bot.process_commands(message)
 
