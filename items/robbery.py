@@ -215,7 +215,7 @@ class Robbery(commands.Cog):
     @dynamite.error
     async def dynamite_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: {self.bot.prefix}dynamite (user)")
+            return await ctx.send(f"Usage: `{self.bot.prefix}dynamite (user)`")
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
