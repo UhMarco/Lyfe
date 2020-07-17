@@ -82,6 +82,7 @@ class Shop(commands.Cog):
 
         elif section.lower() == "item" or section.lower() == "items":
             embed = discord.Embed(title=":shopping_bags: Items", description="The place to buy your useful items", color=discord.Color.gold())
+            embed.add_field(name=":frog: Frog", value=f"Costs $`10`\n`{self.bot.prefix}buy frog`", inline=False)
             embed.add_field(name=":jeans: Jeans", value=f"Costs $`10`\n`{self.bot.prefix}buy jeans`", inline=False)
             embed.add_field(name=":sponge: Sponge", value=f"Costs $`10`\n`{self.bot.prefix}buy sponge`", inline=False)
             embed.add_field(name=":card_index: ID", value=f"Costs $`500`\n`{self.bot.prefix}buy id`", inline=False)
@@ -165,6 +166,31 @@ class Shop(commands.Cog):
             await ctx.send(embed=embed)
 
         # ITEMS
+        elif item == "frog":
+            item = items["frog"]
+            name, emoji, cost = item["name"], item["emoji"], item["value"]
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+
+            given = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += 1
+                    given = True
+
+            if not given:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = 1
+                inventory.append(item)
+
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
 
         elif item == "jeans" or item == "pants":
             item = items["jeans"]
