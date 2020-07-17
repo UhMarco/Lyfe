@@ -131,7 +131,6 @@ class Admin(commands.Cog):
     # ----- ERROR HANDLER ------------------------------------------------------
 
     @removeitem.error
-    @commands.is_owner()
     async def removeitem_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"Usage: `{self.bot.prefix}removeitem (item) (user)`")
@@ -141,6 +140,7 @@ class Admin(commands.Cog):
     # Abandoning format for this as I honestly can't be bothered
 
     @commands.command(aliases=['sb'])
+    @commands.is_owner()
     async def setbalance(self, ctx, user: discord.Member, amount="n"):
         data = await self.bot.inventories.find(user.id)
         if data is None:
@@ -153,6 +153,41 @@ class Admin(commands.Cog):
 
         await self.bot.inventories.upsert({"_id": user.id, "balance": amount})
         await ctx.send(f"Set **{user.name}'s** balance to $`{amount}`")
+
+    @commands.command(aliases=['reset'])
+    @commands.is_owner()
+    async def resetdata(self, ctx, user: discord.Member):
+        await ctx.send("Please confirm.")
+        def check(m):
+            return m.channel == ctx.channel and m.author == ctx.author
+        message = await self.bot.wait_for('message', check=check)
+        if message.content.lower() == "confirm" or message.content.lower() == "yes":
+            pass
+        else:
+            return await ctx.send("Aborted.")
+
+        items = await self.bot.items.find("items")
+        items = items["items"]
+        data = []
+        message = await ctx.send(f"Resetting **{user.name}'s** data... <a:loading:733746914109161542>")
+        item = items["shoppingcart"]
+        del item["emoji"], item["value"], item["description"], item["rarity"]
+        item["locked"] = False
+        item["quantity"] = 1
+        data.append(item)
+        await self.bot.inventories.upsert({"_id": user.id, "balance": 100})
+        await self.bot.inventories.upsert({"_id": user.id, "bankbalance": 0})
+        await self.bot.inventories.upsert({"_id": user.id, "banklimit": 0})
+        await self.bot.inventories.upsert({"_id": user.id, "job": None})
+        await self.bot.inventories.upsert({"_id": user.id, "inventory": data})
+        await message.edit(content=f"Resetting **{user.name}'s** data... **Done!**")
+
+    @resetdata.error
+    async def resetdata_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"Usage: `{self.bot.prefix}resetdata (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send("I couldn't find that user.")
 
 
 def setup(bot):
