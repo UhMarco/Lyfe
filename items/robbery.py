@@ -164,6 +164,61 @@ class Robbery(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- DYNAMITE -----------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command()
+    async def dynamite(self, ctx, user: discord.Member):
+        author_data = await self.bot.inventories.find(ctx.author.id)
+        if author_data is None:
+            return await ctx.send("You haven't initialized your inventory yet.")
+
+        if user == ctx.author:
+            return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
+
+        user_data = await self.bot.inventories.find(user.id)
+        if user_data is None:
+            return await ctx.send(f"{user.name} hasn't initialized their inventory yet.")
+
+        inventory = author_data["inventory"]
+        balance = user_data["balance"]
+        bankbal = user_data["bankbalance"]
+
+        if balance < 10:
+            if bankbal == 0:
+                return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
+            else:
+                return await ctx.send(f"**{user.name}** doesn't have enough money in their inventory for you to blow up. Maybe check their bank account :smirk:")
+
+        found = False
+        for i in inventory:
+            if i["name"] == "Dynamite":
+                if i["quantity"] != 1:
+                    i["quantity"] -= 1
+                else:
+                    inventory.remove(i)
+                found = True
+
+        if not found:
+            return await ctx.send("You don't have a :firecracker: **Dynamite** in your inventory.")
+
+        balance = int(balance * 0.8)
+
+        await ctx.send(f":firecracker: You blew up $`{int(balance * 0.2)}` of **{user.name}'s** money.")
+        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+        await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
+
+    # ----- ERROR HANDLER ------------------------------------------------------
+
+    @dynamite.error
+    async def dynamite_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: {self.bot.prefix}dynamite (user)")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send("I couldn't find that user.")
+
 
 def setup(bot):
     bot.add_cog(Robbery(bot))
