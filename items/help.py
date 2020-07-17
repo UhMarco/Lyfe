@@ -64,6 +64,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":moneybag: Robbery Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="robbery command list")
             embed.add_field(name=f"`{self.bot.prefix}rob (user) (tool) (desired item)`", value="Rob another player of an item, requires a tool, leave blank to see owned tools", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}dynamite (user)`", value="Blow up 20% of someone's balance, requires :firecracker: Dynamite", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}lock (item)`", value="Prevent an item from being traded or stolen, requires :lock: Lock", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}unlock (item)`", value="Allow an item to be traded or stolen, requires :key: Key", inline=False)
             return await ctx.send(embed=embed)
