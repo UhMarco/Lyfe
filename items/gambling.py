@@ -27,9 +27,9 @@ class Gambling(commands.Cog):
         items = items["items"]
 
         if game is None:
-            embed = discord.Embed(title=":game_die: **Gambling**", description="Spend your money sensibly by doing some gambling!`", color=discord.Color.dark_teal())
+            embed = discord.Embed(title=":game_die: **Gambling**", description="Spend your money sensibly by doing some gambling!", color=discord.Color.dark_teal())
             embed.add_field(name=":package: Three Boxes", value=f"Choose a prize from 3 mystery boxes! Costs $`750`\n`{self.bot.prefix}gamble boxes`", inline=False)
-            embed.add_field(name=":question: Guess the number", value=f"Guess the correct number to double however much you enter\n`{self.bot.prefix}gamble number`", inline=False)
+            embed.add_field(name=":question: Number Guesser", value=f"Guess the correct number to triple however much you enter\n`{self.bot.prefix}gamble number (amount)`", inline=False)
             embed.add_field(name="<:coin:733930163817152565> Coin Flip", value=f"50% chance of doubling your money! You win on heads\n`{self.bot.prefix}gamble coinflip (amount)`", inline=False)
             return await ctx.send(embed=embed)
 
@@ -46,7 +46,7 @@ class Gambling(commands.Cog):
             numbers = ['1', '2', '3']
             while True:
                 try:
-                    message = await self.bot.wait_for('message', check=check, timeout=5)
+                    message = await self.bot.wait_for('message', check=check, timeout=10)
                 except asyncio.TimeoutError:
                     return await ctx.send("You ran out of time! Refunding $`750`")
 
@@ -91,7 +91,56 @@ class Gambling(commands.Cog):
 
 
         elif game.replace(" ", "").lower() == "number" or game.replace(" ", "").lower() == "number guess":
-            embed = discord.Embed()
+            try:
+                amount = int(amount)
+            except Exception:
+                return await ctx.send("Enter a valid amount.")
+
+            if amount > balance:
+                return await ctx.send("You don't have that much money!")
+
+            def check(m):
+                return m.channel == ctx.channel and m.author == ctx.author
+
+            num = random.randint(1, 10)
+
+            win = False
+            for i in range(3):
+                while True:
+                    if i == 0:
+                        embed = discord.Embed(title=":question: Number Guesser (1 to 10)", description=f"You have 3 guesses!", color=discord.Color.dark_teal())
+                    else:
+                        embed = discord.Embed(title=":question: Incorrect!", description=f"{3 - i} guesses remaining!", color=discord.Color.dark_teal())
+                    await ctx.send(embed=embed)
+                    try:
+                        message = await self.bot.wait_for('message', check=check, timeout=10)
+                    except asyncio.TimeoutError:
+                        return await ctx.send(f"You ran out of time! Refunding $`{amount}`")
+
+                    try:
+                        input = int(message.content)
+                        if 0 < input <= 10:
+                            break
+                        else:
+                            await ctx.send("Enter a number between 1 and 10.")
+                    except Exception:
+                        await ctx.send("Enter a number between 1 and 10.")
+
+                if input == num:
+                    win = True
+                    break
+                #else:
+                    #await ctx.send("**Incorrect!**")
+
+            if win:
+                balance += int(amount * 3)
+                embed = discord.Embed(title=":question: Number Guesser", description=f"**Correct!** Your earned $`{int(amount * 3)}`", color=discord.Color.dark_teal())
+            else:
+                balance -= amount
+                embed = discord.Embed(title=":question: Number Guesser", description=f"**Incorrect!** The number was `{num}`. Your lost $`{amount}`", color=discord.Color.dark_teal())
+            await ctx.send(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+
 
         elif game.replace(" ", "").lower() == "coinflip" or game.replace(" ", "").lower() == "coin" or game.replace(" ", "").lower() == "flip":
             try:
@@ -115,12 +164,6 @@ class Gambling(commands.Cog):
                 embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet {amount}", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
             await message.edit(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
-
-    @gamble.error
-    async def gamble_error(self, ctx, error):
-        if isinstance(error, commands.CommandInvokeError):
-            if error.original == TimeoutError:
-                return await ctx.send(":x: You've run out of time.")
 
 def setup(bot):
     bot.add_cog(Gambling(bot))
