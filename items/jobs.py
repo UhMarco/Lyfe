@@ -1,4 +1,4 @@
-import discord, platform, datetime, logging, random, time, re
+import discord, platform, datetime, logging, random, time, re, asyncio
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
