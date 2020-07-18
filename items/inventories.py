@@ -27,11 +27,14 @@ class Inventories(commands.Cog):
                 page = 1
                 user = ctx.author
             else:
-                if self.bot.get_user(int(user)) == None:
-                    page = user
-                    user = ctx.author
-                else:
-                    user = self.bot.get_user(int(user))
+                try:
+                    if self.bot.get_user(int(user)) == None:
+                        page = user
+                        user = ctx.author
+                    else:
+                        user = self.bot.get_user(int(user))
+                except ValueError:
+                    return await ctx.send("I couldn't find that user. Use a mention or id.")
         else:
             user = ctx.message.mentions[0]
 
