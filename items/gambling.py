@@ -158,10 +158,10 @@ class Gambling(commands.Cog):
             coin = random.choice(coin)
             if coin == 'heads':
                 balance += amount
-                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet {amount}", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount * 2}`", color=discord.Color.dark_teal())
+                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{amount}`", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount * 2}`", color=discord.Color.dark_teal())
             else:
                 balance -= amount
-                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet {amount}", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
+                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{amount}`", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
             await message.edit(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
