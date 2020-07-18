@@ -258,7 +258,7 @@ class Jobs(commands.Cog):
                 def check(m):
                     return m.channel == ctx.channel and m.author == ctx.author
                 try:
-                    message = await self.bot.wait_for('message', check=check)
+                    message = await self.bot.wait_for('message', check=check, timeout=10)
 
                     if message.content.replace(" ", "").lower() == spell.replace(" ", ""):
                         if time.time() - timer <= 3:
