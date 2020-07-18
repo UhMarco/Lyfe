@@ -142,18 +142,23 @@ class Jobs(commands.Cog):
 
                 def check(m):
                     return m.channel == ctx.channel and m.author == ctx.author
-                message = await self.bot.wait_for('message', check=check)
+                try:
+                    message = await self.bot.wait_for('message', check=check, timeout=10)
 
-                words = work[word]
-                if any(ele in message.content.replace(" ", "").lower() for ele in words):
-                    if time.time() - timer <= 3:
-                        pay = int(pay * 2)
-                        await ctx.send(f"**Correct!** You were paid $`{pay}` as you named the emoji within 3 seconds")
+                    words = work[word]
+                    if any(ele in message.content.replace(" ", "").lower() for ele in words):
+                        if time.time() - timer <= 3:
+                            pay = int(pay * 2)
+                            await ctx.send(f"**Correct!** You were paid $`{pay}` as you named the emoji within 3 seconds")
+                        else:
+                            await ctx.send(f"**Correct!** You were paid $`{pay}`")
                     else:
-                        await ctx.send(f"**Correct!** You were paid $`{pay}`")
-                else:
+                        pay = int(pay * 0.8)
+                        await ctx.send(f"**Incorrect!** The manager doesn't seem happy - You were only paid $`{pay}`")
+
+                except asyncio.TimeoutError:
                     pay = int(pay * 0.8)
-                    await ctx.send(f"**Incorrect!** The manager doesn't seem happy - You were only paid $`{pay}`")
+                    await ctx.send(f"**Disappointing!** You took too long - You were only paid $`{pay}`")
 
                 # PAY
                 balance += pay
@@ -190,18 +195,24 @@ class Jobs(commands.Cog):
 
                     def check(m):
                         return m.channel == ctx.channel and m.author == ctx.author
-                    message = await self.bot.wait_for('message', check=check)
+                    try:
+                        message = await self.bot.wait_for('message', check=check, timeout=10)
 
-                    emoji = emoji.encode('utf-16','surrogatepass').decode('utf-16')
+                        emoji = emoji.encode('utf-16','surrogatepass').decode('utf-16')
 
-                    if emoji in message.content:
-                        if time.time() - timer <= 5:
-                            pay = int(pay * 1.2)
-                            await ctx.send(f"**Correct!** You were paid $`{pay}`")
+                        if emoji in message.content:
+                            if time.time() - timer <= 5:
+                                pay = int(pay * 1.2)
+                                await ctx.send(f"**Correct!** You were paid $`{pay}`")
+                            else:
+                                await ctx.send(f"**Correct!** You were paid $`{pay}`")
                         else:
-                            await ctx.send(f"**Correct!** You were paid $`{pay}`")
-                    else:
-                        await ctx.send(f"**Incorrect!** Your boss looks angry - You were paid $`{pay}`")
+                            pay = int(pay * 0.8)
+                            await ctx.send(f"**Incorrect!** Your boss looks angry - You were paid $`{pay}`")
+
+                    except asyncio.TimeoutError:
+                        pay = int(pay * 0.8)
+                        await ctx.send(f"**Disappointing!** You took too long - You were paid $`{pay}`")
 
                     # PAY
                     balance += pay
@@ -246,17 +257,22 @@ class Jobs(commands.Cog):
 
                 def check(m):
                     return m.channel == ctx.channel and m.author == ctx.author
-                message = await self.bot.wait_for('message', check=check)
+                try:
+                    message = await self.bot.wait_for('message', check=check)
 
-                if message.content.replace(" ", "").lower() == spell.replace(" ", ""):
-                    if time.time() - timer <= 3:
-                        pay = int(pay * 1.2)
-                        await ctx.send(f"**Correct!** It took you less than 3 seconds to type the spell so you were paid extra and got $`{pay}`")
+                    if message.content.replace(" ", "").lower() == spell.replace(" ", ""):
+                        if time.time() - timer <= 3:
+                            pay = int(pay * 1.2)
+                            await ctx.send(f"**Correct!** It took you less than 3 seconds to type the spell so you were paid extra and got $`{pay}`")
+                        else:
+                            await ctx.send(f"**Correct!** However you were paid the normal $`{pay}` as it took you more than 3 seconds to type the spell")
                     else:
-                        await ctx.send(f"**Correct!** However you were paid the normal $`{pay}` as it took you more than 3 seconds to type the spell")
-                else:
+                        pay = int(pay * 0.5)
+                        await ctx.send(f"**Incorrect!** The lead mage looks upon you with distaste - You were only paid $`{pay}`")
+
+                except asyncio.TimeoutError:
                     pay = int(pay * 0.5)
-                    await ctx.send(f"**Incorrect!** The lead mage looks upon you with distaste - You were only paid $`{pay}`")
+                    await ctx.send(f"**Disappointing!** You took too long - You were only paid $`{pay}`")
 
                 # PAY
                 balance += pay
