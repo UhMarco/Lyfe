@@ -89,7 +89,12 @@ class Gambling(commands.Cog):
             embed = discord.Embed()
 
         elif game.replace(" ", "").lower() == "coinflip" or game.replace(" ", "").lower() == "coin" or game.replace(" ", "").lower() == "flip":
-            embed = discord.Embed()
+            if balance < 1:
+                return await ctx.send("Now how are you going to do that?")
+            #balance -= amount
+            embed = discord.Embed(f"You have bet {amount}", description = "Flipping coin <a:loading:733746914109161542>")
+            embed = discord.Embed(f"You have bet {amount}", description = "Coin has been flipped")
+            await self.bot.edit_message(msg, embed=embed)
 
 def setup(bot):
     bot.add_cog(Gambling(bot))
