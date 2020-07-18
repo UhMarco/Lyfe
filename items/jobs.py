@@ -143,7 +143,7 @@ class Jobs(commands.Cog):
                 def check(m):
                     return m.channel == ctx.channel and m.author == ctx.author
                 try:
-                    message = await self.bot.wait_for('message', check=check, timeout=10)
+                    message = await self.bot.wait_for('message', check=check, timeout=20)
 
                     words = work[word]
                     if any(ele in message.content.replace(" ", "").lower() for ele in words):
@@ -196,7 +196,7 @@ class Jobs(commands.Cog):
                     def check(m):
                         return m.channel == ctx.channel and m.author == ctx.author
                     try:
-                        message = await self.bot.wait_for('message', check=check, timeout=10)
+                        message = await self.bot.wait_for('message', check=check, timeout=20)
 
                         emoji = emoji.encode('utf-16','surrogatepass').decode('utf-16')
 
@@ -258,7 +258,7 @@ class Jobs(commands.Cog):
                 def check(m):
                     return m.channel == ctx.channel and m.author == ctx.author
                 try:
-                    message = await self.bot.wait_for('message', check=check, timeout=10)
+                    message = await self.bot.wait_for('message', check=check, timeout=20)
 
                     if message.content.replace(" ", "").lower() == spell.replace(" ", ""):
                         if time.time() - timer <= 3:
