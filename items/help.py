@@ -74,12 +74,8 @@ class Help(commands.Cog):
             embed = discord.Embed(title="<:reddragon:733766679036952646> Misc Commands", color=discord.Color.purple())
             embed.set_footer(text="misc command list")
             embed.add_field(name=f"`{self.bot.prefix}feed`", value="Feed a frog to a dragon, there's a 5% chance of something special happening", inline=False)
-            return await ctx.send(embed=embed)
-
-        elif section.lower() == "utilities" or section.lower() == "utility":
-            embed = discord.Embed(title=":tools: Utility Commands", color=discord.Color.purple())
-            embed.set_footer(text="Utility command list")
             embed.add_field(name=f"`{self.bot.prefix}avatar [user]`", value="Display the avatar of a user in full size", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}8ball (question)`", value="8ball lol", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "bot":
@@ -121,7 +117,6 @@ class Help(commands.Cog):
         embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
         embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
         embed.add_field(name="<:reddragon:733766679036952646> Misc", value=f"`{self.bot.prefix}help misc`", inline=False)
-        embed.add_field(name=":tools: Utility", value=f"`{self.bot.prefix}help utility`", inline=False)
         embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
         return await ctx.send(embed=embed)
 
