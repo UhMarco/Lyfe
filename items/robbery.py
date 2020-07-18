@@ -47,9 +47,6 @@ class Robbery(commands.Cog):
         if tool.lower() not in robberytools:
             return await ctx.send("That is not a vaid tool.")
 
-        if tool.lower() == item.lower():
-            return await ctx.send("That's pointless.")
-
         item = items[item.lower()]
         tool = items[tool.lower()]
         myinventory = mydata["inventory"]
