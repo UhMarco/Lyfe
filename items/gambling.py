@@ -1,4 +1,4 @@
-import discord, platform, datetime, logging, random
+import discord, platform, datetime, logging, random, asyncio
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
@@ -30,7 +30,7 @@ class Gambling(commands.Cog):
             embed = discord.Embed(title=":game_die: **Gambling**", description="Spend your money sensibly by doing some gambling!`", color=discord.Color.dark_teal())
             embed.add_field(name=":package: Three Boxes", value=f"Choose a prize from 3 mystery boxes! Costs $`750`\n`{self.bot.prefix}gamble boxes`", inline=False)
             embed.add_field(name=":question: Guess the number", value=f"Guess the correct number to double however much you enter\n`{self.bot.prefix}gamble number`", inline=False)
-            embed.add_field(name="<:coin:733930163817152565> Coin Flip", value=f"50% chance of doubling your money\n`{self.bot.prefix}gamble coinflip`", inline=False)
+            embed.add_field(name="<:coin:733930163817152565> Coin Flip", value=f"50% chance of doubling your money! You win on heads\n`{self.bot.prefix}gamble coinflip (amount)`", inline=False)
             return await ctx.send(embed=embed)
 
         elif game.replace(" ", "").lower() == "threeboxes" or game.replace(" ", "").lower() == "boxes":
@@ -45,11 +45,16 @@ class Gambling(commands.Cog):
                 return m.channel == ctx.channel and m.author == ctx.author
             numbers = ['1', '2', '3']
             while True:
-                message = await self.bot.wait_for('message', check=check)
+                try:
+                    message = await self.bot.wait_for('message', check=check, timeout=5)
+                except asyncio.TimeoutError:
+                    return await ctx.send("You ran out of time! Refunding $`750`")
+
                 if any(ele in message.content for ele in numbers):
                     break
                 else:
                     await ctx.send("Please enter 1, 2 or 3.")
+
 
             randomrarity = random.randint(1, 100)
             if 0 < randomrarity <= 30:
@@ -89,12 +94,33 @@ class Gambling(commands.Cog):
             embed = discord.Embed()
 
         elif game.replace(" ", "").lower() == "coinflip" or game.replace(" ", "").lower() == "coin" or game.replace(" ", "").lower() == "flip":
-            if balance < 1:
+            try:
+                amount = int(amount)
+            except Exception:
+                return await ctx.send(f"Usage: `{self.bot.prefix}gamble coinflip (amount)`")
+
+            if balance < amount:
                 return await ctx.send("Now how are you going to do that?")
-            #balance -= amount
-            embed = discord.Embed(f"You have bet {amount}", description = "Flipping coin <a:loading:733746914109161542>")
-            embed = discord.Embed(f"You have bet {amount}", description = "Coin has been flipped")
-            await self.bot.edit_message(msg, embed=embed)
+
+            embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{amount}`", description=f"Taken $`{amount}` and flipping coin <a:loading:733746914109161542>", color=discord.Color.dark_teal())
+            message = await ctx.send(embed=embed)
+            await asyncio.sleep(2)
+            coin = ['heads', 'tails']
+            coin = random.choice(coin)
+            if coin == 'heads':
+                balance += amount
+                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet {amount}", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount * 2}`", color=discord.Color.dark_teal())
+            else:
+                balance -= amount
+                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet {amount}", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
+            await message.edit(embed=embed)
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+
+    @gamble.error
+    async def gamble_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            if error.original == TimeoutError:
+                return await ctx.send(":x: You've run out of time.")
 
 def setup(bot):
     bot.add_cog(Gambling(bot))
