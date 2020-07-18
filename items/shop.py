@@ -22,10 +22,15 @@ class Shop(commands.Cog):
 
     @commands.command()
     @commands.cooldown(2, 10, commands.BucketType.user)
-    async def sell(self, ctx, *, item):
+    async def sell(self, ctx, item, quantity="1"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
             return await ctx.send("You haven't initialized your inventory yet.")
+
+        try:
+            quantity = int(quantity)
+        except Exception:
+            return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
         item = item.replace(" ", "").lower()
         items = await self.bot.items.find("items")
@@ -40,20 +45,32 @@ class Shop(commands.Cog):
         change = False
         for i in inventory:
             if i["name"] == name:
+                if i["quantity"] < quantity:
+                    return await ctx.send(f"You don't have that many **{emoji} {name}s**")
+
+                if i["locked"]:
+                    return await ctx.send(f"**{emoji} {name}** is locked in your inventory.")
+
                 if i["quantity"] == 1:
                     inventory.remove(i)
                     change = True
                 else:
-                    i["quantity"] -= 1
+                    i["quantity"] -= quantity
+                    if i["quantity"] == 0:
+                        inventory.remove(i)
                     change = True
+
         if not change:
             return await ctx.send(f"You don't have a **{emoji} {name}**.")
 
         value = item["value"]
         balance = data["balance"]
         value = int(value * 0.75)
-        balance += value
-        await ctx.send(f"You sold **{emoji} {name}** for $`{value}`. Your balance is now $`{balance}`.")
+        balance += int(value * quantity)
+        if quantity == 1:
+            await ctx.send(f"You sold **{emoji} {name}** for $`{value}`. Your balance is now $`{balance}`.")
+        else:
+            await ctx.send(f"You sold **{quantity} {emoji} {name}s** for $`{value}` each. Your balance is now $`{balance}`.")
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
@@ -108,10 +125,15 @@ class Shop(commands.Cog):
 
     @commands.command()
     @commands.cooldown(2, 10, commands.BucketType.user)
-    async def buy(self, ctx, *, item):
+    async def buy(self, ctx, item, quantity="1"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
             return await ctx.send("You haven't initialized your inventory yet.")
+
+        try:
+            quantity = int(quantity)
+        except Exception:
+            return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
         inventory = data["inventory"]
         bal = data["balance"]
@@ -123,6 +145,8 @@ class Shop(commands.Cog):
         # BANKS
 
         if item == "smallbankslot" or item == "smallbank":
+            if quantity != 1:
+                return await ctx.send("You cannot buy multiple of these.")
             cost = 150
             if banklimit != 0:
                 return await ctx.send("A bank slot of greater or equal value has already been purchased.")
@@ -138,6 +162,8 @@ class Shop(commands.Cog):
             await ctx.send(embed=embed)
 
         elif item == "mediumbankslot" or item == "mediumbank":
+            if quantity != 1:
+                return await ctx.send("You cannot buy multiple of these.")
             cost = 300
             if banklimit > 500:
                 return await ctx.send("A bank slot of greater or equal value has already been purchased.")
@@ -153,6 +179,8 @@ class Shop(commands.Cog):
             await ctx.send(embed=embed)
 
         elif item == "largebankslot" or item == "largebank":
+            if quantity != 1:
+                return await ctx.send("You cannot buy multiple of these.")
             cost = 2500
             if banklimit > 1000:
                 return await ctx.send("A bank slot of greater or equal value has already been purchased.")
@@ -172,24 +200,27 @@ class Shop(commands.Cog):
             item = items["frog"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -198,24 +229,27 @@ class Shop(commands.Cog):
             item = items["jeans"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -224,24 +258,27 @@ class Shop(commands.Cog):
             item = items["sponge"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -250,24 +287,27 @@ class Shop(commands.Cog):
             item = items["id"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -276,24 +316,27 @@ class Shop(commands.Cog):
             item = items["crystal"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -302,24 +345,27 @@ class Shop(commands.Cog):
             item = items["key"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -328,24 +374,27 @@ class Shop(commands.Cog):
             item = items["fireextinguisher"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -354,24 +403,27 @@ class Shop(commands.Cog):
             item = items["dynamite"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -380,24 +432,27 @@ class Shop(commands.Cog):
             item = items["hammer"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -406,24 +461,27 @@ class Shop(commands.Cog):
             item = items["fire"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
@@ -432,24 +490,27 @@ class Shop(commands.Cog):
             item = items["lock"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
+            cost = int(cost * quantity)
+
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
 
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
+            for i in range(quantity):
+                given = False
+                for i in inventory:
+                    if i["name"] == name:
+                        i["quantity"] += 1
+                        given = True
 
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
+                if not given:
+                    del item["emoji"], item["value"], item["description"], item["rarity"]
+                    item["locked"] = False
+                    item["quantity"] = 1
+                    inventory.append(item)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})

@@ -34,7 +34,7 @@ class Inventories(commands.Cog):
                     else:
                         user = self.bot.get_user(int(user))
                 except ValueError:
-                    return await ctx.send("I couldn't find that user. Use a mention or id.")
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
         else:
             user = ctx.message.mentions[0]
 

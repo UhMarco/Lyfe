@@ -21,7 +21,7 @@ class Trading(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['donate'])
-    async def give(self, ctx, user: discord.Member, item):
+    async def give(self, ctx, user: discord.Member, item, quantity="1"):
         mydata = await self.bot.inventories.find(ctx.author.id)
         if mydata is None:
             return await ctx.send("You haven't initialized your inventory yet.")
@@ -35,6 +35,11 @@ class Trading(commands.Cog):
             return await ctx.send("This user hasn't initialized their inventory yet.")
         yourinventory = yourdata["inventory"]
 
+        try:
+            quantity = int(quantity)
+        except Exception:
+            return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
+
         if user.id == ctx.author.id:
             return await ctx.send("That's pointless.")
 
@@ -43,36 +48,43 @@ class Trading(commands.Cog):
         item = items[item.lower()]
         name, emoji = item["name"], item["emoji"]
 
-        found = False
+        change = False
         for i in myinventory:
             if i["name"] == name:
+                if i["quantity"] < quantity:
+                    return await ctx.send(f"You don't have that many **{emoji} {name}s**")
+
                 if i["locked"]:
                     return await ctx.send(f"**{emoji} {name}** is locked in your inventory.")
 
                 if i["quantity"] == 1:
                     myinventory.remove(i)
+                    change = True
                 else:
-                    i["quantity"] -= 1
+                    i["quantity"] -= quantity
+                    if i["quantity"] == 0:
+                        myinventory.remove(i)
+                    change = True
 
-                found = True
-                break
-
-        if not found:
-            return await ctx.send(f"You don't own a **{emoji} {name}**.")
+        if not change:
+            return await ctx.send(f"You don't have a **{emoji} {name}**.")
 
         given = False
         for i in yourinventory:
             if i["name"] == name:
-                i["quantity"] += 1
+                i["quantity"] += quantity
                 given = True
 
         if not given:
             del item["emoji"], item["value"], item["description"], item["rarity"]
             item["locked"] = False
-            item["quantity"] = 1
+            item["quantity"] = quantity
             yourinventory.append(item)
 
-        await ctx.send(f"**{emoji} {name}** transferred from **{ctx.author.name}** to **{user.name}**.")
+        if quantity == 1:
+            await ctx.send(f"**{emoji} {name}** transferred from **{ctx.author.name}** to **{user.name}**.")
+        else:
+            await ctx.send(f"**{quantity} {emoji} {name}s** transferred from **{ctx.author.name}** to **{user.name}**.")
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": myinventory})
         await self.bot.inventories.upsert({"_id": user.id, "inventory": yourinventory})
 
