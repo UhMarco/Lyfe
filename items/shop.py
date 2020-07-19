@@ -87,35 +87,19 @@ class Shop(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    async def shop(self, ctx, *, section=None):
-        if not section:
-            pass
-
-        elif section.lower() == "bank" or section.lower() == "banking" or section.lower() == "banks":
-            embed = discord.Embed(title=":bank: Banks", description="Protects your money from theives", color=discord.Color.gold())
-            embed.add_field(name=":bank: Small Bank Slot", value=f"Store $`500` in the bank.\nCosts $`150`\n`{self.bot.prefix}buy small bank slot`", inline=False)
-            embed.add_field(name=":bank: Medium Bank Slot", value=f"Store $`1000` in the bank.\nCosts $`300`\n`{self.bot.prefix}buy medium bank slot`", inline=False)
-            embed.add_field(name=":bank: Large Bank Slot", value=f"Store $`10000` in the bank.\nCosts $`2500`\n`{self.bot.prefix}buy large bank slot`", inline=False)
-            return await ctx.send(embed=embed)
-
-        elif section.lower() == "item" or section.lower() == "items":
-            embed = discord.Embed(title=":shopping_bags: Items", description="The place to buy your useful items", color=discord.Color.gold())
-            embed.add_field(name=":frog: Frog", value=f"Costs $`10`\n`{self.bot.prefix}buy frog`", inline=False)
-            embed.add_field(name=":jeans: Jeans", value=f"Costs $`10`\n`{self.bot.prefix}buy jeans`", inline=False)
-            embed.add_field(name=":sponge: Sponge", value=f"Costs $`10`\n`{self.bot.prefix}buy sponge`", inline=False)
-            embed.add_field(name=":card_index: ID", value=f"Costs $`500`\n`{self.bot.prefix}buy id`", inline=False)
-            embed.add_field(name=":gem: Crystal", value=f"Costs $`500`\n`{self.bot.prefix}buy crystal`", inline=False)
-            embed.add_field(name=":key: Key", value=f"Costs $`500`\n`{self.bot.prefix}buy key`", inline=False)
-            embed.add_field(name=":fire_extinguisher: Fire Extinguisher", value=f"Costs $`500`\n`{self.bot.prefix}buy fire extinguisher`", inline=False)
-            embed.add_field(name=":firecracker: Dynamite", value=f"Costs $`1000`\n`{self.bot.prefix}buy firecracker`", inline=False)
-            embed.add_field(name=":hammer: Hammer", value=f"Costs $`1500`\n`{self.bot.prefix}buy hammer`", inline=False)
-            embed.add_field(name=":fire: Fire", value=f"Costs $`2000`\n`{self.bot.prefix}buy fire`", inline=False)
-            embed.add_field(name=":lock: Lock", value=f"Costs $`2000`\n`{self.bot.prefix}buy lock`", inline=False)
-            return await ctx.send(embed=embed)
-
-        embed = discord.Embed(title=":shopping_cart: Shop", color=discord.Color.gold())
-        embed.add_field(name=":shopping_bags: Items", value=f"`{self.bot.prefix}shop items`", inline=False)
-        embed.add_field(name=":bank: Banks", value=f"`{self.bot.prefix}shop banks`", inline=False)
+    async def shop(self, ctx):
+        embed = discord.Embed(title=":shopping_cart: Items", description="The place to buy your useful items", color=discord.Color.gold())
+        embed.add_field(name=":frog: Frog", value=f"Costs $`10`\n`{self.bot.prefix}buy frog`", inline=False)
+        embed.add_field(name=":jeans: Jeans", value=f"Costs $`10`\n`{self.bot.prefix}buy jeans`", inline=False)
+        embed.add_field(name=":sponge: Sponge", value=f"Costs $`10`\n`{self.bot.prefix}buy sponge`", inline=False)
+        embed.add_field(name=":card_index: ID", value=f"Costs $`500`\n`{self.bot.prefix}buy id`", inline=False)
+        embed.add_field(name=":gem: Crystal", value=f"Costs $`500`\n`{self.bot.prefix}buy crystal`", inline=False)
+        embed.add_field(name=":key: Key", value=f"Costs $`500`\n`{self.bot.prefix}buy key`", inline=False)
+        embed.add_field(name=":fire_extinguisher: Fire Extinguisher", value=f"Costs $`500`\n`{self.bot.prefix}buy fire extinguisher`", inline=False)
+        embed.add_field(name=":firecracker: Dynamite", value=f"Costs $`1000`\n`{self.bot.prefix}buy firecracker`", inline=False)
+        embed.add_field(name=":hammer: Hammer", value=f"Costs $`1500`\n`{self.bot.prefix}buy hammer`", inline=False)
+        embed.add_field(name=":fire: Fire", value=f"Costs $`2000`\n`{self.bot.prefix}buy fire`", inline=False)
+        embed.add_field(name=":lock: Lock", value=f"Costs $`2000`\n`{self.bot.prefix}buy lock`", inline=False)
         await ctx.send(embed=embed)
 
     # --------------------------------------------------------------------------
@@ -137,66 +121,12 @@ class Shop(commands.Cog):
 
         inventory = data["inventory"]
         bal = data["balance"]
-        banklimit = data["banklimit"]
         item = item.replace(" ", "").lower()
         items = await self.bot.items.find("items")
         items = items["items"]
 
-        # BANKS
-
-        if item == "smallbankslot" or item == "smallbank":
-            if quantity != 1:
-                return await ctx.send("You cannot buy multiple of these.")
-            cost = 150
-            if banklimit != 0:
-                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
-
-            if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
-
-            bal -= cost
-            banklimit = 500
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Small Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
-            await ctx.send(embed=embed)
-
-        elif item == "mediumbankslot" or item == "mediumbank":
-            if quantity != 1:
-                return await ctx.send("You cannot buy multiple of these.")
-            cost = 300
-            if banklimit > 500:
-                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
-
-            if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
-
-            bal -= cost
-            banklimit = 1000
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Medium Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
-            await ctx.send(embed=embed)
-
-        elif item == "largebankslot" or item == "largebank":
-            if quantity != 1:
-                return await ctx.send("You cannot buy multiple of these.")
-            cost = 2500
-            if banklimit > 1000:
-                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
-
-            if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
-
-            bal -= cost
-            banklimit = 10000
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Large Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
-            await ctx.send(embed=embed)
-
         # ITEMS
-        elif item == "frog":
+        if item == "frog":
             item = items["frog"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
