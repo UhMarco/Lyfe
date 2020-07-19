@@ -16,6 +16,14 @@ class Basic(commands.Cog):
         data = utils.json.read_json("blacklist")
         for item in data["blacklistedUsers"]:
             self.bot.blacklisted_users.append(item)
+
+        try:
+            data = utils.json.read_json("whitelist")
+            for item in data["whitelist"]:
+                self.bot.whitelisted.append(item)
+        except Exception:
+            pass
+
         print("- Basic Cog loaded")
 
     # --------------------------------------------------------------------------
@@ -73,7 +81,61 @@ class Basic(commands.Cog):
         if isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
         elif isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send("Usage: `.unblacklist (user)`")
+            return await ctx.send(f"Usage: `{self.bot.prefix}unblacklist (user)`")
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- WHITELIST ----------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command()
+    @commands.is_owner()
+    async def whitelist(self, ctx, member: discord.Member):
+        data = utils.json.read_json("whitelist")
+
+        if member.id in data["whitelist"]:
+            return await ctx.send("This user is already whitelisted.")
+
+        data["whitelist"].append(member.id)
+        self.bot.whitelisted.append(member.id)
+        utils.json.write_json(data, "whitelist")
+        await ctx.send(f"Whitelisted **{member.name}**.")
+
+    # ----- ERROR HANDLER ------------------------------------------------------
+
+    @whitelist.error
+    async def whitelist_error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            return await ctx.send("I couldn't find that user.")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}whitelist (user)`")
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- UNWHITELIST --------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command()
+    @commands.is_owner()
+    async def unwhitelist(self, ctx, member: discord.Member):
+        data = utils.json.read_json("whitelist")
+
+        if member.id not in data["whitelist"]:
+            return await ctx.send("That user isn't whitelisted.")
+
+        data["whitelist"].remove(member.id)
+        self.bot.whitelisted.remove(member.id)
+        utils.json.write_json(data, "whitelist")
+        await ctx.send(f"Unwhitelist **{member.name}**.")
+
+    # ----- ERROR HANDLER ------------------------------------------------------
+
+    @unwhitelist.error
+    async def unwhitelist_error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            return await ctx.send("I couldn't find that user.")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}whitelist (user)`")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------

@@ -20,6 +20,7 @@ bot.prefix = prefix
 bot.blacklisted_users = []
 bot.upsince = time.time()
 bot.maintenancemode = False
+bot.whitelisted = []
 
 @bot.event
 async def on_ready():
@@ -46,8 +47,12 @@ async def on_message(message):
         return
 
     # Blacklist system
-    if message.author.id in bot.blacklisted_users:
-        return
+    if secret_file["status"] != "idle":
+        if message.author.id in bot.blacklisted_users:
+            return
+    else:
+        if message.author.id not in bot.whitelisted:
+            return
 
     # Auto responses go here
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
