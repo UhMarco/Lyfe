@@ -58,7 +58,7 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}trade (user) (owned item) (desired item)`", value="Offer to trade with another player", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}taccept (tradeid)`", value="Accepts a trade offer", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}tcancel (tradeid)`", value="Cancel a trade offer", inline=False)
-            embed.add_field(name=f"`{self.bot.prefix}give (user) (item)`", value="Give an item to another player", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}give (user) (item) [quantity]`", value="Give an item to another player", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "robbery":
