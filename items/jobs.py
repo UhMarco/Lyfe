@@ -111,6 +111,9 @@ class Jobs(commands.Cog):
         else:
             emoji = ":question:"
 
+        author = ctx.author.id
+        last_command[author] = None
+
         embed = discord.Embed(title=f"You quit your job as a {emoji} **{job}**", color=discord.Color.greyple())
         await ctx.send(embed=embed)
 
