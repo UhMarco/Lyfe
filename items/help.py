@@ -43,6 +43,13 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}sell (item) [quantity]`", value="Sell any item for 75% of its value to the shop", inline=False)
             return await ctx.send(embed=embed)
 
+        elif section.lower() == "banks" or section.lower() == "banking":
+            embed = discord.Embed(title=":bank: Banking Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
+            embed.set_footer(text="banks command list")
+            embed.add_field(name=f"`{self.bot.prefix}banks`", value="Shows all banks", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}bank (bank slot)`", value="Purchase a bank slot", inline=False)
+            return await ctx.send(embed=embed)
+
         elif section.lower() == "jobs":
             embed = discord.Embed(title=":card_box: Job Commands", color=discord.Color.purple())
             embed.set_footer(text="job command list")
@@ -104,7 +111,7 @@ class Help(commands.Cog):
                             """,
                 color=discord.Color.purple()
             )
-            embed.set_footer(text="built by NotStealthy#0001")
+            embed.set_footer(text="built by NotStealthy#0001 and Spook#4177")
             return await ctx.send(embed=embed)
 
         data = await self.bot.inventories.find(ctx.author.id)
@@ -114,6 +121,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
         embed.add_field(name=":page_facing_up: Basic", value=f"`{self.bot.prefix}help basic`", inline=False)
         embed.add_field(name=":shopping_cart: Shop", value=f"`{self.bot.prefix}help shop`", inline=False)
+        embed.add_field(name=":bank: Banks", value=f"`{self.bot.prefix}help banks`", inline=False)
         embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
         embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
         embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
