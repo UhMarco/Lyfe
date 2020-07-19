@@ -74,7 +74,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":game_die: Misc Commands", color=discord.Color.purple())
             embed.set_footer(text="misc command list")
             embed.add_field(name=f"`{self.bot.prefix}gamble`", value="See ways of spending money sensibly", inline=False)
-            embed.add_field(name=f"`{self.bot.prefix}feed`", value="Feed a frog to a dragon, there's a 5% chance of something special happening", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}feed`", value="Feed a frog to a dragon, there's a 1% chance of something special happening", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}avatar [user]`", value="Display the avatar of a user in full size", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}8ball (question)`", value="8ball lol", inline=False)
             return await ctx.send(embed=embed)

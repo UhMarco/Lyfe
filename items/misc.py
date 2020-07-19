@@ -43,11 +43,11 @@ class Misc(commands.Cog):
         if not found:
             return await ctx.send("You don't have a :frog: **Frog** in your inventory.")
 
-        if random.randint(0, 100) > 5:
+        if random.randint(0, 100) == 50:
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
             return await ctx.send("You fed a :frog: **Frog** to your :dragon: **Dragon**.")
 
-        embed = discord.Embed(title=":tada: Your :dragon: **Dragon** evolved into an <:reddragon:733766679036952646> **Evolved Dragon**", description="The chances of this event occuring are 5% - Well done!", color=discord.Color.green())
+        embed = discord.Embed(title=":tada: Your :dragon: **Dragon** evolved into an <:reddragon:733766679036952646> **Evolved Dragon**", description="The chances of this event occuring are 1% - Well done!", color=discord.Color.green())
         await ctx.send(embed=embed)
 
         for i in inventory:
