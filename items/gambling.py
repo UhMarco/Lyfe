@@ -30,7 +30,7 @@ class Gambling(commands.Cog):
             embed = discord.Embed(title=":game_die: **Gambling**", description="Spend your money sensibly by doing some gambling!", color=discord.Color.dark_teal())
             embed.add_field(name=":package: Three Boxes", value=f"Choose a prize from 3 mystery boxes! Costs $`750`\n`{self.bot.prefix}gamble boxes`", inline=False)
             embed.add_field(name=":question: Number Guesser", value=f"Guess the correct number to triple however much you enter\n`{self.bot.prefix}gamble number (amount)`", inline=False)
-            embed.add_field(name="<:coin:733930163817152565> Coin Flip", value=f"50% chance of doubling your money! You win on heads\n`{self.bot.prefix}gamble coinflip (amount)`", inline=False)
+            embed.add_field(name="<:coin:733930163817152565> Coin Flip", value=f"50% chance of doubling your money, 50% chance of losing double! You win on heads\n`{self.bot.prefix}gamble coinflip (amount)`", inline=False)
             return await ctx.send(embed=embed)
 
         elif game.replace(" ", "").lower() == "threeboxes" or game.replace(" ", "").lower() == "boxes":
@@ -144,12 +144,14 @@ class Gambling(commands.Cog):
 
         elif game.replace(" ", "").lower() == "coinflip" or game.replace(" ", "").lower() == "coin" or game.replace(" ", "").lower() == "flip":
             try:
-                amount = int(amount)
+                amount = int(amount * 2)
             except Exception:
                 return await ctx.send(f"Usage: `{self.bot.prefix}gamble coinflip (amount)`")
 
             if balance < amount:
-                return await ctx.send("Now how are you going to do that?")
+                return await ctx.send(f"Insufficient funds! You need at least $`{amount}` to do that")
+
+            balance - amount / 2
 
             embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{amount}`", description=f"Taken $`{amount}` and flipping coin <a:loading:733746914109161542>", color=discord.Color.dark_teal())
             message = await ctx.send(embed=embed)
