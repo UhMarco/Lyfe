@@ -33,7 +33,7 @@ class Gambling(commands.Cog):
             embed.add_field(name="<:coin:733930163817152565> Coin Flip", value=f"50% chance of doubling your money, 50% chance of losing double! You win on heads\n`{self.bot.prefix}gamble coinflip (amount)`", inline=False)
             return await ctx.send(embed=embed)
 
-        elif game.replace(" ", "").lower() == "threeboxes" or game.replace(" ", "").lower() == "boxes":
+        elif game.replace(" ", "").lower() == "threeboxes" or game.replace(" ", "").lower() == "boxes" or game.replace(" ", "").lower() == "box":
             if balance < 750:
                 return await ctx.send("Insufficient funds.")
             balance -= 750
