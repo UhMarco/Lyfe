@@ -153,7 +153,7 @@ class Gambling(commands.Cog):
 
             balance - amount
 
-            embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Taken $`{amount}` and flipping coin <a:loading:733746914109161542>", color=discord.Color.dark_teal())
+            embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Flipping coin <a:loading:733746914109161542>", color=discord.Color.dark_teal())
             message = await ctx.send(embed=embed)
             await asyncio.sleep(2)
             coin = ['heads', 'tails']
