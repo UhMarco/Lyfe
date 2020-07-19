@@ -45,7 +45,7 @@ class Events(commands.Cog):
         elif isinstance(error, commands.CommandInvokeError):
             if str(error.original) == "403 Forbidden (error code: 50013): Missing Permissions":
                 try:
-                    embed = discord.Embed(title=":x: Missing Permissions", description="If you believe this was an error, please [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
+                    embed = discord.Embed(title=":x: **Missing Permissions**", description="If you believe this was an error, please [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
                     await ctx.send(embed=embed)
                     print(f"\n===============================================\nMISSING PERMISSIONS\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
                 except Exception:
@@ -56,6 +56,13 @@ class Events(commands.Cog):
                 print(f"\n===============================================\nCOMMAND INVOKE ERROR\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\nRAISING ERROR:")
                 raise error
             return
+
+        elif isinstance(error, commands.UnexpectedQuoteError) or isinstance(error, commands.ExpectedClosingQuoteError):
+            embed = discord.Embed(title=":x: **Unexpected Quote**", description="There was an unexpected quote in your command.\nIf you think this is a mistake, you may [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
+            await ctx.send(embed=embed)
+            print(f"\n===============================================\nUNEXPECTED QUOTE\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
+            return
+
 
         print("\n----------\n")
         raise error
