@@ -179,55 +179,41 @@ class Jobs(commands.Cog):
             localcooldown = cooldown["janitor"]
 
             if last_command is None or last_command > localcooldown:
-                localcooldown = cooldown["janitor"]
+                job = "Janitor"
+                emoji = ":broom:"
+                pay = 100
 
-                if last_command is None or last_command > localcooldown:
-                    job = "Janitor"
-                    emoji = ":broom:"
-                    pay = 100
+                # WORK
+                emojis = ['\ud83e\uddf9', '\ud83d\udca1', '\ud83e\uddfd', "\ud83e\uddfb", "\ud83e\uddfc", "\ud83e\uddef", "\ud83d\udeb0", "\ud83d\udebd", "\ud83d\udd11"]
+                emoji = random.choice(emojis)
+                embed = discord.Embed(title=f"Send a message containing this emoji: {emoji}", description="You will be paid 20% more if you do so within 5 seconds.", color=discord.Color.greyple())
+                await ctx.send(embed=embed)
+                timer = time.time()
 
-                    # WORK
-                    emojis = ['\ud83e\uddf9', '\ud83d\udca1', '\ud83e\uddfd', "\ud83e\uddfb", "\ud83e\uddfc", "\ud83e\uddef", "\ud83d\udeb0", "\ud83d\udebd", "\ud83d\udd11"]
-                    emoji = random.choice(emojis)
-                    embed = discord.Embed(title=f"Send a message containing this emoji: {emoji}", description="You will be paid 20% more if you do so within 5 seconds.", color=discord.Color.greyple())
-                    await ctx.send(embed=embed)
-                    timer = time.time()
+                def check(m):
+                    return m.channel == ctx.channel and m.author == ctx.author
+                try:
+                    message = await self.bot.wait_for('message', check=check, timeout=20)
 
-                    def check(m):
-                        return m.channel == ctx.channel and m.author == ctx.author
-                    try:
-                        message = await self.bot.wait_for('message', check=check, timeout=20)
+                    emoji = emoji.encode('utf-16','surrogatepass').decode('utf-16')
 
-                        emoji = emoji.encode('utf-16','surrogatepass').decode('utf-16')
-
-                        if emoji in message.content:
-                            if time.time() - timer <= 5:
-                                pay = int(pay * 1.2)
-                                await ctx.send(f"**Correct!** You were paid $`{pay}`")
-                            else:
-                                await ctx.send(f"**Correct!** You were paid $`{pay}`")
+                    if emoji in message.content:
+                        if time.time() - timer <= 5:
+                            pay = int(pay * 1.2)
+                            await ctx.send(f"**Correct!** You were paid $`{pay}`")
                         else:
-                            pay = int(pay * 0.8)
-                            await ctx.send(f"**Incorrect!** Your boss looks angry - You were paid $`{pay}`")
-
-                    except asyncio.TimeoutError:
-                        pay = int(pay * 0.8)
-                        await ctx.send(f"**Disappointing!** You took too long - You were paid $`{pay}`")
-
-                    # PAY
-                    balance += pay
-                    await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
-
-                else:
-                    m, s = divmod(localcooldown - last_command, 60)
-                    h, m = divmod(m, 60)
-                    if int(h) == 0 and int(m) == 0:
-                        await ctx.send(f':card_box: You must wait **{int(s)} seconds** to work again.')
-                    elif int(h) == 0 and int(m) != 0:
-                        await ctx.send(f':card_box: You must wait **{int(m)} minutes and {int(s)} seconds** to work again.')
+                            await ctx.send(f"**Correct!** You were paid $`{pay}`")
                     else:
-                        await ctx.send(f':card_box: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to work again.')
-                    return
+                        pay = int(pay * 0.8)
+                        await ctx.send(f"**Incorrect!** Your boss looks angry - You were paid $`{pay}`")
+
+                except asyncio.TimeoutError:
+                    pay = int(pay * 0.8)
+                    await ctx.send(f"**Disappointing!** You took too long - You were paid $`{pay}`")
+
+                # PAY
+                balance += pay
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
             else:
                 m, s = divmod(localcooldown - last_command, 60)
