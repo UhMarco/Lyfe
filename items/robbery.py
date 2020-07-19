@@ -45,7 +45,7 @@ class Robbery(commands.Cog):
             return await ctx.send("That tool does not exist.")
 
         if tool.lower() not in robberytools:
-            return await ctx.send("That is not a vaid tool.")
+            return await ctx.send("That is not a valid tool.")
 
         item = items[item.lower()]
         tool = items[tool.lower()]
