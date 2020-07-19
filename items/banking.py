@@ -20,7 +20,7 @@ class Banking(commands.Cog):
     # ----- DEPOSIT ------------------------------------------------------------
     # --------------------------------------------------------------------------
 
-    @commands.command()
+    @commands.command(aliases=['dep'])
     async def deposit(self, ctx, amount="null"):
         try:
             amount = int(amount)
