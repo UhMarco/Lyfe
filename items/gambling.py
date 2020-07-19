@@ -144,26 +144,26 @@ class Gambling(commands.Cog):
 
         elif game.replace(" ", "").lower() == "coinflip" or game.replace(" ", "").lower() == "coin" or game.replace(" ", "").lower() == "flip":
             try:
-                amount = int(amount * 2)
+                amount = int(amount) * 2
             except Exception:
                 return await ctx.send(f"Usage: `{self.bot.prefix}gamble coinflip (amount)`")
 
             if balance < amount:
                 return await ctx.send(f"Insufficient funds! You need at least $`{amount}` to do that")
 
-            balance - amount / 2
+            balance - amount
 
-            embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{amount}`", description=f"Taken $`{amount}` and flipping coin <a:loading:733746914109161542>", color=discord.Color.dark_teal())
+            embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Taken $`{amount}` and flipping coin <a:loading:733746914109161542>", color=discord.Color.dark_teal())
             message = await ctx.send(embed=embed)
             await asyncio.sleep(2)
             coin = ['heads', 'tails']
             coin = random.choice(coin)
             if coin == 'heads':
                 balance += amount
-                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{amount}`", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount * 2}`", color=discord.Color.dark_teal())
+                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount * 2}`", color=discord.Color.dark_teal())
             else:
                 balance -= amount
-                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{amount}`", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
+                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
             await message.edit(embed=embed)
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
