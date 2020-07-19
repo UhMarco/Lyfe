@@ -160,7 +160,7 @@ class Gambling(commands.Cog):
             coin = random.choice(coin)
             if coin == 'heads':
                 balance += amount
-                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount * 2}`", color=discord.Color.dark_teal())
+                embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount}`", color=discord.Color.dark_teal())
             else:
                 balance -= amount
                 embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount / 2)}`", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
