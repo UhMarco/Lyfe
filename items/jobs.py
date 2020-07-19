@@ -81,6 +81,12 @@ class Jobs(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             await ctx.send("That's not a job.")
 
+    @apply.error
+    async def apply_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send(f"Usage: `{self.bot.prefix}apply (job)`")
+
     @commands.command()
     async def resign(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
