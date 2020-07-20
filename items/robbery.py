@@ -117,6 +117,11 @@ class Robbery(commands.Cog):
             )
             await ctx.send(embed = embed)
             try:
+                embed = discord.Embed(
+                    title=f":moneybag: {ctx.author.name} has robbed you!",
+                    description=f"**Robbery Succeeded**\n**{ctx.author.name}** gained **{itememoji} {itemname}** from **{user.name}**.\n**{ctx.author.name}** used **{toolemoji} {toolname}** to commit the robbery.",
+                    color=discord.Color.red()
+                )
                 await user.send(embed=embed)
             except Forbidden:
                 pass
@@ -131,6 +136,11 @@ class Robbery(commands.Cog):
             )
             await ctx.send(embed = embed)
             try:
+                embed = discord.Embed(
+                    title=f":moneybag: {ctx.author.name} attempted to rob you!",
+                    description=f"{failureReason}\n**{ctx.author.name}** lost **{toolemoji} {toolname}** while trying to steal **{itememoji} {itemname}** from **{user.name}**.",
+                    color=discord.Color.green()
+                )
                 await user.send(embed=embed)
             except Forbidden:
                 pass
