@@ -83,6 +83,7 @@ class Help(commands.Cog):
             embed.set_footer(text="misc command list")
             embed.add_field(name=f"`{self.bot.prefix}gamble`", value="See ways of spending money sensibly", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}feed`", value="Feed a frog to a dragon, there's a 1% chance of something special happening", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}find (item)`", value="Find 5 random users and their IDs who own an item", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}frogtop`", value="See who has the most frogs", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}avatar [user]`", value="Display the avatar of a user in full size", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}8ball (question)`", value="8ball lol", inline=False)
