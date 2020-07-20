@@ -240,5 +240,95 @@ class Robbery(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- STEAL --------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command(aliases=["mug"])
+    async def steal(self, ctx, user: discord.Member, amount=1):
+        author_data = await self.bot.inventories.find(ctx.author.id)
+        if author_data is None:
+            return await ctx.send("You haven't initialized your inventory yet.")
+
+        if user == ctx.author:
+            return await ctx.send("You put the money in the bag and then took it back home")
+
+        user_data = await self.bot.inventories.find(user.id)
+        if user_data is None:
+            return await ctx.send(f"{user.name} hasn't initialized their inventory yet.")
+
+        inventory = author_data["inventory"]
+        balance = user_data["balance"]
+        bankbal = user_data["bankbalance"]
+        amount = int(amount)
+
+        if balance < 10:
+            if bankbal == 0:
+                return await ctx.send(f"**{user.name}** is practically broke, leave them alone will ya?")
+            else:
+                return await ctx.send(f"**{user.name}** doesn't have enough money in their inventory for you to yoink. Maybe check their bank account :smirk:")
+
+        found = False
+        for i in inventory:
+            if i["name"] == "Gun":
+                if i["quantity"] != 1:
+                    i["quantity"] -= 1
+                else:
+                    inventory.remove(i)
+                found = True
+
+        if not found:
+            return await ctx.send("You don't have a :gun: **Gun** in your inventory.")
+        random1 = random.randint(0, 100)
+        if (amount>5000):
+            return await ctx.send("dont be so greedy")
+        if (amount<500):
+            return await ctx.send("what's the point of that")
+        threshold = int((amount-500)*0.0003)
+        if (random1 > int(85-threshold)):
+            failureReasons = utils.json.read_json("robbery")
+            failureReason = random.choice(failureReasons["failureReasons"])
+            embed = discord.Embed(
+                title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
+                description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: gun** while trying to steal **${amount}** from **{user.name}**.",
+                color=discord.Color.red()
+            )
+            await ctx.send(embed = embed)
+            try:
+                embed = discord.Embed(
+                    title=f":moneybag: {ctx.author.name} attempted to rob you!",
+                    description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: Gun** while trying to steal **${amount}** from **{user.name}**.",
+                    color=discord.Color.green()
+                )
+                await user.send(embed=embed)
+            except discord.Forbidden:
+                pass
+            return await ctx.send("L")
+        authorBalance = author_data["balance"]
+        authorBalance = int(authorBalance+amount)
+
+        originalbalance = balance
+
+        balance = int(balance - amount)
+
+        await ctx.send(f":gun: You stole up $`{amount}` of **{user.name}'s** money.")
+        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+        await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+        await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
+        try:
+            await user.send(f"**{ctx.author}** stole $`{amount} of your money!")
+        except Forbidden:
+            pass
+
+    # ----- ERROR HANDLER ------------------------------------------------------
+
+    @steal.error
+    async def steal_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}steal (user) (amount)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send("I couldn't find that user or I couldnt find the amount idk")
+
 def setup(bot):
     bot.add_cog(Robbery(bot))
