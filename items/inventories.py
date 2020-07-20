@@ -222,6 +222,13 @@ class Inventories(commands.Cog):
         embed = discord.Embed(title="<:coin:733930163817152565> Highest Total Balances:", description=output, color=discord.Color.gold())
         await ctx.send(embed=embed)
 
+    @baltop.error
+    async def baltop_error(self, ctx, error):
+        self.bot.errors += 1
+        self.bot.important_errors += 1
+        embed = discord.Emebd(title=":x: Leaderboard Error", description="There was an error fetching infortmation. If you wish, you may [report this](https://discord.gg/zAZ3vKJ).")
+        await ctx.send(embed=embed)
+
 
 
 def setup(bot):
