@@ -218,7 +218,7 @@ class Inventories(commands.Cog):
             ["4th", fourth_user, f"${bal4}"],
             ["5th", fifth_user, f"${bal5}"]
         ]
-        output = ("```" + tabulate(entries, tablefmt="plain", headers=["#", "Player", "Balance"]) + "```")
+        output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Balance"]) + "```")
         embed = discord.Embed(title="<:coin:733930163817152565> Highest Total Balances:", description=output, color=discord.Color.gold())
         await ctx.send(embed=embed)
 

@@ -166,7 +166,7 @@ class Misc(commands.Cog):
             pass
 
 
-        output = ("```" + tabulate(entries, tablefmt="plain", headers=["#", "Player", "Amount"]) + "```")
+        output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Amount"]) + "```")
         embed = discord.Embed(title=":frog: Most Frogs:", description=output, color=discord.Color.gold())
         await ctx.send(embed=embed)
 
