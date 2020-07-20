@@ -210,13 +210,14 @@ class Robbery(commands.Cog):
         if not found:
             return await ctx.send("You don't have a :firecracker: **Dynamite** in your inventory.")
 
+        originalbalance = balance
         balance = int(balance * 0.8)
 
-        await ctx.send(f":firecracker: You blew up $`{int(balance * 0.2)}` of **{user.name}'s** money.")
+        await ctx.send(f":firecracker: You blew up $`{int(originalbalance * 0.2)}` of **{user.name}'s** money.")
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
         try:
-            await user.send(f"**{ctx.author}** blew up $`{int(balance * 0.2)}` of your money!")
+            await user.send(f"**{ctx.author}** blew up $`{int(originalbalance * 0.2)}` of your money!")
         except Forbidden:
             pass
 
