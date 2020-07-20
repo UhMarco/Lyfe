@@ -74,7 +74,7 @@ class Banking(commands.Cog):
 
         elif item == "massivebankslot" or item == "massivebank":
             cost = 10000
-            if banklimit > 5000:
+            if banklimit > 10000:
                 return await ctx.send("A bank slot of greater or equal value has already been purchased.")
 
             if bal < cost:
