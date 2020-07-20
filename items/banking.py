@@ -71,11 +71,27 @@ class Banking(commands.Cog):
             embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Large Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
 
+        elif item == "massivebankslot" or item == "massivebank":
+            cost = 10000
+            if banklimit > 5000:
+                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
+
+            if bal < cost:
+                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+
+            bal -= cost
+            banklimit = 50000
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
+            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Massive Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            await ctx.send(embed=embed)
+
         else:
             embed = discord.Embed(title=":bank: Banks", description="Protects your money from theives", color=discord.Color.gold())
             embed.add_field(name=":bank: Small Bank Slot", value=f"Store $`500` in the bank.\nCosts $`150`\n`{self.bot.prefix}bank small bank slot`", inline=False)
             embed.add_field(name=":bank: Medium Bank Slot", value=f"Store $`1000` in the bank.\nCosts $`300`\n`{self.bot.prefix}bank medium bank slot`", inline=False)
             embed.add_field(name=":bank: Large Bank Slot", value=f"Store $`10000` in the bank.\nCosts $`2500`\n`{self.bot.prefix}bank large bank slot`", inline=False)
+            embed.add_field(name=":bank: Massive Bank Slot", value=f"Store $`50000` in the bank.\nCosts $`10000`\n`{self.bot.prefix}bank massive bank slot`", inline=False)
             await ctx.send(embed=embed)
 
 
