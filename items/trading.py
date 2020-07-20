@@ -165,7 +165,7 @@ class Trading(commands.Cog):
 
         embed = discord.Embed(
                     title=f"Trade Request for **{user.name}** from **{ctx.author.name}**",
-                    description=f"TradeID: `{tradeid}`\n\n**Offering: {emoji1} {name1}**\n**For: {emoji2} {name2}**\n\nTo accept: `{self.bot.prefix}taccept {tradeid}`\nExpires in 10 minutes",
+                    description=f"TradeID: `{tradeid}`\n\n**Offering: {emoji1} {name1}**\n**For: {emoji2} {name2}**\n\nTo accept: `{self.bot.prefix}taccept {tradeid}`\nExpires in 30 minutes",
                     color=discord.Color.gold()
                 )
         await ctx.send(embed=embed)
@@ -174,7 +174,7 @@ class Trading(commands.Cog):
             await user.send(embed=embed)
         except Forbidden:
             await ctx.send("Messaging user failed.")
-        await asyncio.sleep(60 * 10)
+        await asyncio.sleep(60 * 30)
         dict["completed"] = True
         await self.bot.trades.upsert({"_id": int(tradeid), "trade": dict})
 
