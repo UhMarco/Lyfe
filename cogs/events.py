@@ -20,6 +20,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        self.bot.errors += 1
         # Ignored errors
         ignored = (commands.CommandNotFound, commands.MissingRequiredArgument, commands.BadArgument)#, commands.UserInputError
         if isinstance(error, ignored):
@@ -55,6 +56,7 @@ class Events(commands.Cog):
                 await ctx.send(embed=embed)
                 print(f"\n===============================================\nCOMMAND INVOKE ERROR\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\nRAISING ERROR:")
                 raise error
+                self.bot.important_errors += 1
             return
 
         elif isinstance(error, commands.UnexpectedQuoteError) or isinstance(error, commands.ExpectedClosingQuoteError):
@@ -63,7 +65,7 @@ class Events(commands.Cog):
             print(f"\n===============================================\nUNEXPECTED QUOTE\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\n")
             return
 
-
+        self.bot.important_errors += 1
         print("\n----------\n")
         raise error
         print("\n----------\n")

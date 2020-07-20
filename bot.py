@@ -22,6 +22,9 @@ bot.upsince = time.time()
 bot.maintenancemode = False
 bot.whitelisted = []
 
+bot.errors = 0
+bot.important_errors = 0
+
 @bot.event
 async def on_ready():
     print(f"-----\n{bot.user.name} Online\n-----\nPrefix: {bot.prefix}\n-----")

@@ -1,4 +1,4 @@
-import discord, platform, datetime, logging
+import discord, platform, datetime, logging, os
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
@@ -149,6 +149,60 @@ class Basic(commands.Cog):
             return
         await ctx.send("Stopping.")
         await self.bot.logout()
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- DIAGNOSE ------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command(aliases=['diagnosis'])
+    async def diagnose(self, ctx):
+        modules = []
+        items = []
+        message = "\n"
+        count = 0
+        icount = 0
+
+        for file in os.listdir(cwd+"/cogs"):
+            if file.endswith(".py") and not file.startswith("_"):
+                try:
+                    self.bot.load_extension(f"cogs.{file[:-3]}")
+                    self.bot.unload_extension(f"cogs.{file[:-3]}")
+                except commands.ExtensionAlreadyLoaded:
+                    name = file[:-3]
+                    name = f"`✔ {name[:1].upper()}{name[1:]}`"
+                    modules.append(name)
+                    count += 1
+
+                try:
+                    self.bot.unload_extension(f"cogs.{file[:-3]}")
+                    self.bot.load_extension(f"cogs.{file[:-3]}")
+                except commands.ExtensionNotLoaded:
+                    name = file[:-3]
+                    name = f"`✘ {name[:1].upper()}{name[1:]}`"
+                    modules.append(name)
+
+        for file in os.listdir(cwd+"/items"):
+            if file.endswith(".py") and not file.startswith("_"):
+                try:
+                    self.bot.load_extension(f"items.{file[:-3]}")
+                    self.bot.unload_extension(f"items.{file[:-3]}")
+                except commands.ExtensionAlreadyLoaded:
+                    name = file[:-3]
+                    name = f"`✔ {name[:1].upper()}{name[1:]}`"
+                    items.append(name)
+                    icount += 1
+
+                try:
+                    self.bot.unload_extension(f"items.{file[:-3]}")
+                    self.bot.load_extension(f"items.{file[:-3]}")
+                except commands.ExtensionNotLoaded:
+                    name = file[:-3]
+                    name = f"`✘ {name[:1].upper()}{name[1:]}`"
+                    items.append(name)
+
+        embed = discord.Embed(title="Diagnosis", description=f"**Extensions:**\n{message.join(modules)}\n**Modules:**\n{message.join(items)}\n**Errors since startup:** `{self.bot.important_errors}/{self.bot.errors}`", color=discord.Color.blue())
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Basic(bot))
