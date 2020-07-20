@@ -175,6 +175,7 @@ class Basic(commands.Cog):
 
         for file in os.listdir(cwd+"/cogs"):
             if file.endswith(".py") and not file.startswith("_"):
+                done = False
                 try:
                     self.bot.load_extension(f"cogs.{file[:-3]}")
                     self.bot.unload_extension(f"cogs.{file[:-3]}")
@@ -183,17 +184,17 @@ class Basic(commands.Cog):
                     name = f"`✔ {name[:1].upper()}{name[1:]}`"
                     modules.append(name)
                     count += 1
+                    done = True
 
-                try:
-                    self.bot.unload_extension(f"cogs.{file[:-3]}")
-                    self.bot.load_extension(f"cogs.{file[:-3]}")
-                except commands.ExtensionNotLoaded:
+                if not done:
                     name = file[:-3]
                     name = f"`✘ {name[:1].upper()}{name[1:]}`"
                     modules.append(name)
 
+
         for file in os.listdir(cwd+"/items"):
             if file.endswith(".py") and not file.startswith("_"):
+                done = False
                 try:
                     self.bot.load_extension(f"items.{file[:-3]}")
                     self.bot.unload_extension(f"items.{file[:-3]}")
@@ -202,11 +203,9 @@ class Basic(commands.Cog):
                     name = f"`✔ {name[:1].upper()}{name[1:]}`"
                     items.append(name)
                     icount += 1
+                    done = True
 
-                try:
-                    self.bot.unload_extension(f"items.{file[:-3]}")
-                    self.bot.load_extension(f"items.{file[:-3]}")
-                except commands.ExtensionNotLoaded:
+                if not done:
                     name = file[:-3]
                     name = f"`✘ {name[:1].upper()}{name[1:]}`"
                     items.append(name)
