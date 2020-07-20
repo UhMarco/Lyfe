@@ -285,8 +285,8 @@ class Robbery(commands.Cog):
             return await ctx.send("dont be so greedy")
         if (amount<500):
             return await ctx.send("what's the point of that")
-        threshold = int((amount-500)*0.0003)
-        if (random1 > int(85-threshold)):
+        threshold = float((amount-500)*0.0003)
+        if (random1 > float(85-threshold)):
             failureReasons = utils.json.read_json("robbery")
             failureReason = random.choice(failureReasons["failureReasons"])
             embed = discord.Embed(
