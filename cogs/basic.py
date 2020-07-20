@@ -147,6 +147,16 @@ class Basic(commands.Cog):
     async def logout(self, ctx):
         if self.bot.maintenancemode:
             return
+
+        await ctx.send("Please confirm.")
+        def check(m):
+            return m.channel == ctx.channel and m.author == ctx.author
+        message = await self.bot.wait_for('message', check=check)
+        if message.content.lower() == "confirm" or message.content.lower() == "yes":
+            pass
+        else:
+            return await ctx.send("Aborted.")
+
         await ctx.send("Stopping.")
         await self.bot.logout()
 
