@@ -5,6 +5,7 @@ from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
+from tabulate import tabulate
 
 class Banking(commands.Cog):
 
@@ -87,14 +88,16 @@ class Banking(commands.Cog):
             await ctx.send(embed=embed)
 
         else:
-            embed = discord.Embed(title=":bank: Banks", description="Protects your money from theives", color=discord.Color.gold())
-            embed.add_field(name=":bank: Small Bank Slot", value=f"Store $`500` in the bank.\nCosts $`150`\n`{self.bot.prefix}bank small bank slot`", inline=False)
-            embed.add_field(name=":bank: Medium Bank Slot", value=f"Store $`1000` in the bank.\nCosts $`300`\n`{self.bot.prefix}bank medium bank slot`", inline=False)
-            embed.add_field(name=":bank: Large Bank Slot", value=f"Store $`10000` in the bank.\nCosts $`2500`\n`{self.bot.prefix}bank large bank slot`", inline=False)
-            embed.add_field(name=":bank: Massive Bank Slot", value=f"Store $`50000` in the bank.\nCosts $`10000`\n`{self.bot.prefix}bank massive bank slot`", inline=False)
+            entries = [
+                ["Small Bank Slot", "$150", "$500", f"{self.bot.prefix}bank small bank slot"],
+                ["Medium Bank Slot", "$300", "$1,000", f"{self.bot.prefix}bank medium bank slot"],
+                ["Large Bank Slot", "$2,500", "$10,000", f"{self.bot.prefix}buy large bank slot"],
+                ["Massive Bank Slot", "$10,000", "$50,000", f"{self.bot.prefix}buy massive bank slot"]
+            ]
+
+            output = ("Protect your money from thieves\n```" + tabulate(entries, tablefmt="simple", headers=["Item", "Cost", "Stores", "Command"]) + "```")
+            embed = discord.Embed(title=":bank: Banks:", description=output, color=discord.Color.gold())
             await ctx.send(embed=embed)
-
-
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------

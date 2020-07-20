@@ -101,7 +101,7 @@ class Shop(commands.Cog):
             ["Lock", "$2,000", f"{self.bot.prefix}buy lock"]
         ]
 
-        output = ("```" + tabulate(entries, tablefmt="simple", headers=["Item", "Cost", "Command"]) + "```")
+        output = ("The place to buy useful items\n```" + tabulate(entries, tablefmt="simple", headers=["Item", "Cost", "Command"]) + "```")
         embed = discord.Embed(title=":shopping_cart: Item Shop:", description=output, color=discord.Color.gold())
         await ctx.send(embed=embed)
 
