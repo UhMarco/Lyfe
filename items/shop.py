@@ -5,6 +5,7 @@ from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
+from tabulate import tabulate
 
 class Shop(commands.Cog):
 
@@ -88,18 +89,20 @@ class Shop(commands.Cog):
 
     @commands.command()
     async def shop(self, ctx):
-        embed = discord.Embed(title=":shopping_cart: Items", description="The place to buy your useful items", color=discord.Color.gold())
-        embed.add_field(name=":frog: Frog", value=f"Costs $`10`\n`{self.bot.prefix}buy frog`", inline=False)
-        embed.add_field(name=":jeans: Jeans", value=f"Costs $`10`\n`{self.bot.prefix}buy jeans`", inline=False)
-        embed.add_field(name=":sponge: Sponge", value=f"Costs $`10`\n`{self.bot.prefix}buy sponge`", inline=False)
-        embed.add_field(name=":card_index: ID", value=f"Costs $`500`\n`{self.bot.prefix}buy id`", inline=False)
-        embed.add_field(name=":gem: Crystal", value=f"Costs $`500`\n`{self.bot.prefix}buy crystal`", inline=False)
-        embed.add_field(name=":key: Key", value=f"Costs $`500`\n`{self.bot.prefix}buy key`", inline=False)
-        embed.add_field(name=":fire_extinguisher: Fire Extinguisher", value=f"Costs $`500`\n`{self.bot.prefix}buy fireextinguisher`", inline=False)
-        embed.add_field(name=":firecracker: Dynamite", value=f"Costs $`1000`\n`{self.bot.prefix}buy firecracker`", inline=False)
-        embed.add_field(name=":hammer: Hammer", value=f"Costs $`1500`\n`{self.bot.prefix}buy hammer`", inline=False)
-        embed.add_field(name=":fire: Fire", value=f"Costs $`2000`\n`{self.bot.prefix}buy fire`", inline=False)
-        embed.add_field(name=":lock: Lock", value=f"Costs $`2000`\n`{self.bot.prefix}buy lock`", inline=False)
+        entries = [
+            ["Frog", "$10", f"{self.bot.prefix}buy frog"],
+            ["Sponge", "$10", f"{self.bot.prefix}buy sponge"],
+            ["ID", "$500", f"{self.bot.prefix}buy id"],
+            ["Crystal", "$500", f"{self.bot.prefix}buy crystal"],
+            ["Key", "$500", f"{self.bot.prefix}buy key"],
+            ["Dynamite", "$1,000", f"{self.bot.prefix}buy dynamite"],
+            ["Hammer", "$1,500", f"{self.bot.prefix}buy hammer"],
+            ["Fire", "$2,000", f"{self.bot.prefix}buy fire"],
+            ["Lock", "$2,000", f"{self.bot.prefix}buy lock"]
+        ]
+
+        output = ("```" + tabulate(entries, tablefmt="simple", headers=["Item", "Cost", "Command"]) + "```")
+        embed = discord.Embed(title=":shopping_cart: Item Shop:", description=output, color=discord.Color.gold())
         await ctx.send(embed=embed)
 
     # --------------------------------------------------------------------------
@@ -128,35 +131,6 @@ class Shop(commands.Cog):
         # ITEMS
         if item == "frog":
             item = items["frog"]
-            name, emoji, cost = item["name"], item["emoji"], item["value"]
-
-            cost = int(cost * quantity)
-
-            if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
-
-            bal -= cost
-
-            for i in range(quantity):
-                given = False
-                for i in inventory:
-                    if i["name"] == name:
-                        i["quantity"] += 1
-                        given = True
-
-                if not given:
-                    del item["emoji"], item["value"], item["description"], item["rarity"]
-                    item["locked"] = False
-                    item["quantity"] = 1
-                    inventory.append(item)
-
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
-            await ctx.send(embed=embed)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-
-        elif item == "jeans" or item == "pants":
-            item = items["jeans"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
             cost = int(cost * quantity)
@@ -273,35 +247,6 @@ class Shop(commands.Cog):
 
         elif item == "key" or item == "Key":
             item = items["key"]
-            name, emoji, cost = item["name"], item["emoji"], item["value"]
-
-            cost = int(cost * quantity)
-
-            if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
-
-            bal -= cost
-
-            for i in range(quantity):
-                given = False
-                for i in inventory:
-                    if i["name"] == name:
-                        i["quantity"] += 1
-                        given = True
-
-                if not given:
-                    del item["emoji"], item["value"], item["description"], item["rarity"]
-                    item["locked"] = False
-                    item["quantity"] = 1
-                    inventory.append(item)
-
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
-            await ctx.send(embed=embed)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-
-        elif item == "fire extinguisher" or item == "extinguisher":
-            item = items["fireextinguisher"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
             cost = int(cost * quantity)
