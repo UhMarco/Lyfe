@@ -261,7 +261,7 @@ class Jobs(commands.Cog):
                             pay = int(pay * 1.2)
                             await ctx.send(f"**Correct!** It took you less than 3 seconds to type the spell so you were paid extra and got $`{pay}`")
                         else:
-                            await ctx.send(f"**Correct!** However you were paid the normal $`{pay}` as it took you more than 3 seconds to type the spell")
+                            await ctx.send(f"**Correct!** You were paid $`{pay}`")
                     else:
                         pay = int(pay * 0.5)
                         await ctx.send(f"**Incorrect!** The lead mage looks upon you with distaste - You were only paid $`{pay}`")
