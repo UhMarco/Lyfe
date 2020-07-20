@@ -169,6 +169,11 @@ class Trading(commands.Cog):
                     color=discord.Color.gold()
                 )
         await ctx.send(embed=embed)
+        try:
+            await user.send(f"You have a trade request! Do `{self.bot.prefix}taccept {tradeid}` in dms or in any channel I have acces to.")
+            await user.send(embed=embed)
+        except Forbidden:
+            await ctx.send("Messaging user failed.")
         await asyncio.sleep(60 * 10)
         dict["completed"] = True
         await self.bot.trades.upsert({"_id": int(tradeid), "trade": dict})
@@ -303,6 +308,10 @@ class Trading(commands.Cog):
             color=discord.Color.gold()
         )
         await ctx.send(embed=embed)
+        try:
+            await offerer.send(embed=embed)
+        except Forbidden:
+            pass
 
     # ----- ERROR HANDLER ------------------------------------------------------
 
