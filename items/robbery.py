@@ -146,7 +146,7 @@ class Robbery(commands.Cog):
             empty = True
             for i in inventory:
                 name = i["name"]
-                if any(ele in name for ele in robberytools):
+                if any(ele in name.lower() for ele in robberytools):
                     locked, quantity = i["locked"], i["quantity"]
                     item = items[name.replace(" ", "").lower()]
                     desc, emoji, value = item["description"], item["emoji"], item["value"]
