@@ -95,7 +95,7 @@ class Shop(commands.Cog):
         embed.add_field(name=":card_index: ID", value=f"Costs $`500`\n`{self.bot.prefix}buy id`", inline=False)
         embed.add_field(name=":gem: Crystal", value=f"Costs $`500`\n`{self.bot.prefix}buy crystal`", inline=False)
         embed.add_field(name=":key: Key", value=f"Costs $`500`\n`{self.bot.prefix}buy key`", inline=False)
-        embed.add_field(name=":fire_extinguisher: Fire Extinguisher", value=f"Costs $`500`\n`{self.bot.prefix}buy fire extinguisher`", inline=False)
+        embed.add_field(name=":fire_extinguisher: Fire Extinguisher", value=f"Costs $`500`\n`{self.bot.prefix}buy fireextinguisher`", inline=False)
         embed.add_field(name=":firecracker: Dynamite", value=f"Costs $`1000`\n`{self.bot.prefix}buy firecracker`", inline=False)
         embed.add_field(name=":hammer: Hammer", value=f"Costs $`1500`\n`{self.bot.prefix}buy hammer`", inline=False)
         embed.add_field(name=":fire: Fire", value=f"Costs $`2000`\n`{self.bot.prefix}buy fire`", inline=False)
