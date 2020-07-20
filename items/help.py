@@ -122,14 +122,14 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":herb: Lyfé Command List", description=f"**Hey!** Initialize your inventory with `{self.bot.prefix}inv`", color=discord.Color.purple())
         else:
             embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
-        embed.add_field(name=":page_facing_up: Basic", value=f"`{self.bot.prefix}help basic`", inline=False)
-        embed.add_field(name=":shopping_cart: Shop", value=f"`{self.bot.prefix}help shop`", inline=False)
-        embed.add_field(name=":bank: Banks", value=f"`{self.bot.prefix}help banks`", inline=False)
-        embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
-        embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
-        embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
-        embed.add_field(name=":game_die: Misc", value=f"`{self.bot.prefix}help misc`", inline=False)
-        embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
+            embed.add_field(name=":page_facing_up: Basic", value=f"`{self.bot.prefix}help basic`", inline=False)
+            embed.add_field(name=":shopping_cart: Shop", value=f"`{self.bot.prefix}help shop`", inline=False)
+            embed.add_field(name=":bank: Banks", value=f"`{self.bot.prefix}help banks`", inline=False)
+            embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
+            embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
+            embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
+            embed.add_field(name=":game_die: Misc", value=f"`{self.bot.prefix}help misc`", inline=False)
+            embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
         return await ctx.send(embed=embed)
 
     # --------------------------------------------------------------------------
