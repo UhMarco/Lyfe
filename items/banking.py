@@ -91,8 +91,8 @@ class Banking(commands.Cog):
             entries = [
                 ["Small Bank Slot", "$150", "$500", f"{self.bot.prefix}bank small bank slot"],
                 ["Medium Bank Slot", "$300", "$1,000", f"{self.bot.prefix}bank medium bank slot"],
-                ["Large Bank Slot", "$2,500", "$10,000", f"{self.bot.prefix}buy large bank slot"],
-                ["Massive Bank Slot", "$10,000", "$50,000", f"{self.bot.prefix}buy massive bank slot"]
+                ["Large Bank Slot", "$2,500", "$10,000", f"{self.bot.prefix}bank large bank slot"],
+                ["Massive Bank Slot", "$10,000", "$50,000", f"{self.bot.prefix}bank massive bank slot"]
             ]
 
             output = ("Protect your money from thieves\n```" + tabulate(entries, tablefmt="simple", headers=["Item", "Cost", "Stores", "Command"]) + "```")
