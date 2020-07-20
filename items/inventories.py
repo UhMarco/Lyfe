@@ -1,10 +1,11 @@
-import discord, platform, datetime, logging
+import discord, platform, datetime, logging, operator
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
+from tabulate import tabulate
 
 class Inventories(commands.Cog):
 
@@ -162,6 +163,65 @@ class Inventories(commands.Cog):
     async def iteminfo_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"Usage: `{self.bot.prefix} iteminfo (item)`")
+
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- BALTOP -------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command(aliases=['balancetop'])
+    async def baltop(self, ctx):
+        data = await self.bot.inventories.get_all()
+        first, second, third, fourth, fifth = {}, {}, {}, {}, {}
+
+        data = sorted(data, key=lambda k: k['balance'] + k['bankbalance'])
+        data.reverse()
+        count = 0
+        for item in data:
+            if self.bot.get_user(int(item["_id"])) is None:
+                count -= 1
+            elif count == 0:
+                first = item
+            elif count == 1:
+                second = item
+            elif count == 2:
+                third = item
+            elif count == 3:
+                fourth = item
+            elif count == 4:
+                fifth = item
+            else:
+                break
+            count += 1
+
+        first_user = first["_id"]
+        first_user = self.bot.get_user(int(first_user))
+        second_user = second["_id"]
+        second_user = self.bot.get_user(int(second_user))
+        third_user = third["_id"]
+        third_user = self.bot.get_user(int(third_user))
+        fourth_user = fourth["_id"]
+        fourth_user = self.bot.get_user(int(fourth_user))
+        fifth_user = fifth["_id"]
+        fifth_user = self.bot.get_user(int(fifth_user))
+
+        bal1 = "{:,}".format(int(first["balance"] + first["bankbalance"]))
+        bal2 = "{:,}".format(int(second["balance"] + second["bankbalance"]))
+        bal3 = "{:,}".format(int(third["balance"] + third["bankbalance"]))
+        bal4 = "{:,}".format(int(fourth["balance"] + fourth["bankbalance"]))
+        bal5 = "{:,}".format(int(fifth["balance"] + fifth["bankbalance"]))
+
+        entries = [
+            ["1st", first_user, f"${bal1}"],
+            ["2nd", second_user, f"${bal2}"],
+            ["3rd", third_user, f"${bal3}"],
+            ["4th", fourth_user, f"${bal4}"],
+            ["5th", fifth_user, f"${bal5}"]
+        ]
+        output = ("```" + tabulate(entries, tablefmt="plain", headers=["#", "Player", "Balance"]) + "```")
+        embed = discord.Embed(title="<:coin:733930163817152565> Highest Total Balances:", description=output, color=discord.Color.gold())
+        await ctx.send(embed=embed)
+
 
 
 def setup(bot):
