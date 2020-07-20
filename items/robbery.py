@@ -116,6 +116,10 @@ class Robbery(commands.Cog):
                 color=discord.Color.green()
             )
             await ctx.send(embed = embed)
+            try:
+                await user.send(embed=embed)
+            except Forbidden:
+                pass
 
         else: # Fail
             failureReasons = utils.json.read_json("robbery")
@@ -126,6 +130,10 @@ class Robbery(commands.Cog):
                 color=discord.Color.red()
             )
             await ctx.send(embed = embed)
+            try:
+                await user.send(embed=embed)
+            except Forbidden:
+                pass
 
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": myinventory})
         await self.bot.inventories.upsert({"_id": user.id, "inventory": yourinventory})
@@ -156,7 +164,7 @@ class Robbery(commands.Cog):
 
             if empty:
                 embed.add_field(name="You don't have any robbery tools!", value="`No robbing for you :(`", inline=False)
-            embed.add_field(name="Usage:", value="`.robbery [victim] [tool] [item]`", inline=False)
+            embed.add_field(name="Usage:", value=f"`{self.bot.prefix}robbery [victim] [tool] [item]`", inline=False)
             return await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BadArgument):
@@ -207,6 +215,10 @@ class Robbery(commands.Cog):
         await ctx.send(f":firecracker: You blew up $`{int(balance * 0.2)}` of **{user.name}'s** money.")
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
+        try:
+            await user.send(f"**{ctx.author}** blew up $`{int(balance * 0.2)}` of your money!")
+        except Forbidden:
+            pass
 
     # ----- ERROR HANDLER ------------------------------------------------------
 
