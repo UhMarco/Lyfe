@@ -34,7 +34,7 @@ class Robbery(commands.Cog):
 
         yourdata = await self.bot.inventories.find(user.id)
         if yourdata is None:
-            return await ctx.send("This user hasn't initialized their inventory yet.")
+            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
 
         items = await self.bot.items.find("items")
         items = items["items"]
@@ -196,7 +196,7 @@ class Robbery(commands.Cog):
 
         user_data = await self.bot.inventories.find(user.id)
         if user_data is None:
-            return await ctx.send(f"{user.name} hasn't initialized their inventory yet.")
+            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
 
         inventory = author_data["inventory"]
         balance = user_data["balance"]
@@ -252,11 +252,11 @@ class Robbery(commands.Cog):
             return await ctx.send("You haven't initialized your inventory yet.")
 
         if user == ctx.author:
-            return await ctx.send("You put the money in the bag and then took it back home")
+            return await ctx.send("You put the money in the bag and then took it back home.")
 
         user_data = await self.bot.inventories.find(user.id)
         if user_data is None:
-            return await ctx.send(f"{user.name} hasn't initialized their inventory yet.")
+            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
 
         inventory = author_data["inventory"]
         balance = user_data["balance"]
@@ -280,44 +280,63 @@ class Robbery(commands.Cog):
 
         if not found:
             return await ctx.send("You don't have a :gun: **Gun** in your inventory.")
+
         random1 = random.randint(0, 100)
-        if (amount>5000):
-            return await ctx.send("dont be so greedy")
-        if (amount<500):
-            return await ctx.send("what's the point of that")
-        threshold = float((amount-500)*0.0003)
-        if (random1 > float(85-threshold)):
+
+        if amount > 5000:
+            return await ctx.send("Don't be so greedy! The maxmimum is $`5000`")
+        if amount < 500:
+            return await ctx.send("What's the point of that? The minimum is $`500`")
+
+        threshold = float((amount - 500) * 0.0003)
+
+        if random1 > float(85 - threshold):
             failureReasons = utils.json.read_json("robbery")
             failureReason = random.choice(failureReasons["failureReasons"])
             embed = discord.Embed(
                 title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
-                description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: gun** while trying to steal **${amount}** from **{user.name}**.",
+                description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: Gun** while trying to steal $`{amount}` from **{user.name}**.",
                 color=discord.Color.red()
             )
-            await ctx.send(embed = embed)
+            await ctx.send(embed=embed)
+
             try:
                 embed = discord.Embed(
                     title=f":moneybag: {ctx.author.name} attempted to rob you!",
-                    description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: Gun** while trying to steal **${amount}** from **{user.name}**.",
+                    description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: Gun** while trying to steal $`{amount}` from **{user.name}**.",
                     color=discord.Color.green()
                 )
                 await user.send(embed=embed)
             except discord.Forbidden:
                 pass
-            return await ctx.send("L")
+
+            return await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+
         authorBalance = author_data["balance"]
-        authorBalance = int(authorBalance+amount)
+        authorBalance = int(authorBalance + amount)
 
         originalbalance = balance
 
         balance = int(balance - amount)
+
+        embed = discord.Embed(
+            title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
+            description=f"**{ctx.author.name}** stole $`{amount}` from **{user.name}** with a :gun: **Gun**.",
+            color=discord.Color.green()
+        )
 
         await ctx.send(f":gun: You stole up $`{amount}` of **{user.name}'s** money.")
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
         await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
         try:
-            await user.send(f"**{ctx.author}** stole $`{amount} of your money!")
+            embed = discord.Embed(
+                title=f":moneybag: {ctx.author.name} has robbed you!",
+                description=f"**{ctx.author.name}** stole $`{amount}` from **{user.name}** with a :gun: **Gun**.",
+                color=discord.Color.red()
+            )
+
+            await user.send(f"**{ctx.author}** stole $`{amount}` of your money!")
         except Forbidden:
             pass
 
