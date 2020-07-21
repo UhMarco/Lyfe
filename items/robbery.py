@@ -123,7 +123,7 @@ class Robbery(commands.Cog):
                     color=discord.Color.red()
                 )
                 await user.send(embed=embed)
-            except Forbidden:
+            except discord.Forbidden:
                 pass
 
         else: # Fail
@@ -142,7 +142,7 @@ class Robbery(commands.Cog):
                     color=discord.Color.green()
                 )
                 await user.send(embed=embed)
-            except Forbidden:
+            except discord.Forbidden:
                 pass
 
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": myinventory})
@@ -228,7 +228,7 @@ class Robbery(commands.Cog):
         await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
         try:
             await user.send(f"**{ctx.author}** blew up $`{int(originalbalance * 0.2)}` of your money!")
-        except Forbidden:
+        except discord.Forbidden:
             pass
 
     # ----- ERROR HANDLER ------------------------------------------------------
@@ -337,7 +337,7 @@ class Robbery(commands.Cog):
             )
 
             await user.send(embed=embed)
-        except Forbidden:
+        except discord.Forbidden:
             pass
 
     # ----- ERROR HANDLER ------------------------------------------------------
