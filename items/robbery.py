@@ -325,7 +325,7 @@ class Robbery(commands.Cog):
             color=discord.Color.green()
         )
 
-        await ctx.send(f":gun: You stole up $`{amount}` of **{user.name}'s** money.")
+        await ctx.send(embed=embed)
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
         await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
@@ -336,7 +336,7 @@ class Robbery(commands.Cog):
                 color=discord.Color.red()
             )
 
-            await user.send(f"**{ctx.author}** stole $`{amount}` of your money!")
+            await user.send(embed=embed)
         except Forbidden:
             pass
 
