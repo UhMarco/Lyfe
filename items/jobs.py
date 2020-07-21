@@ -118,6 +118,7 @@ class Jobs(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def work(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
@@ -287,6 +288,11 @@ class Jobs(commands.Cog):
 
         else:
             return await ctx.send("Error: Job not null but not found.")
+
+    @work.error
+    async def work_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            return await ctx.send("You just did that.")
 
 def setup(bot):
     bot.add_cog(Jobs(bot))
