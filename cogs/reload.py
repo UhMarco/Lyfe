@@ -52,22 +52,18 @@ class Reload(commands.Cog):
             return
         if module == "all":
             start = time.time()
-            await ctx.send("**Extensions:**")
             for file in os.listdir(cwd+"/cogs"):
                 if file.endswith(".py") and not file.startswith("_"):
                     self.bot.reload_extension(f"cogs.{file[:-3]}")
                     name = file[:-3].lower()
-                    await ctx.send(f"**{name[:1].upper()}{name[1:]}** has been reloaded.")
 
-            await ctx.send("**Items:**")
             for file in os.listdir(cwd+"/items"):
                 if file.endswith(".py") and not file.startswith("_"):
                     self.bot.reload_extension(f"items.{file[:-3]}")
                     name = file[:-3].lower()
-                    await ctx.send(f"**{name[:1].upper()}{name[1:]}** has been reloaded.")
 
             end = time.time()
-            return await ctx.send("`Operation took: {:.2f} seconds`".format(end - start))
+            return await ctx.send("Operation took: `{:.5f}` seconds".format(end - start))
 
         try:
             self.bot.reload_extension(f"cogs.{module.lower()}")
