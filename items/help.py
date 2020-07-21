@@ -27,7 +27,7 @@ class Help(commands.Cog):
 
         elif section.lower() == "basic":
             embed = discord.Embed(title=":page_facing_up: Basic Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
-            embed.set_footer(text="basic command list")
+            embed.set_footer(text="Basic command list")
             embed.add_field(name=f"`{self.bot.prefix}inv [user] [page]`", value="Open your inventory", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}bal [user]`", value="See your own or another's balance", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}baltop`", value="See the balance leaderboards", inline=False)
@@ -38,7 +38,7 @@ class Help(commands.Cog):
 
         elif section.lower() == "shop":
             embed = discord.Embed(title=":shopping_cart: Shop Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
-            embed.set_footer(text="shop command list")
+            embed.set_footer(text="Shop command list")
             embed.add_field(name=f"`{self.bot.prefix}shop`", value="Shows the shop", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}buy (item) [quantity]`", value="Buy something from the shop", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}sell (item) [quantity]`", value="Sell any item for 75% of its value to the shop", inline=False)
@@ -46,14 +46,14 @@ class Help(commands.Cog):
 
         elif section.lower() == "banks" or section.lower() == "banking":
             embed = discord.Embed(title=":bank: Banking Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
-            embed.set_footer(text="banks command list")
+            embed.set_footer(text="Banks command list")
             embed.add_field(name=f"`{self.bot.prefix}banks`", value="Shows all banks", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}bank (bank slot)`", value="Purchase a bank slot", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "jobs":
             embed = discord.Embed(title=":card_box: Job Commands", color=discord.Color.purple())
-            embed.set_footer(text="job command list")
+            embed.set_footer(text="Job command list")
             embed.add_field(name=f"`{self.bot.prefix}jobs`", value="Shows the list of jobs", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}apply (job)`", value="You can apply for work here", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}resign`", value="Promoting yourself to customer", inline=False)
@@ -62,7 +62,7 @@ class Help(commands.Cog):
 
         elif section.lower() == "trading":
             embed = discord.Embed(title=":scales: Trading Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
-            embed.set_footer(text="trading command list")
+            embed.set_footer(text="Trading command list")
             embed.add_field(name=f"`{self.bot.prefix}trade (user) (owned item) (desired item)`", value="Offer to trade with another player", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}taccept (tradeid)`", value="Accepts a trade offer", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}tcancel (tradeid)`", value="Cancel a trade offer", inline=False)
@@ -71,7 +71,7 @@ class Help(commands.Cog):
 
         elif section.lower() == "robbery":
             embed = discord.Embed(title=":moneybag: Robbery Commands", description="**Note:** Items in commands don't contain spaces", color=discord.Color.purple())
-            embed.set_footer(text="robbery command list")
+            embed.set_footer(text="Tobbery command list")
             embed.add_field(name=f"`{self.bot.prefix}rob (user) (tool) (desired item)`", value="Rob another player of an item, requires a tool, leave blank to see owned tools", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}steal (user) (amount)`", value="Rob another player of money, requires a :gun: Gun, min=500 max=5000", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}dynamite (user)`", value="Blow up 20% of someone's balance, requires :firecracker: Dynamite", inline=False)
@@ -81,7 +81,7 @@ class Help(commands.Cog):
 
         elif section.lower() == "misc":
             embed = discord.Embed(title=":game_die: Misc Commands", color=discord.Color.purple())
-            embed.set_footer(text="misc command list")
+            embed.set_footer(text="Misc command list")
             embed.add_field(name=f"`{self.bot.prefix}gamble`", value="See ways of spending money sensibly", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}feed`", value="Feed a frog to a dragon, there's a 1% chance of something special happening", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}find (item)`", value="Find 5 random users and their IDs who own an item", inline=False)
@@ -115,7 +115,7 @@ class Help(commands.Cog):
                             """,
                 color=discord.Color.purple()
             )
-            embed.set_footer(text="built by NotStealthy#0001 and Spook#4177")
+            embed.set_footer(text="Built by NotStealthy#0001, Spook#4177 and hypews#2401")
             return await ctx.send(embed=embed)
 
         data = await self.bot.inventories.find(ctx.author.id)
