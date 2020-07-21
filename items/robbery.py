@@ -327,7 +327,7 @@ class Robbery(commands.Cog):
 
         await ctx.send(embed=embed)
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-        await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
+        await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": authorBalance})
         await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
         try:
             embed = discord.Embed(
