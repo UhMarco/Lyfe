@@ -90,7 +90,6 @@ class Shop(commands.Cog):
     @commands.command()
     async def shop(self, ctx):
         entries = [
-            ["Frog", "$10", f"{self.bot.prefix}buy frog"],
             ["Sponge", "$10", f"{self.bot.prefix}buy sponge"],
             ["ID", "$500", f"{self.bot.prefix}buy id"],
             ["Crystal", "$500", f"{self.bot.prefix}buy crystal"],
@@ -129,36 +128,7 @@ class Shop(commands.Cog):
         items = items["items"]
 
         # ITEMS
-        if item == "frog":
-            item = items["frog"]
-            name, emoji, cost = item["name"], item["emoji"], item["value"]
-
-            cost = int(cost * quantity)
-
-            if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
-
-            bal -= cost
-
-            for i in range(quantity):
-                given = False
-                for i in inventory:
-                    if i["name"] == name:
-                        i["quantity"] += 1
-                        given = True
-
-                if not given:
-                    del item["emoji"], item["value"], item["description"], item["rarity"]
-                    item["locked"] = False
-                    item["quantity"] = 1
-                    inventory.append(item)
-
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
-            await ctx.send(embed=embed)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-
-        elif item == "sponge":
+        if item == "sponge":
             item = items["sponge"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
