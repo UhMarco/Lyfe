@@ -6,6 +6,7 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 from tabulate import tabulate
+import random
 
 class Inventories(commands.Cog):
 
@@ -73,7 +74,24 @@ class Inventories(commands.Cog):
         bal = data["balance"]
         bankbal = data["bankbalance"]
         banklimit = data["banklimit"]
-
+        ## Peanut Allergy
+        peanut = "Peanut"
+        money = random.randint(int(50), int(120))
+        has_allergy = random.choice([1, 2])
+        bal -= money
+        for i in inventory:
+            if i["name"] == peanut:
+                if has_allergy == 1:
+                    if bal > 120:
+                        await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+                        nutembed = discord.Embed(
+                            title=":peanuts: Peanut Allergy",
+                            description=f"""
+                                        Oh No! You had an allergic reaction to some peanuts in your inventory.\nYou had to pay `${money}` for treatment.
+                                        """,
+                            color=discord.Color.red()
+                        )
+                        await ctx.send(embed=nutembed)
         pagelimit = 5 * round(len(inventory) / 5)
         if pagelimit < len(inventory): pagelimit += 5
         pagelimit = int(pagelimit / 5)
