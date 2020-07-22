@@ -218,6 +218,8 @@ class Inventories(commands.Cog):
             except (KeyError, IndexError):
                 entries.append([places[count], "None", 0])
             count += 1
+            if count == 10:
+                break
 
         output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Balance"]) + "```")
         embed = discord.Embed(title="<:coin:733930163817152565> Highest Total Balances:", description=output, color=discord.Color.gold())
