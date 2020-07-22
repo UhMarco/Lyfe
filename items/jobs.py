@@ -113,7 +113,10 @@ class Jobs(commands.Cog):
             emoji = ":question:"
 
         author = ctx.author.id
-        del last_command[author]
+        try:
+            del last_command[author]
+        except KeyError:
+            pass
 
         embed = discord.Embed(title=f"You quit your job as a {emoji} **{job}**", color=discord.Color.greyple())
         await ctx.send(embed=embed)
