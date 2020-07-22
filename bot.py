@@ -37,15 +37,13 @@ async def on_ready():
     bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
     bot.db = bot.mongo["lyfe"]
     if secret_file["status"] != "idle":
-        bot.inventories = Document(bot.db, "inventories")
-        bot.items = Document(bot.db, "items")
-        bot.trades = Document(bot.db, "trades")
-        bot.playershops = Document(bot.db, "playershops")
+        bot.db = bot.mongo["lyfe"]
     else:
-        bot.inventories = Document(bot.db, "inventories.beta")
-        bot.items = Document(bot.db, "items")
-        bot.trades = Document(bot.db, "trades.beta")
-        bot.playershops = Document(bot.db, "playershops.beta")
+        bot.db = bot.mongo["lyfebeta"]
+    bot.inventories = Document(bot.db, "inventories")
+    bot.items = Document(bot.db, "items")
+    bot.trades = Document(bot.db, "trades")
+    bot.playershops = Document(bot.db, "playershops")
     print("Initialized database\n-----")
 
 @bot.event
