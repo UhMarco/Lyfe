@@ -215,7 +215,7 @@ class Inventories(commands.Cog):
                     count -= 1
                 else:
                     entries.append([places[count], user, "${:,}".format(int(item["balance"] + item["bankbalance"]))])
-            except KeyError:
+            except (KeyError, IndexError) as e:
                 entries.append([places[count], "None", 0])
             count += 1
 
