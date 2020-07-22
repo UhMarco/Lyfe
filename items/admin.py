@@ -71,16 +71,17 @@ class Admin(commands.Cog):
         item = items[item.lower()]
         name, emoji = item["name"], item["emoji"]
 
+        found = False
         for i in inventory:
             if i["name"] == name:
                 i["quantity"] += 1
-                await self.bot.inventories.update_by_id({"_id": ctx.author.id, "inventory": inventory})
-                return await ctx.send(f"Given **{emoji} {name}** to **{user.name}**")
+                found = True
 
-        del item["emoji"], item["value"], item["description"], item["rarity"]
-        item["locked"] = False
-        item["quantity"] = 1
-        inventory.append(item)
+        if not found:
+            del item["emoji"], item["value"], item["description"], item["rarity"]
+            item["locked"] = False
+            item["quantity"] = 1
+            inventory.append(item)
         await ctx.send(f"Given **{emoji} {name}** to **{user.name}**.")
         await self.bot.inventories.upsert({"_id": user.id, "inventory": inventory})
 
