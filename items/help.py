@@ -94,7 +94,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":credit_card: Player Shops", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="Player Shops command list")
             embed.add_field(name=f"`{self.bot.prefix}pshop`", value="Lists all the Player Shops", inline=False)
-            embed.add_field(name=f"`{self.bot.prefix}pshop shoew (user)`", value="See a user's shop", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}pshop show (user)`", value="See a user's shop", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}pshop buy (user) (item)`", value="Buys a user's item", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}pshop add (item) (price) [quantity]`", value="Adds an item from your inventory to your shop. Default quantity : `1`", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}pshop remove (item) [quantity]`", value="Removes a certain item from your shop. Default quantity : `1`", inline=False)
