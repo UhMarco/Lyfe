@@ -90,12 +90,15 @@ class Jobs(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}apply (job)`")
 
     @commands.command()
+    @commands.cooldown(1, 86400, commands.BucketType.user)
     async def resign(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
         job = data["job"]
         if job is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You're not currently employed anywhere.")
 
         await self.bot.inventories.upsert({"_id": ctx.author.id, "job": None})
