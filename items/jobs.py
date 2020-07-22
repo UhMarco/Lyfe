@@ -1,10 +1,11 @@
-import discord, platform, datetime, logging, random, time, re, asyncio
+import discord, platform, logging, random, time, re, asyncio
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
+from datetime import datetime, timedelta
 
 # Custom cooldown variables
 on_cooldown = {}
@@ -112,7 +113,7 @@ class Jobs(commands.Cog):
             emoji = ":question:"
 
         author = ctx.author.id
-        last_command[author] = None
+        del last_command[author]
 
         embed = discord.Embed(title=f"You quit your job as a {emoji} **{job}**", color=discord.Color.greyple())
         await ctx.send(embed=embed)
@@ -131,15 +132,16 @@ class Jobs(commands.Cog):
 
         author = ctx.author.id
         try:
-            last_command[author] = time.time() - on_cooldown[author]
+            last_command[author] = datetime.now() - on_cooldown[author]
         except KeyError:
             last_command[author] = None
-            on_cooldown[author] = time.time()
+            on_cooldown[author] = datetime.now()
 
         if job == "fastfoodworker":
             localcooldown = cooldown["fastfoodworker"]
 
-            if last_command[author] is None or last_command[author] > localcooldown:
+            if last_command[author] is None or last_command[author].seconds > localcooldown:
+                on_cooldown[author] = datetime.now()
                 job = "Fast Food Worker"
                 emoji = ":hamburger:"
                 pay = 20
@@ -176,7 +178,7 @@ class Jobs(commands.Cog):
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
             else:
-                m, s = divmod(localcooldown - last_command[author], 60)
+                m, s = divmod(localcooldown - last_command[author].seconds, 60)
                 h, m = divmod(m, 60)
                 if int(h) == 0 and int(m) == 0:
                     await ctx.send(f':card_box: You must wait **{int(s)} seconds** to work again.')
@@ -189,7 +191,8 @@ class Jobs(commands.Cog):
         elif job == "janitor":
             localcooldown = cooldown["janitor"]
 
-            if last_command[author] is None or last_command[author] > localcooldown:
+            if last_command[author] is None or last_command[author].seconds > localcooldown:
+                on_cooldown[author] = datetime.now()
                 job = "Janitor"
                 emoji = ":broom:"
                 pay = 100
@@ -227,7 +230,7 @@ class Jobs(commands.Cog):
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
             else:
-                m, s = divmod(localcooldown - last_command[author], 60)
+                m, s = divmod(localcooldown - last_command[author].seconds, 60)
                 h, m = divmod(m, 60)
                 if int(h) == 0 and int(m) == 0:
                     await ctx.send(f':card_box: You must wait **{int(s)} seconds** to work again.')
@@ -240,7 +243,8 @@ class Jobs(commands.Cog):
         elif job == "mage":
             localcooldown = cooldown["mage"]
 
-            if last_command[author] is None or last_command[author] > localcooldown:
+            if last_command[author] is None or last_command[author].seconds > localcooldown:
+                on_cooldown[author] = datetime.now()
                 job = "Mage"
                 emoji = ":mage:"
                 pay = 150
@@ -276,7 +280,7 @@ class Jobs(commands.Cog):
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
             else:
-                m, s = divmod(localcooldown - last_command[author], 60)
+                m, s = divmod(localcooldown - last_command[author].seconds, 60)
                 h, m = divmod(m, 60)
                 if int(h) == 0 and int(m) == 0:
                     await ctx.send(f':card_box: You must wait **{int(s)} seconds** to work again.')
