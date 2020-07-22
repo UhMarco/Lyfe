@@ -90,6 +90,16 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}8ball (question)`", value="8ball lol", inline=False)
             return await ctx.send(embed=embed)
 
+        elif section.lower() == "pshop":
+            embed = discord.Embed(title=":credit_card: Player Shops", color=discord.Color.purple())
+            embed.set_footer(text="Player Shops command list")
+            embed.add_field(name=f"`{self.bot.prefix}pshop`", value="Lists all the Player Shops", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}pshop (user)`", value="See a user's shop", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}pshop buy (user) (item)`", value="Buys a user's item", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}pshop add (item) (price) [quantity]`", value="Adds an item from your inventory to your shop. Default quantity : `1`", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}pshop remove (item) [quantity]`", value="Removes a certain item from your shop. Default quantity : `1`", inline=False)
+            return await ctx.send(embed=embed)
+
         elif section.lower() == "bot":
             m, s = divmod(time.time() - self.bot.upsince, 60)
             h, m = divmod(m, 60)
@@ -130,6 +140,7 @@ class Help(commands.Cog):
             embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)
             embed.add_field(name=":moneybag: Robbery", value=f"`{self.bot.prefix}help robbery`", inline=False)
             embed.add_field(name=":game_die: Misc", value=f"`{self.bot.prefix}help misc`", inline=False)
+            embed.add_field(name=":credit_card: Player Shops", value=f"`{self.bot.prefix}help pshop`", inline=False)
             embed.add_field(name=":robot: Bot", value=f"`{self.bot.prefix}help bot`", inline=False)
         return await ctx.send(embed=embed)
 
