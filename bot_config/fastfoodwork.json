@@ -7,5 +7,6 @@
     ":pie:": ["pie"],
     ":bacon:": ["bacon"],
     ":pancakes:": ["pancakes", "pancake"],
-    ":waffle:": ["waffle", "waffles"]
+    ":waffle:": ["waffle", "waffles"],
+    ":taco:": ["taco", "tacos"]
 }
