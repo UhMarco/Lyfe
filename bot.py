@@ -33,13 +33,17 @@ async def on_ready():
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"))
     elif status == "idle":
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"), status=discord.Status.idle)
+    elif status == "streaming":
+        await bot.change_presence(activity=discord.Streaming(name=f"{bot.prefix}help", url="https://twitch.tv/discord"))
 
     bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
     bot.db = bot.mongo["lyfe"]
-    if secret_file["status"] != "idle":
+    if status == "online":
         bot.db = bot.mongo["lyfe"]
-    else:
+    elif status == "idle":
         bot.db = bot.mongo["lyfebeta"]
+    else:
+        bot.db = bot.mongo["lyfeaqua"]
     bot.inventories = Document(bot.db, "inventories")
     bot.items = Document(bot.db, "items")
     bot.trades = Document(bot.db, "trades")
