@@ -93,14 +93,23 @@ class Inventories(commands.Cog):
                                 )
                                 await ctx.send(embed=nutembed)
                                 await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-                                
+
         pagelimit = 5 * round(len(inventory) / 5)
         if pagelimit < len(inventory): pagelimit += 5
         pagelimit = int(pagelimit / 5)
 
         if page > pagelimit:
             if page == 1:
-                return await ctx.send(f"**{user.name}'s** inventory is empty!")
+                emptyembed = discord.Embed(
+                    title=":wastebasket: Empty Inventory",
+                    description=f"""
+                                **{user.name}'s** inventory is empty!
+                                **Balance:** $`{bal}`
+                                **Bank:** $`{bankbal}`/`{banklimit}`
+                                """,
+                    color=discord.Color.red()
+                )
+                return await ctx.send(embed=emptyembed)
             return await ctx.send(f"**{user.name}** doesn't have that many pages!")
 
         if user == ctx.author:
