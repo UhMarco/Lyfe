@@ -19,34 +19,12 @@ class Playershops(commands.Cog):
     @commands.command(aliases=['playershops', 'pshops', 'playershop'])
     async def pshop(self, ctx, argument=None, item=None, cq=None, cq2=None):
         entries = []
-        if argument is None:
-            shops = await self.bot.playershops.get_all()
-            if shops == []:
-                entries.append(["None", 0, 0])
-                output = ("```" + tabulate(entries, tablefmt="simple", headers=["Player", "Items", "User ID"]) + "```")
-                embed = discord.Embed(title=f":shopping_cart: Player Shops:", description=output, color=discord.Color.gold())
-                return await ctx.send(embed=embed)
-            else:
-                for i in shops:
-                    id = i["_id"]
-                    user = self.bot.get_user(id)
-                    if user is None:
-                        return ctx.send("Finding the user failed.")
-                    stock = len(i["shop"])
-                    #if stock == 0:
-                    #    await self.bot.playershops.delete(user.id)
-                    #else:
-                    entries.append([user, stock, int(id)])
-
-                output = ("```" + tabulate(entries, tablefmt="simple", headers=["Player", "Items", "User ID"]) + "```")
-                embed = discord.Embed(title=f":shopping_cart: Player Shops:", description=output, color=discord.Color.gold())
-                return await ctx.send(embed=embed)
 
         # ADD
 
-        elif argument == "add":
+        if argument == "add":
             if item is None or cq is None:
-                return await ctx.send(f"Usage: `{self.bot.prefix}pshop add (item) (cost)`")
+                return await ctx.send(f"Usage: `{self.bot.prefix}pshop add (item) (cost) [quantity]`")
 
             data = await self.bot.inventories.find(ctx.author.id)
             items = await self.bot.items.find("items")
@@ -58,20 +36,32 @@ class Playershops(commands.Cog):
             item = items[item.lower()]
             name, emoji = item["name"], item["emoji"]
 
+            try:
+                if cq2 is None:
+                    cq2 = 1
+                quantity = int(cq2)
+            except Exception:
+                return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
+
             inventory = data["inventory"]
             found = False
             for i in inventory:
                 if i["name"] == name:
-                    if ["locked"] is True:
+                    if i["locked"] is True:
                         return await ctx.send(f"{emoji} **{name}** is locked in your inventory.")
+                    if i["quantity"] < quantity:
+                        return await ctx.send(f"You don't have that many {emoji} **{name}s**.")
+                    i["quantity"] -= quantity
+                    if i["quantity"] == 0:
+                        inventory.remove(i)
                     found = True
             if not found:
                 return await ctx.send(f"You don't have {emoji} **{name}** in your inventory.")
 
             try:
-                cq = int(cq)
+                price = int(cq)
             except Exception:
-                return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
+                return await ctx.send("Please enter a valid price.\n**Tip:** Items in commands generally don't contain spaces!")
 
             data = await self.bot.playershops.find(ctx.author.id)
             if data is None:
@@ -80,11 +70,12 @@ class Playershops(commands.Cog):
                 shop = data["shop"]
                 for i in shop:
                     if i["item"] == name.replace(" ", "").lower():
-                        return await ctx.send(f"You already have {emoji} **{name}** in your shop.")
+                        return await ctx.send("You already have that listed in your shop.")
 
-            shop.append({"item": name.replace(" ", "").lower(), "price": cq})
+            shop.append({"item": name.replace(" ", "").lower(), "price": price, "stock": quantity})
             await self.bot.playershops.upsert({"_id": ctx.author.id, "shop": shop})
-            await ctx.send(f"Added {emoji} **{name}**  to your shop.")
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+            await ctx.send(f"Added **{quantity} {emoji} {name}s**  to your shop.")
 
         # REMOVE
 
@@ -109,16 +100,34 @@ class Playershops(commands.Cog):
             found = False
             for i in shop:
                 if i["item"] == name.replace(" ", "").lower():
+                    quantity = i["stock"]
                     shop.remove(i)
                     found = True
             if not found:
                 return await ctx.send(f"You aren't selling {emoji} **{name}**")
+
+            player_data = await self.bot.inventories.find(ctx.author.id)
+            inventory = player_data["inventory"]
+
+            found = False
+            for i in inventory:
+                if i["name"] == name:
+                    i["quantity"] += quantity
+                    found = True
+
+            if not found:
+                del item["emoji"], item["value"], item["description"], item["rarity"]
+                item["locked"] = False
+                item["quantity"] = quantity
+                inventory.append(item)
 
             await ctx.send(f"Removed {emoji} **{name}** from your shop.")
             if len(shop) == 0:
                 await self.bot.playershops.delete(ctx.author.id)
             else:
                 await self.bot.playershops.upsert({"_id": ctx.author.id, "shop": shop})
+
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
 
 
         # BUY
@@ -164,10 +173,13 @@ class Playershops(commands.Cog):
             item = items[item]
             name, emoji = item["name"], item["emoji"]
 
+            raw_name = item["name"].replace(" ", "").lower()
+
             found = False
             for i in shop:
-                if i["item"] == item["name"].replace(" ", "").lower():
+                if i["item"] == raw_name:
                     price = i["price"]
+                    stock = i["stock"]
                     found = True
             if not found:
                 return await ctx.send(f"**{user}** is not selling a {emoji} **{name}")
@@ -176,19 +188,8 @@ class Playershops(commands.Cog):
             user_inventory = user_data["inventory"]
             user_balance = user_data["balance"]
 
-            max_quantity = 0
-            for i in user_inventory:
-                if i["name"] == name:
-                    if i["locked"] is True:
-                        for x in shop:
-                            if x["item"] == name.replace(" ", "").lower():
-                                shop.remove(x)
-                        return await ctx.send(f"{emoji} **{name}** has been locked in that user's inventory and has now been removed from their shop.")
-                    max_quantity = i["quantity"]
 
-            if max_quantity == 0:
-                return await ctx.send(f"{emoji} **{name}** is out of stock in **{user}'s** shop.")
-            elif quantity > max_quantity:
+            if quantity > stock:
                 return await ctx.send(f"That quantity is too great. There aren't that many for sale.")
 
             author_data = await self.bot.inventories.find(ctx.author.id)
@@ -216,21 +217,16 @@ class Playershops(commands.Cog):
                 item["quantity"] = 1
                 author_inventory.append(item)
 
-            # Set seller's inventory
-            for i in user_inventory:
-                if i["name"] == name:
-                    if i["quantity"] == 1:
-                        user_inventory.remove(i)
-                        for x in shop:
-                            if x["item"] == name.replace(" ", "").lower():
-                                shop.remove(x)
-                    else:
-                        i["quantity"] -= 1
+            # Change shop
+            for i in shop:
+                if i["item"] == raw_name:
+                    i["stock"] -= quantity
+                    if i["stock"] == 0:
+                        shop.remove(i)
 
             embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{price * quantity}`\nNew balance: $`{author_balance}`", color=discord.Color.gold())
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": author_inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": author_balance})
-            await self.bot.inventories.upsert({"_id": user.id, "inventory": user_inventory})
             await self.bot.inventories.upsert({"_id": user.id, "balance": user_balance})
             if len(shop) == 0:
                 await self.bot.playershops.delete(user.id)
@@ -239,16 +235,17 @@ class Playershops(commands.Cog):
             await ctx.send(embed=embed)
 
 
-
         # SPECIFIC
 
-        elif argument != None:
-            if len(ctx.message.mentions) == 0:
+        elif argument == "show" or argument == "view":
+            if item is None:
+                user = ctx.author
+            elif len(ctx.message.mentions) == 0:
                 try:
-                    if self.bot.get_user(int(argument)) == None:
+                    if self.bot.get_user(int(item)) == None:
                         return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
                     else:
-                        user = self.bot.get_user(int(argument))
+                        user = self.bot.get_user(int(item))
                 except ValueError:
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             else:
@@ -266,10 +263,7 @@ class Playershops(commands.Cog):
 
             shop = data["shop"]
             for i in shop:
-                for x in inventory:
-                    if x["name"].replace(" ", "").lower() == i["item"]:
-                        stock = x["quantity"]
-                        entries.append([items[i["item"]]["name"], f'${i["price"]}', stock])
+                entries.append([items[i["item"]]["name"], f'${i["price"]}', i["stock"]])
 
             if entries == []:
                 entries.append(["OUT", "OF", "STOCK"])
@@ -278,8 +272,28 @@ class Playershops(commands.Cog):
             embed = discord.Embed(title=f":shopping_cart: **{user.name}'s** Shop", description=output, color=discord.Color.gold())
             await ctx.send(embed=embed)
 
+
+        # SHOW ALL
+
         else:
-            pass
+            shops = await self.bot.playershops.get_all()
+            if shops == []:
+                entries.append(["None", 0, 0])
+                output = ("```" + tabulate(entries, tablefmt="simple", headers=["Player", "Items", "User ID"]) + "```")
+                embed = discord.Embed(title=f":shopping_cart: Player Shops:", description=output, color=discord.Color.gold())
+                return await ctx.send(embed=embed)
+            else:
+                for i in shops:
+                    id = i["_id"]
+                    user = self.bot.get_user(id)
+                    if user is None:
+                        return ctx.send("Finding the user failed.")
+                    stock = len(i["shop"])
+                    entries.append([user, stock, int(id)])
+
+                output = ("```" + tabulate(entries, tablefmt="simple", headers=["Player", "Items", "User ID"]) + "```")
+                embed = discord.Embed(title=f":shopping_cart: Player Shops:", description=output, color=discord.Color.gold())
+                return await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Playershops(bot))
