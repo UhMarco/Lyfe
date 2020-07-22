@@ -75,23 +75,25 @@ class Inventories(commands.Cog):
         bankbal = data["bankbalance"]
         banklimit = data["banklimit"]
         ## Peanut Allergy
-        peanut = "Peanut"
-        money = random.randint(50, 120)
-        has_allergy = random.choice([1, 2])
-        if has_allergy == 1:
-            for i in inventory:
-                if i["name"] == peanut:
-                        if bal > 120:
-                            bal -= money
-                            nutembed = discord.Embed(
-                                title=":peanuts: Peanut Allergy",
-                                description=f"""
-                                            Oh No! You had an allergic reaction to some peanuts in your inventory.\nYou had to pay `${money}` for treatment.
-                                            """,
-                                color=discord.Color.red()
-                            )
-                            await ctx.send(embed=nutembed)
-                            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+        if user == ctx.author:
+            peanut = "Peanut"
+            money = random.randint(50, 120)
+            has_allergy = random.choice([1, 2])
+            if has_allergy == 1:
+                for i in inventory:
+                    if i["name"] == peanut:
+                            if bal > 120:
+                                bal -= money
+                                nutembed = discord.Embed(
+                                    title=":peanuts: Peanut Allergy",
+                                    description=f"""
+                                                Oh No! You had an allergic reaction to some peanuts in your inventory.\nYou had to pay `${money}` for treatment.
+                                                """,
+                                    color=discord.Color.red()
+                                )
+                                await ctx.send(embed=nutembed)
+                                await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
+                                
         pagelimit = 5 * round(len(inventory) / 5)
         if pagelimit < len(inventory): pagelimit += 5
         pagelimit = int(pagelimit / 5)
