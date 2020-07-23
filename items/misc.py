@@ -325,7 +325,7 @@ class Misc(commands.Cog):
     @commands.command()
     async def beg(self, ctx):
         user = ctx.author
-        begembed = discord.Embed(title=f":dollar:  Someone is begging for money!", description=f"I think {user.name} should get a job! Do `,jobs` for more information about that!", color=discord.Color.gold())
+        begembed = discord.Embed(title=f":dollar:  Someone is begging for money!", description=f"I think {user.name} should do their job! If you don't have a job, do `,jobs` for more infortmation!", color=discord.Color.gold())
         return await ctx.send(embed=begembed)
 
 def setup(bot):
