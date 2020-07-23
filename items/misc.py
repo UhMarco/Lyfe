@@ -324,9 +324,15 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def beg(self, ctx):
+        data = await self.bot.inventories.find(ctx.author.id)
         user = ctx.author
-        begembed = discord.Embed(title=f":dollar:  Someone is begging for money!", description=f"I think {user.name} should do their job! If you don't have a job, do `,jobs` for more infortmation!", color=discord.Color.gold())
-        return await ctx.send(embed=begembed)
+        if data["job"] is None:
+            nojob = discord.Embed(title=f":dollar:  {user.name} is begging for money!", description=f"I think {user.name} should get a job! Do `,jobs` for more infortmation!", color=discord.Color.gold())
+            await ctx.send(embed=nojob)
+        else:
+            hasjob = discord.Embed(title=f":dollar:  {user.name} is begging for money!", description=f"I think {user.name} should do their job! Do `,work` to work!", color=discord.Color.gold())
+            await ctx.send(embed=hasjob)
+
 
 def setup(bot):
     bot.add_cog(Misc(bot))
