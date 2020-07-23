@@ -24,7 +24,17 @@ class Robbery(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['rob', 'burgle'])
-    async def robbery(self, ctx, user: discord.Member, tool=None, item=None):
+    async def robbery(self, ctx, user, tool=None, item=None):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         if user.id == ctx.author.id:
             return await ctx.send("You can't rob yourself.")
 
