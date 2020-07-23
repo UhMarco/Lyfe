@@ -22,66 +22,61 @@ class Banking(commands.Cog):
         if data is None:
             return await ctx.send("You haven't initialized your inventory yet.")
 
+        price = {"small": 500, "medium": 1000, "large": 3000, "massive": 10000}
+        stores = {"small": 5000, "medium":1000 , "large": 10000, "massive": 50000}
+
         inventory = data["inventory"]
         bal = data["balance"]
         banklimit = data["banklimit"]
 
         item = item.replace(" ", "").lower()
         if item == "smallbankslot" or item == "smallbank":
-            cost = 150
-            if banklimit != 0:
-                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
+            cost = price["small"]
 
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
-            banklimit = 500
+            banklimit += stores["small"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
             embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Small Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
 
         elif item == "mediumbankslot" or item == "mediumbank":
-            cost = 300
-            if banklimit > 500:
-                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
+            cost = price["medium"]
 
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
-            banklimit = 1000
+            banklimit += stores["medium"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
             embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Medium Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
 
         elif item == "largebankslot" or item == "largebank":
-            cost = 2500
-            if banklimit > 1000:
-                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
+            cost = price["large"]
 
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
-            banklimit = 10000
+            banklimit += stores["large"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
             embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Large Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
             await ctx.send(embed=embed)
 
         elif item == "massivebankslot" or item == "massivebank":
-            cost = 10000
-            if banklimit > 10000:
-                return await ctx.send("A bank slot of greater or equal value has already been purchased.")
+            cost = price["massive"]
 
             if bal < cost:
                 return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
 
             bal -= cost
-            banklimit = 50000
+            banklimit += stores["massive"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
             embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Massive Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
@@ -89,10 +84,10 @@ class Banking(commands.Cog):
 
         else:
             entries = [
-                ["Small Bank Slot", "$150", "$500", f"{self.bot.prefix}bank small bank slot"],
-                ["Medium Bank Slot", "$300", "$1,000", f"{self.bot.prefix}bank medium bank slot"],
-                ["Large Bank Slot", "$2,500", "$10,000", f"{self.bot.prefix}bank large bank slot"],
-                ["Massive Bank Slot", "$10,000", "$50,000", f"{self.bot.prefix}bank massive bank slot"]
+                ["Small Bank Slot", "${:,}".format(price["small"]), "${:,}".format(stores["small"]), f"{self.bot.prefix}bank small bank slot"],
+                ["Medium Bank Slot", "${:,}".format(price["medium"]), "${:,}".format(stores["medium"]), f"{self.bot.prefix}bank medium bank slot"],
+                ["Large Bank Slot", "${:,}".format(price["large"]), "${:,}".format(stores["large"]), f"{self.bot.prefix}bank large bank slot"],
+                ["Massive Bank Slot", "${:,}".format(price["massive"]), "${:,}".format(stores["massive"]), f"{self.bot.prefix}bank massive bank slot"]
             ]
 
             output = ("Protect your money from thieves\n```" + tabulate(entries, tablefmt="simple", headers=["Item", "Cost", "Stores", "Command"]) + "```")
