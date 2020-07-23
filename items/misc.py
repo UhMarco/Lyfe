@@ -317,5 +317,16 @@ class Misc(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}find (item)`")
 
 
+    # --------------------------------------------------------------------------
+    # ----- COMMAND: -----------------------------------------------------------
+    # ----- BEG ----------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    @commands.command()
+    async def beg(self, ctx):
+        user = ctx.author
+        begembed = discord.Embed(title=f":dollar:  Someone is begging for money!", description=f"I think {user.name} should get a job! Do `,jobs` for more information about that!", color=discord.Color.gold())
+        return await ctx.send(embed=begembed)
+
 def setup(bot):
     bot.add_cog(Misc(bot))
