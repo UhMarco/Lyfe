@@ -74,7 +74,7 @@ class Locking(commands.Cog):
     @lock.error
     async def lock_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send("Usage: `.lock (item)`")
+            return await ctx.send(f"Usage: `{self.bot.prefix}lock (item)`")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
@@ -133,7 +133,7 @@ class Locking(commands.Cog):
     @unlock.error
     async def unlock_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send("Usage: `.unlock (item)`")
+            return await ctx.send(f"Usage: `{self.bot.prefix}unlock (item)`")
 
 
 def setup(bot):
