@@ -89,6 +89,7 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}frogtop`", value="See who has the most frogs", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}avatar [user]`", value="Display the avatar of a user in full size", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}8ball (question)`", value="8ball lol", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}beg`", value="Shows a special message to help you earn money", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "pshop" or section.lower() == "pshops":
