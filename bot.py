@@ -87,4 +87,4 @@ if __name__ == '__main__':
         if file.endswith(".py") and not file.startswith("_"):
             bot.load_extension(f"items.{file[:-3]}")
 
-bot.run(bot.config_token)
+bot.run(bot.config_token, reconnect=True)
