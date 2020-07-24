@@ -57,7 +57,17 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['si', 'gi'])
     @commands.is_owner()
-    async def spawnitem(self, ctx, item, user: discord.Member):
+    async def spawnitem(self, ctx, item, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         data = await self.bot.inventories.find(user.id)
         if data is None:
             return await ctx.send("This user hasn't initialized their inventory yet.")
@@ -89,9 +99,7 @@ class Admin(commands.Cog):
 
     @spawnitem.error
     async def spawnitem_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"Usage: `{self.bot.prefix}spawnitem (item) (user)`")
-        elif isinstance(error, commands.BadArgument):
+        if isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
     # --------------------------------------------------------------------------
@@ -101,7 +109,17 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['ri'])
     @commands.is_owner()
-    async def removeitem(self, ctx, item, user: discord.Member):
+    async def removeitem(self, ctx, item, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         data = await self.bot.inventories.find(user.id)
         if data is None:
             return await ctx.send("This user hasn't initialized their inventory yet.")
@@ -133,16 +151,24 @@ class Admin(commands.Cog):
 
     @removeitem.error
     async def removeitem_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"Usage: `{self.bot.prefix}removeitem (item) (user)`")
-        elif isinstance(error, commands.BadArgument):
+        if isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
     # Abandoning format for this as I honestly can't be bothered
 
     @commands.command(aliases=['sb'])
     @commands.is_owner()
-    async def setbalance(self, ctx, user: discord.Member, amount="n"):
+    async def setbalance(self, ctx, user, amount="n"):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         data = await self.bot.inventories.find(user.id)
         if data is None:
             return await ctx.send("This user hasn't initialized their inventory yet.")
@@ -157,7 +183,17 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['reset'])
     @commands.is_owner()
-    async def resetdata(self, ctx, user: discord.Member):
+    async def resetdata(self, ctx, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         await ctx.send("Please confirm.")
         def check(m):
             return m.channel == ctx.channel and m.author == ctx.author
@@ -185,9 +221,7 @@ class Admin(commands.Cog):
 
     @resetdata.error
     async def resetdata_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"Usage: `{self.bot.prefix}resetdata (user)`")
-        elif isinstance(error, commands.BadArgument):
+        if isinstance(error, commands.BadArgument):
             return await ctx.send("I couldn't find that user.")
 
 

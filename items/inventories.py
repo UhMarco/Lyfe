@@ -139,7 +139,17 @@ class Inventories(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['bal'])
-    async def balance(self, ctx, user: discord.Member):
+    async def balance(self, ctx, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         data = await self.bot.inventories.find(user.id)
 
         if data is None:
@@ -152,7 +162,7 @@ class Inventories(commands.Cog):
 
     @balance.error
     async def balance_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument):
+        if isinstance(error, commands.MissingRequiredArgument):
             data = await self.bot.inventories.find(ctx.author.id)
 
             if data is None:

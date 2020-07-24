@@ -83,7 +83,17 @@ class Misc(commands.Cog):
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
 
     @commands.command()
-    async def avatar(self, ctx, user:discord.Member):
+    async def avatar(self, ctx, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         embed = discord.Embed(title=f"**{user.name}'s** Avatar", color=discord.Color.dark_blue())
         embed.set_image(url=user.avatar_url)
         await ctx.send(embed=embed)
@@ -94,8 +104,6 @@ class Misc(commands.Cog):
             embed = discord.Embed(title=f"**{ctx.author.name}'s** Avatar", color=discord.Color.dark_blue())
             embed.set_image(url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
 
     @commands.command(name="8ball")
     async def _8Ball(self, ctx, *, question=None):
