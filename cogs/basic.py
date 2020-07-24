@@ -6,6 +6,13 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
+
 class Basic(commands.Cog):
 
     def __init__(self, bot):
@@ -32,7 +39,7 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def blacklist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
@@ -70,7 +77,7 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def unblacklist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
@@ -105,7 +112,7 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def whitelist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
@@ -140,7 +147,7 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def unwhitelist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
@@ -175,7 +182,7 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['disconnect', 'stop', 's'])
-    @commands.is_owner()
+    @is_dev()
     async def logout(self, ctx):
         if self.bot.maintenancemode:
             return

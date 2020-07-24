@@ -6,6 +6,13 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
+
 class Admin(commands.Cog):
 
     def __init__(self, bot):
@@ -21,7 +28,7 @@ class Admin(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['li', 'listitems', 'il'])
-    @commands.is_owner()
+    @is_dev()
     async def itemlist(self, ctx, page=1):
         items = await self.bot.items.find("items")
         items = items["items"]
@@ -56,7 +63,7 @@ class Admin(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['si', 'gi'])
-    @commands.is_owner()
+    @is_dev()
     async def spawnitem(self, ctx, item, user):
         if len(ctx.message.mentions) == 0:
             try:
@@ -99,8 +106,8 @@ class Admin(commands.Cog):
 
     @spawnitem.error
     async def spawnitem_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}spawnitem (item) (user)`")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
@@ -108,7 +115,7 @@ class Admin(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['ri'])
-    @commands.is_owner()
+    @is_dev()
     async def removeitem(self, ctx, item, user):
         if len(ctx.message.mentions) == 0:
             try:
@@ -151,13 +158,13 @@ class Admin(commands.Cog):
 
     @removeitem.error
     async def removeitem_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}removeitem (item) (user)`")
 
     # Abandoning format for this as I honestly can't be bothered
 
     @commands.command(aliases=['sb'])
-    @commands.is_owner()
+    @is_dev()
     async def setbalance(self, ctx, user, amount="n"):
         if len(ctx.message.mentions) == 0:
             try:
@@ -182,7 +189,7 @@ class Admin(commands.Cog):
         await ctx.send(f"Set **{user.name}'s** balance to $`{amount}`")
 
     @commands.command(aliases=['reset'])
-    @commands.is_owner()
+    @is_dev()
     async def resetdata(self, ctx, user):
         if len(ctx.message.mentions) == 0:
             try:
@@ -221,8 +228,8 @@ class Admin(commands.Cog):
 
     @resetdata.error
     async def resetdata_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}reset (user)`")
 
 
 def setup(bot):

@@ -7,6 +7,13 @@ cwd = str(cwd)
 import utils.json
 from tabulate import tabulate
 
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
+
 class Banking(commands.Cog):
 
     def __init__(self, bot):
