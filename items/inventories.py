@@ -226,7 +226,7 @@ class Inventories(commands.Cog):
                 else:
                     entries.append([places[count], user, "${:,}".format(int(item["balance"] + item["bankbalance"]))])
             except (KeyError, IndexError):
-                entries.append([places[count], "None", 0])
+                entries.append([places[count], "Invalid User", 0])
             count += 1
             if count == 10:
                 break

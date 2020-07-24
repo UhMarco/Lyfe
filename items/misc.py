@@ -116,7 +116,7 @@ class Misc(commands.Cog):
     @commands.command()
     async def frogtop(self, ctx):
         data = await self.bot.inventories.get_all()
-        first, second, third, fourth, fifth = {}, {}, {}, {}, {}
+
         all = {}
         for item in data:
             for i in item["inventory"]:
@@ -124,59 +124,22 @@ class Misc(commands.Cog):
                     all[item["_id"]] = i["quantity"]
 
         all = sorted(all.items(), key=lambda k: k[1], reverse=True)
-
-        try:
-            first_user = self.bot.get_user(int(all[0][0]))
-        except IndexError:
-            first_user = None
-
-        try:
-            second_user = self.bot.get_user(int(all[1][0]))
-        except IndexError:
-            second_user = None
-
-        try:
-            third_user = self.bot.get_user(int(all[2][0]))
-        except IndexError:
-            third_user = None
-
-        try:
-            fourth_user = self.bot.get_user(int(all[3][0]))
-        except IndexError:
-            fourth_user = None
-
-        try:
-            fifth_user = self.bot.get_user(int(all[4][0]))
-        except IndexError:
-            fifth_user = None
-
+        places = ['1st', '2nd', '3rd', '4th', '5th']
         entries = []
 
-        try:
-            entries.append(["1st", first_user, all[0][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["2nd", second_user, all[1][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["3rd", third_user, all[2][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["4th", fourth_user, all[3][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["5th", fifth_user, all[4][1]])
-        except IndexError:
-            pass
-
+        count = 0
+        for i in all:
+            try:
+                user = self.bot.get_user(int(all[count][0]))
+                if user is None:
+                    count -= 1
+                else:
+                    entries.append([places[count], user, all[count][1]])
+            except (KeyError, IndexError):
+                entries.append([places[count], "Invalid User", 0])
+            count += 1
+            if count == 5:
+                break
 
         output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Amount"]) + "```")
         embed = discord.Embed(title=":frog: Most Frogs:", description=output, color=discord.Color.gold())
