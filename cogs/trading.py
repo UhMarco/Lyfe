@@ -1,10 +1,18 @@
-import discord, platform, datetime, logging, random, asyncio
+import discord, platform, datetime, logging, random, os
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
+from tabulate import tabulate
+
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
 
 class Trading(commands.Cog):
 
@@ -14,101 +22,6 @@ class Trading(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("+ Trading Cog loaded")
-
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- GIVE ---------------------------------------------------------------
-    # --------------------------------------------------------------------------
-
-    @commands.command(aliases=['donate'])
-    async def give(self, ctx, user, item, quantity="1"):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
-
-        mydata = await self.bot.inventories.find(ctx.author.id)
-        if mydata is None:
-            return await ctx.send("You haven't initialized your inventory yet.")
-        myinventory = mydata["inventory"]
-
-        items = await self.bot.items.find("items")
-        items = items["items"]
-
-        yourdata = await self.bot.inventories.find(user.id)
-        if yourdata is None:
-            return await ctx.send("This user hasn't initialized their inventory yet.")
-        yourinventory = yourdata["inventory"]
-
-        try:
-            quantity = int(quantity)
-        except Exception:
-            return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
-
-        if user.id == ctx.author.id:
-            return await ctx.send("That's pointless.")
-
-        if item.lower() not in items:
-            return await ctx.send("That item does not exist.")
-        item = items[item.lower()]
-        name, emoji = item["name"], item["emoji"]
-
-        change = False
-        for i in myinventory:
-            if i["name"] == name:
-                if i["quantity"] < quantity:
-                    return await ctx.send(f"You don't have that many **{emoji} {name}s**")
-
-                if i["locked"]:
-                    return await ctx.send(f"**{emoji} {name}** is locked in your inventory.")
-
-                if i["quantity"] == 1:
-                    myinventory.remove(i)
-                    change = True
-                else:
-                    i["quantity"] -= quantity
-                    if i["quantity"] == 0:
-                        myinventory.remove(i)
-                    change = True
-
-        if not change:
-            return await ctx.send(f"You don't have a **{emoji} {name}**.")
-
-        given = False
-        for i in yourinventory:
-            if i["name"] == name:
-                i["quantity"] += quantity
-                given = True
-
-        if not given:
-            del item["emoji"], item["value"], item["description"], item["rarity"]
-            item["locked"] = False
-            item["quantity"] = quantity
-            yourinventory.append(item)
-
-        if quantity == 1:
-            await ctx.send(f"**{emoji} {name}** transferred from **{ctx.author.name}** to **{user.name}**.")
-        else:
-            await ctx.send(f"**{quantity} {emoji} {name}s** transferred from **{ctx.author.name}** to **{user.name}**.")
-        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": myinventory})
-        await self.bot.inventories.upsert({"_id": user.id, "inventory": yourinventory})
-
-    # ----- ERROR HANDLER ------------------------------------------------------
-
-    @give.error
-    async def give_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}give (user) (item) [quantity]`")
-
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- TRADE --------------------------------------------------------------
-    # --------------------------------------------------------------------------
 
     @commands.command()
     async def trade(self, ctx, user, item1, item2):
@@ -196,17 +109,11 @@ class Trading(commands.Cog):
         dict["completed"] = True
         await self.bot.trades.upsert({"_id": int(tradeid), "trade": dict})
 
-    # ----- ERROR HANDLER ------------------------------------------------------
-
     @trade.error
     async def trade_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}trade (user) (owned item) (desired item)`")
 
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- TRADE --------------------------------------------------------------
-    # --------------------------------------------------------------------------
 
     @commands.command()
     async def taccept(self, ctx, tradeid):
@@ -329,8 +236,6 @@ class Trading(commands.Cog):
         except Forbidden:
             pass
 
-    # ----- ERROR HANDLER ------------------------------------------------------
-
     @taccept.error
     async def taccept_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
@@ -338,10 +243,6 @@ class Trading(commands.Cog):
         elif isinstance(error, commands.CommandInvokeError):
             return await ctx.send("That is not a valid TradeID.")
 
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- TCANCEL ------------------------------------------------------------
-    # --------------------------------------------------------------------------
 
     @commands.command()
     async def tcancel(self, ctx, tradeid):
@@ -363,65 +264,12 @@ class Trading(commands.Cog):
         embed = discord.Embed(title=f"Trade {tradeid} Cancelled", color=discord.Color.gold())
         await ctx.send(embed=embed)
 
-    # ----- ERROR HANDLER ------------------------------------------------------
-
     @tcancel.error
     async def tcancel_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}tradecancel (tradeid)`")
         elif isinstance(error, commands.CommandInvokeError):
             return await ctx.send("That is not a valid TradeID.")
-
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- PAY ----------------------------------------------------------------
-    # --------------------------------------------------------------------------
-
-    @commands.command()
-    async def pay(self, ctx, user, amount=None):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
-
-        if user == ctx.author:
-            return await ctx.send("That's pointless.")
-
-        try:
-            amount = int(amount)
-        except Exception:
-            return await ctx.send(f"Enter a valid amount. Usage: `{self.bot.prefix}pay (user) (amount)`")
-
-        author_data = await self.bot.inventories.find(ctx.author.id)
-        if author_data is None:
-            return await ctx.send("You haven't initialized your inventory yet.")
-        author_balance = int(author_data["balance"])
-        if amount > author_balance:
-            return await ctx.send(f"Insufficient funds, you only have $`{author_balance}`")
-
-        user_data = await self.bot.inventories.find(user.id)
-        if user_data is None:
-            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
-        user_balance = int(user_data["balance"])
-
-        author_balance -= amount
-        user_balance += amount
-        await ctx.send(f"Paid **{user.name}** $`{amount}`")
-        await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": author_balance})
-        await self.bot.inventories.upsert({"_id": user.id, "balance": user_balance})
-
-    # ----- ERROR HANDLER ------------------------------------------------------
-
-    @pay.error
-    async def pay_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}pay (user) (amount)`")
-
 
 def setup(bot):
     bot.add_cog(Trading(bot))

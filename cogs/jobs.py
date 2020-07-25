@@ -1,16 +1,18 @@
-import discord, platform, logging, random, time, re, asyncio
+import discord, platform, datetime, logging, random, os
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
-from datetime import datetime, timedelta
+from tabulate import tabulate
 
-# Custom cooldown variables
-on_cooldown = {}
-last_command = {}
-cooldown = {"fastfoodworker": 600, "janitor": 1800, "mage": 3600}
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
 
 class Jobs(commands.Cog):
 
@@ -20,8 +22,6 @@ class Jobs(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("+ Jobs Cog loaded")
-
-    # Abandoning formatting for this as I honestly can't be bothered
 
     @commands.command(aliases=['job'])
     async def jobs(self, ctx):
@@ -303,6 +303,17 @@ class Jobs(commands.Cog):
     async def work_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
             return await ctx.send("You just did that.")
+
+    @commands.command()
+    async def beg(self, ctx):
+        data = await self.bot.inventories.find(ctx.author.id)
+        user = ctx.author
+        if data["job"] is None:
+            nojob = discord.Embed(title=f":dollar:  {user.name} is begging for money!", description=f"I think {user.name} should get a job! Do `,jobs` for more infortmation!", color=discord.Color.gold())
+            await ctx.send(embed=nojob)
+        else:
+            hasjob = discord.Embed(title=f":dollar:  {user.name} is begging for money!", description=f"I think {user.name} should do their job! Do `,work` to work!", color=discord.Color.gold())
+            await ctx.send(embed=hasjob)
 
 def setup(bot):
     bot.add_cog(Jobs(bot))

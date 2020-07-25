@@ -1,4 +1,4 @@
-import discord, platform, datetime, logging, random
+import discord, platform, datetime, logging, random, os
 from discord.ext import commands
 import platform, datetime
 from pathlib import Path
@@ -7,21 +7,21 @@ cwd = str(cwd)
 import utils.json
 from tabulate import tabulate
 
-robberytools = ['gun', 'hammer', 'knife']
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
 
-class Robbery(commands.Cog):
+class Crime(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("+ Robbery Cog loaded")
-
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- ROBBERY ------------------------------------------------------------
-    # --------------------------------------------------------------------------
+        print("+ Crime Cog loaded")
 
     @commands.command(aliases=['rob', 'burgle'])
     async def robbery(self, ctx, user, tool=None, item=None):
@@ -158,8 +158,6 @@ class Robbery(commands.Cog):
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": myinventory})
         await self.bot.inventories.upsert({"_id": user.id, "inventory": yourinventory})
 
-    # ----- ERROR HANDLER ------------------------------------------------------
-
     @robbery.error
     async def robbery_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
@@ -187,78 +185,6 @@ class Robbery(commands.Cog):
             embed.add_field(name="Usage:", value=f"`{self.bot.prefix}robbery (victim) (tool) (item)`", inline=False)
             return await ctx.send(embed=embed)
 
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- DYNAMITE -----------------------------------------------------------
-    # --------------------------------------------------------------------------
-
-    @commands.command()
-    async def dynamite(self, ctx, user):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
-
-        author_data = await self.bot.inventories.find(ctx.author.id)
-        if author_data is None:
-            return await ctx.send("You haven't initialized your inventory yet.")
-
-        if user == ctx.author:
-            return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
-
-        user_data = await self.bot.inventories.find(user.id)
-        if user_data is None:
-            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
-
-        inventory = author_data["inventory"]
-        balance = user_data["balance"]
-        bankbal = user_data["bankbalance"]
-
-        if balance < 10:
-            if bankbal == 0:
-                return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
-            else:
-                return await ctx.send(f"**{user.name}** doesn't have enough money in their inventory for you to blow up. Maybe check their bank account :smirk:")
-
-        found = False
-        for i in inventory:
-            if i["name"] == "Dynamite":
-                if i["quantity"] != 1:
-                    i["quantity"] -= 1
-                else:
-                    inventory.remove(i)
-                found = True
-
-        if not found:
-            return await ctx.send("You don't have a :firecracker: **Dynamite** in your inventory.")
-
-        originalbalance = balance
-        balance = int(balance * 0.8)
-
-        await ctx.send(f":firecracker: You blew up $`{int(originalbalance * 0.2)}` of **{user.name}'s** money.")
-        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-        await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
-        try:
-            await user.send(f"**{ctx.author}** blew up $`{int(originalbalance * 0.2)}` of your money!")
-        except discord.Forbidden:
-            pass
-
-    # ----- ERROR HANDLER ------------------------------------------------------
-
-    @dynamite.error
-    async def dynamite_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}dynamite (user)`")
-
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- STEAL --------------------------------------------------------------
-    # --------------------------------------------------------------------------
 
     @commands.command(aliases=["mug"])
     async def steal(self, ctx, user, amount=1):
@@ -368,18 +294,73 @@ class Robbery(commands.Cog):
         except discord.Forbidden:
             pass
 
-    # ----- ERROR HANDLER ------------------------------------------------------
-
     @steal.error
     async def steal_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}steal (user) (amount)`")
 
 
-    # --------------------------------------------------------------------------
-    # ----- COMMAND: -----------------------------------------------------------
-    # ----- BOMB ---------------------------------------------------------------
-    # --------------------------------------------------------------------------
+    @commands.command()
+    async def dynamite(self, ctx, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        author_data = await self.bot.inventories.find(ctx.author.id)
+        if author_data is None:
+            return await ctx.send("You haven't initialized your inventory yet.")
+
+        if user == ctx.author:
+            return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
+
+        user_data = await self.bot.inventories.find(user.id)
+        if user_data is None:
+            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
+
+        inventory = author_data["inventory"]
+        balance = user_data["balance"]
+        bankbal = user_data["bankbalance"]
+
+        if balance < 10:
+            if bankbal == 0:
+                return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
+            else:
+                return await ctx.send(f"**{user.name}** doesn't have enough money in their inventory for you to blow up. Maybe check their bank account :smirk:")
+
+        found = False
+        for i in inventory:
+            if i["name"] == "Dynamite":
+                if i["quantity"] != 1:
+                    i["quantity"] -= 1
+                else:
+                    inventory.remove(i)
+                found = True
+
+        if not found:
+            return await ctx.send("You don't have a :firecracker: **Dynamite** in your inventory.")
+
+        originalbalance = balance
+        balance = int(balance * 0.8)
+
+        await ctx.send(f":firecracker: You blew up $`{int(originalbalance * 0.2)}` of **{user.name}'s** money.")
+        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
+        await self.bot.inventories.upsert({"_id": user.id, "balance": balance})
+        try:
+            await user.send(f"**{ctx.author}** blew up $`{int(originalbalance * 0.2)}` of your money!")
+        except discord.Forbidden:
+            pass
+
+    @dynamite.error
+    async def dynamite_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}dynamite (user)`")
+
 
     @commands.command()
     async def bomb(self, ctx, user):
@@ -421,7 +402,7 @@ class Robbery(commands.Cog):
 
         if bankbal < 10:
             return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
-        
+
         originalbalance = bankbal
         bankbal = int(bankbal * 0.9)
 
@@ -433,12 +414,10 @@ class Robbery(commands.Cog):
         except discord.Forbidden:
             pass
 
-    # ----- ERROR HANDLER ------------------------------------------------------
-
     @bomb.error
     async def bomb_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}bomb (user)`")
 
 def setup(bot):
-    bot.add_cog(Robbery(bot))
+    bot.add_cog(Crime(bot))

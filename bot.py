@@ -30,7 +30,7 @@ async def on_ready():
     print(f"-----\n{bot.user.name} Online\n-----\nPrefix: {bot.prefix}\n-----")
     status = secret_file["status"]
     if status == "online":
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help | In {len(bot.guilds)} servers"))
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help in {len(bot.guilds)} servers"))
     elif status == "idle":
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"), status=discord.Status.idle)
     elif status == "streaming":
@@ -74,17 +74,9 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-@bot.command()
-async def ping(ctx):
-    await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
-
 if __name__ == '__main__':
     for file in os.listdir(cwd+"/cogs"):
         if file.endswith(".py") and not file.startswith("_"):
             bot.load_extension(f"cogs.{file[:-3]}")
-
-    for file in os.listdir(cwd+"/items"):
-        if file.endswith(".py") and not file.startswith("_"):
-            bot.load_extension(f"items.{file[:-3]}")
 
 bot.run(bot.config_token, reconnect=True)
