@@ -233,7 +233,7 @@ class Economy(commands.Cog):
 
 
     @commands.command()
-    @commands.cooldown(2, 10, commands.BucketType.user)
+    @commands.cooldown(2, 5, commands.BucketType.user)
     async def buy(self, ctx, item, quantity="1"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
@@ -466,7 +466,7 @@ class Economy(commands.Cog):
 
 
     @commands.command()
-    @commands.cooldown(2, 10, commands.BucketType.user)
+    @commands.cooldown(2, 5, commands.BucketType.user)
     async def sell(self, ctx, item, quantity="1"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
