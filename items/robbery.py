@@ -407,9 +407,6 @@ class Robbery(commands.Cog):
         inventory = author_data["inventory"]
         bankbal = user_data["bankbalance"]
 
-        if bankbal < 10:
-            return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
-
         found = False
         for i in inventory:
             if i["name"] == "Bomb":
@@ -422,6 +419,9 @@ class Robbery(commands.Cog):
         if not found:
             return await ctx.send("You don't have a :bomb: **Bomb** in your inventory.")
 
+        if bankbal < 10:
+            return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
+        
         originalbalance = bankbal
         bankbal = int(bankbal * 0.9)
 
