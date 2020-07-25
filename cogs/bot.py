@@ -1,4 +1,4 @@
-import discord, platform, logging, random, os
+import discord, platform, logging, random, os, asyncio
 from discord.ext import commands
 import platform
 from pathlib import Path

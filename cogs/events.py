@@ -1,4 +1,4 @@
-import discord, random, datetime
+import discord, random, datetime, asyncio
 from discord.ext import commands
 
 class Events(commands.Cog):
