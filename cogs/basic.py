@@ -43,7 +43,7 @@ class Basic(commands.Cog):
     async def blacklist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
-                member = self.bot.get_user(int(user))
+                member = self.bot.get_user(int(member))
                 if member is None:
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
@@ -81,7 +81,7 @@ class Basic(commands.Cog):
     async def unblacklist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
-                member = self.bot.get_user(int(user))
+                member = self.bot.get_user(int(member))
                 if member is None:
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
@@ -116,7 +116,7 @@ class Basic(commands.Cog):
     async def whitelist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
-                member = self.bot.get_user(int(user))
+                member = self.bot.get_user(int(member))
                 if member is None:
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
@@ -151,7 +151,7 @@ class Basic(commands.Cog):
     async def unwhitelist(self, ctx, member):
         if len(ctx.message.mentions) == 0:
             try:
-                member = self.bot.get_user(int(user))
+                member = self.bot.get_user(int(member))
                 if member is None:
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
