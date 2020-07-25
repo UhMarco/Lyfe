@@ -15,6 +15,8 @@ def is_dev():
             return ctx.author.id
     return commands.check(predictate)
 
+robberytools = ["knife", "gun", "hammer"]
+
 class Crime(commands.Cog):
 
     def __init__(self, bot):
