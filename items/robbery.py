@@ -49,7 +49,7 @@ class Robbery(commands.Cog):
         items = await self.bot.items.find("items")
         items = items["items"]
         if not item:
-            return await ctx.send("Usage: `.robbery [victim] [tool] [item]`")
+            return await ctx.send(f"Usage: `{self.bot.prefix}robbery (victim) (tool) (item)`")
         if item.lower() not in items:
             return await ctx.send("That item does not exist.")
         if tool.lower() not in items:
@@ -184,7 +184,7 @@ class Robbery(commands.Cog):
 
             if empty:
                 embed.add_field(name="You don't have any robbery tools!", value="`No robbing for you :(`", inline=False)
-            embed.add_field(name="Usage:", value=f"`{self.bot.prefix}robbery [victim] [tool] [item]`", inline=False)
+            embed.add_field(name="Usage:", value=f"`{self.bot.prefix}robbery (victim) (tool) (item)`", inline=False)
             return await ctx.send(embed=embed)
 
     # --------------------------------------------------------------------------

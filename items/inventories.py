@@ -201,7 +201,7 @@ class Inventories(commands.Cog):
     @iteminfo.error
     async def iteminfo_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"Usage: `{self.bot.prefix} iteminfo (item)`")
+            await ctx.send(f"Usage: `{self.bot.prefix}iteminfo (item)`")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------

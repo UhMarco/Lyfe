@@ -103,7 +103,7 @@ class Trading(commands.Cog):
     @give.error
     async def give_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}give (user) (item)`")
+            return await ctx.send(f"Usage: `{self.bot.prefix}give (user) (item) [quantity]`")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
