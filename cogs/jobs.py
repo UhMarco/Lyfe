@@ -1,4 +1,4 @@
-import discord, platform, logging, random, os
+import discord, platform, logging, random, os, time
 from discord.ext import commands
 import platform
 from pathlib import Path
@@ -6,7 +6,7 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 from tabulate import tabulate
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def is_dev():
     def predictate(ctx):
@@ -14,6 +14,11 @@ def is_dev():
         if any(ctx.author.id for ele in devs):
             return ctx.author.id
     return commands.check(predictate)
+
+# Custom cooldown variables
+on_cooldown = {}
+last_command = {}
+cooldown = {"fastfoodworker": 600, "janitor": 1800, "mage": 3600}
 
 class Jobs(commands.Cog):
 
