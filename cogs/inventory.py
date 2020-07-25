@@ -45,6 +45,8 @@ class Inventory(commands.Cog):
 
         try:
             page = int(page)
+            if page < 1:
+                page = 1
         except Exception:
             return await ctx.send("Not a valid page number.")
 
