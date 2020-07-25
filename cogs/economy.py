@@ -138,6 +138,8 @@ class Economy(commands.Cog):
         elif game.replace(" ", "").lower() == "number" or game.replace(" ", "").lower() == "number guess":
             try:
                 amount = int(amount)
+                if amount <= 0:
+                    return await ctx.send("Please enter a valid amount.")
             except Exception:
                 return await ctx.send("Enter a valid amount.")
 
@@ -188,6 +190,8 @@ class Economy(commands.Cog):
         elif game.replace(" ", "").lower() == "coinflip" or game.replace(" ", "").lower() == "coin" or game.replace(" ", "").lower() == "flip":
             try:
                 amount = int(amount)
+                if amount <= 0:
+                    return await ctx.send("Please enter a valid amount.")
             except Exception:
                 return await ctx.send(f"Usage: `{self.bot.prefix}gamble coinflip (amount)`")
 
@@ -237,6 +241,8 @@ class Economy(commands.Cog):
 
         try:
             quantity = int(quantity)
+            if quantity <= 0:
+                return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
         except Exception:
             return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
@@ -468,6 +474,8 @@ class Economy(commands.Cog):
 
         try:
             quantity = int(quantity)
+            if quantity <= 0:
+                return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
         except Exception:
             return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
@@ -546,6 +554,8 @@ class Economy(commands.Cog):
 
         try:
             quantity = int(quantity)
+            if quantity <= 0:
+                return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
         except Exception:
             return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
@@ -620,6 +630,8 @@ class Economy(commands.Cog):
 
         try:
             amount = int(amount)
+            if amount <= 0:
+                return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
         except Exception:
             return await ctx.send(f"Enter a valid amount. Usage: `{self.bot.prefix}pay (user) (amount)`")
 
@@ -671,6 +683,8 @@ class Economy(commands.Cog):
                 if cq2 is None:
                     cq2 = 1
                 quantity = int(cq2)
+                if quantity <= 0:
+                    return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
             except Exception:
                 return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
@@ -1010,6 +1024,8 @@ class Economy(commands.Cog):
     async def deposit(self, ctx, amount="null"):
         try:
             amount = int(amount)
+            if amount <= 0:
+                return await ctx.send("No.")
         except Exception:
             amount.lower()
             if amount == "all":
@@ -1060,6 +1076,8 @@ class Economy(commands.Cog):
     async def withdraw(self, ctx, amount="null"):
         try:
             amount = int(amount)
+            if amount <= 0:
+                return await ctx.send("No.")
         except Exception:
             amount.lower()
             if amount == "all":

@@ -60,11 +60,11 @@ class Events(commands.Cog):
                 except Exception:
                     pass
             else:
+                self.bot.important_errors += 1
                 embed = discord.Embed(title=":x:  **I found an error!**", description="If you wish, you may [report it](https://discord.gg/zAZ3vKJ).", color=discord.Color.red())
                 await ctx.send(embed=embed)
                 print(f"\n===============================================\nCOMMAND INVOKE ERROR\nReplied in ctx\nError: {error}\n{ctx.author}: {ctx.message.content}\n===============================================\nRAISING ERROR:")
                 raise error
-                self.bot.important_errors += 1
             return
 
         elif isinstance(error, commands.UnexpectedQuoteError) or isinstance(error, commands.ExpectedClosingQuoteError):

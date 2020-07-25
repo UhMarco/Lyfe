@@ -215,6 +215,8 @@ class Crime(commands.Cog):
         bankbal = user_data["bankbalance"]
         try:
             amount = int(amount)
+            if amount <= 0:
+                return await ctx.send("Please enter a valid amount.")
         except ValueError:
             return await ctx.send("Please enter a valid amount.")
 
