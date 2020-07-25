@@ -96,7 +96,6 @@ class Shop(commands.Cog):
             ["Key", "$500", f"{self.bot.prefix}buy key"],
             ["Dynamite", "$1,000", f"{self.bot.prefix}buy dynamite"],
             ["Hammer", "$1,500", f"{self.bot.prefix}buy hammer"],
-            ["Fire", "$2,000", f"{self.bot.prefix}buy fire"],
             ["Lock", "$2,000", f"{self.bot.prefix}buy lock"]
         ]
 
@@ -275,35 +274,6 @@ class Shop(commands.Cog):
 
         elif item == "hammer" or item == "sledgehammer":
             item = items["hammer"]
-            name, emoji, cost = item["name"], item["emoji"], item["value"]
-
-            cost = int(cost * quantity)
-
-            if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
-
-            bal -= cost
-
-            for i in range(quantity):
-                given = False
-                for i in inventory:
-                    if i["name"] == name:
-                        i["quantity"] += 1
-                        given = True
-
-                if not given:
-                    del item["emoji"], item["value"], item["description"], item["rarity"]
-                    item["locked"] = False
-                    item["quantity"] = 1
-                    inventory.append(item)
-
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
-            await ctx.send(embed=embed)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
-
-        elif item == "fire" or item == "flame":
-            item = items["fire"]
             name, emoji, cost = item["name"], item["emoji"], item["value"]
 
             cost = int(cost * quantity)
