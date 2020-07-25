@@ -196,7 +196,7 @@ class Economy(commands.Cog):
                 return await ctx.send(f"Usage: `{self.bot.prefix}gamble coinflip (amount)`")
 
             if balance < amount:
-                return await ctx.send(f"Insufficient funds! You need at least $`{amount}` to do that")
+                return await ctx.send(f"Insufficient funds!")
 
             balance - amount
 
