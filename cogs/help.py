@@ -59,7 +59,7 @@ class Help(commands.Cog):
             return await ctx.send(embed=embed)
 
         elif section.lower() == "crime" or section.lower() == "robbery":
-            embed = discord.Embed(title=":bank: Banking Commands", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
+            embed = discord.Embed(title=":moneybag: Crime Commands", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="Crime command list")
             embed.add_field(name=f"`{self.bot.prefix}rob (user) (tool) (desired item)`", value="Rob another player of an item, requires a tool, leave blank to see owned tools", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}steal (user) (amount)`", value="Rob another player of money, requires a :gun: Gun, min=500 max=5000", inline=False)
