@@ -80,7 +80,7 @@ class Shop(commands.Cog):
     @sell.error
     async def sell_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"Usage: `{self.bot.prefix}sell (item)`")
+            await ctx.send(f"Usage: `{self.bot.prefix}sell (item) [quantity]`")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
@@ -338,7 +338,7 @@ class Shop(commands.Cog):
     @buy.error
     async def buy_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"Usage: `{self.bot.prefix}buy (item)`")
+            await ctx.send(f"Usage: `{self.bot.prefix}buy (item) [quantity]`")
 
 def setup(bot):
     bot.add_cog(Shop(bot))

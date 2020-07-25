@@ -30,7 +30,7 @@ async def on_ready():
     print(f"-----\n{bot.user.name} Online\n-----\nPrefix: {bot.prefix}\n-----")
     status = secret_file["status"]
     if status == "online":
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"))
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help | In {len(bot.guilds)} servers"))
     elif status == "idle":
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"), status=discord.Status.idle)
     elif status == "streaming":
@@ -87,4 +87,4 @@ if __name__ == '__main__':
         if file.endswith(".py") and not file.startswith("_"):
             bot.load_extension(f"items.{file[:-3]}")
 
-bot.run(bot.config_token)
+bot.run(bot.config_token, reconnect=True)

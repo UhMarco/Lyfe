@@ -83,7 +83,17 @@ class Misc(commands.Cog):
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
 
     @commands.command()
-    async def avatar(self, ctx, user:discord.Member):
+    async def avatar(self, ctx, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         embed = discord.Embed(title=f"**{user.name}'s** Avatar", color=discord.Color.dark_blue())
         embed.set_image(url=user.avatar_url)
         await ctx.send(embed=embed)
@@ -94,8 +104,6 @@ class Misc(commands.Cog):
             embed = discord.Embed(title=f"**{ctx.author.name}'s** Avatar", color=discord.Color.dark_blue())
             embed.set_image(url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
 
     @commands.command(name="8ball")
     async def _8Ball(self, ctx, *, question=None):
@@ -108,7 +116,7 @@ class Misc(commands.Cog):
     @commands.command()
     async def frogtop(self, ctx):
         data = await self.bot.inventories.get_all()
-        first, second, third, fourth, fifth = {}, {}, {}, {}, {}
+
         all = {}
         for item in data:
             for i in item["inventory"]:
@@ -116,59 +124,22 @@ class Misc(commands.Cog):
                     all[item["_id"]] = i["quantity"]
 
         all = sorted(all.items(), key=lambda k: k[1], reverse=True)
-
-        try:
-            first_user = self.bot.get_user(int(all[0][0]))
-        except IndexError:
-            first_user = None
-
-        try:
-            second_user = self.bot.get_user(int(all[1][0]))
-        except IndexError:
-            second_user = None
-
-        try:
-            third_user = self.bot.get_user(int(all[2][0]))
-        except IndexError:
-            third_user = None
-
-        try:
-            fourth_user = self.bot.get_user(int(all[3][0]))
-        except IndexError:
-            fourth_user = None
-
-        try:
-            fifth_user = self.bot.get_user(int(all[4][0]))
-        except IndexError:
-            fifth_user = None
-
+        places = ['1st', '2nd', '3rd', '4th', '5th']
         entries = []
 
-        try:
-            entries.append(["1st", first_user, all[0][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["2nd", second_user, all[1][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["3rd", third_user, all[2][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["4th", fourth_user, all[3][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["5th", fifth_user, all[4][1]])
-        except IndexError:
-            pass
-
+        count = 0
+        for i in all:
+            try:
+                user = self.bot.get_user(int(all[count][0]))
+                if user is None:
+                    count -= 1
+                else:
+                    entries.append([places[count], user, all[count][1]])
+            except (KeyError, IndexError):
+                entries.append([places[count], "Invalid User", 0])
+            count += 1
+            if count == 5:
+                break
 
         output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Amount"]) + "```")
         embed = discord.Embed(title=":frog: Most Frogs:", description=output, color=discord.Color.gold())
@@ -180,83 +151,6 @@ class Misc(commands.Cog):
         self.bot.important_errors += 1
         embed = discord.Emebd(title=":x: Leaderboard Error", description="There was an error fetching infortmation. If you wish, you may [report this](https://discord.gg/zAZ3vKJ).")
         await ctx.send(embed=embed)
-
-    @commands.command()
-    async def edt(self, ctx):
-        data = await self.bot.inventories.get_all()
-        first, second, third, fourth, fifth = {}, {}, {}, {}, {}
-        all = {}
-        for item in data:
-            for i in item["inventory"]:
-                if i["name"] == "Evolved Dragon":
-                    all[item["_id"]] = i["quantity"]
-
-        all = sorted(all.items(), key=lambda k: k[1], reverse=True)
-
-        try:
-            first_user = self.bot.get_user(int(all[0][0]))
-        except IndexError:
-            first_user = None
-
-        try:
-            second_user = self.bot.get_user(int(all[1][0]))
-        except IndexError:
-            second_user = None
-
-        try:
-            third_user = self.bot.get_user(int(all[2][0]))
-        except IndexError:
-            third_user = None
-
-        try:
-            fourth_user = self.bot.get_user(int(all[3][0]))
-        except IndexError:
-            fourth_user = None
-
-        try:
-            fifth_user = self.bot.get_user(int(all[4][0]))
-        except IndexError:
-            fifth_user = None
-
-        entries = []
-
-        try:
-            entries.append(["1st", first_user, all[0][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["2nd", second_user, all[1][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["3rd", third_user, all[2][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["4th", fourth_user, all[3][1]])
-        except IndexError:
-            pass
-
-        try:
-            entries.append(["5th", fifth_user, all[4][1]])
-        except IndexError:
-            pass
-
-
-        output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Amount"]) + "```")
-        embed = discord.Embed(title="<:reddragon:733766679036952646> Most Evolved Dragons:", description=output, color=discord.Color.gold())
-        await ctx.send(embed=embed)
-
-    @edt.error
-    async def edt_error(self, ctx, error):
-        self.bot.errors += 1
-        self.bot.important_errors += 1
-        embed = discord.Emebd(title=":x: Leaderboard Error", description="There was an error fetching infortmation. If you wish, you may [report this](https://discord.gg/zAZ3vKJ).")
-        await ctx.send(embed=embed)
-
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------

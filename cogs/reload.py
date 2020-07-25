@@ -5,6 +5,13 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
+
 class Reload(commands.Cog):
 
     def __init__(self, bot):
@@ -15,7 +22,7 @@ class Reload(commands.Cog):
         print("- Reload Cog loaded")
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def load(self, ctx, module):
         if self.bot.maintenancemode:
             return
@@ -46,7 +53,7 @@ class Reload(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}load (module)`")
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def reload(self, ctx, module):
         if self.bot.maintenancemode:
             return
@@ -91,7 +98,7 @@ class Reload(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}reload (module/all)`")
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def unload(self, ctx, module):
         if self.bot.maintenancemode:
             return
@@ -124,7 +131,7 @@ class Reload(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}unload (module)`")
 
     @commands.command()
-    @commands.is_owner()
+    @is_dev()
     async def maintenance(self, ctx):
         self.bot.maintenancemode = not self.bot.maintenancemode
         await ctx.send(f"Maintenance-Mode set to **{self.bot.maintenancemode}**.")

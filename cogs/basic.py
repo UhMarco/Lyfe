@@ -6,6 +6,13 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 
+def is_dev():
+    def predictate(ctx):
+        devs = utils.json.read_json("devs")
+        if any(ctx.author.id for ele in devs):
+            return ctx.author.id
+    return commands.check(predictate)
+
 class Basic(commands.Cog):
 
     def __init__(self, bot):
@@ -32,8 +39,18 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
-    async def blacklist(self, ctx, member: discord.Member):
+    @is_dev()
+    async def blacklist(self, ctx, member):
+        if len(ctx.message.mentions) == 0:
+            try:
+                member = self.bot.get_user(int(member))
+                if member is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            member = ctx.message.mentions[0]
+
         if ctx.message.author.id == member.id:
             return await ctx.send("You can't blacklist yourself.")
 
@@ -51,9 +68,7 @@ class Basic(commands.Cog):
 
     @blacklist.error
     async def blacklist_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
-        elif isinstance(error, commands.MissingRequiredArgument):
+        if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}blacklist (user)`")
 
     # --------------------------------------------------------------------------
@@ -62,8 +77,18 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
-    async def unblacklist(self, ctx, member: discord.Member):
+    @is_dev()
+    async def unblacklist(self, ctx, member):
+        if len(ctx.message.mentions) == 0:
+            try:
+                member = self.bot.get_user(int(member))
+                if member is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            member = ctx.message.mentions[0]
+
         data = utils.json.read_json("blacklist")
 
         if member.id not in data["blacklistedUsers"]:
@@ -78,9 +103,7 @@ class Basic(commands.Cog):
 
     @unblacklist.error
     async def unblacklist_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
-        elif isinstance(error, commands.MissingRequiredArgument):
+        if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}unblacklist (user)`")
 
     # --------------------------------------------------------------------------
@@ -89,8 +112,18 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
-    async def whitelist(self, ctx, member: discord.Member):
+    @is_dev()
+    async def whitelist(self, ctx, member):
+        if len(ctx.message.mentions) == 0:
+            try:
+                member = self.bot.get_user(int(member))
+                if member is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            member = ctx.message.mentions[0]
+
         data = utils.json.read_json("whitelist")
 
         if member.id in data["whitelist"]:
@@ -105,9 +138,7 @@ class Basic(commands.Cog):
 
     @whitelist.error
     async def whitelist_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
-        elif isinstance(error, commands.MissingRequiredArgument):
+        if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}whitelist (user)`")
 
     # --------------------------------------------------------------------------
@@ -116,8 +147,18 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    @commands.is_owner()
-    async def unwhitelist(self, ctx, member: discord.Member):
+    @is_dev()
+    async def unwhitelist(self, ctx, member):
+        if len(ctx.message.mentions) == 0:
+            try:
+                member = self.bot.get_user(int(member))
+                if member is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            member = ctx.message.mentions[0]
+
         data = utils.json.read_json("whitelist")
 
         if member.id not in data["whitelist"]:
@@ -132,9 +173,7 @@ class Basic(commands.Cog):
 
     @unwhitelist.error
     async def unwhitelist_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
-        elif isinstance(error, commands.MissingRequiredArgument):
+        if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}whitelist (user)`")
 
     # --------------------------------------------------------------------------
@@ -143,7 +182,7 @@ class Basic(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['disconnect', 'stop', 's'])
-    @commands.is_owner()
+    @is_dev()
     async def logout(self, ctx):
         if self.bot.maintenancemode:
             return

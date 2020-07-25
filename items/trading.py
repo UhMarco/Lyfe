@@ -21,7 +21,17 @@ class Trading(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command(aliases=['donate'])
-    async def give(self, ctx, user: discord.Member, item, quantity="1"):
+    async def give(self, ctx, user, item, quantity="1"):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         mydata = await self.bot.inventories.find(ctx.author.id)
         if mydata is None:
             return await ctx.send("You haven't initialized your inventory yet.")
@@ -93,9 +103,7 @@ class Trading(commands.Cog):
     @give.error
     async def give_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}give (user) (item)`")
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
+            return await ctx.send(f"Usage: `{self.bot.prefix}give (user) (item) [quantity]`")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
@@ -103,7 +111,17 @@ class Trading(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    async def trade(self, ctx, user: discord.Member, item1, item2):
+    async def trade(self, ctx, user, item1, item2):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
         mydata = await self.bot.inventories.find(ctx.author.id)
         if mydata is None:
             return await ctx.send("You haven't initialized your inventory yet.")
@@ -184,8 +202,6 @@ class Trading(commands.Cog):
     async def trade_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}trade (user) (owned item) (desired item)`")
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
 
     # --------------------------------------------------------------------------
     # ----- COMMAND: -----------------------------------------------------------
@@ -362,7 +378,20 @@ class Trading(commands.Cog):
     # --------------------------------------------------------------------------
 
     @commands.command()
-    async def pay(self, ctx, user: discord.Member, amount=None):
+    async def pay(self, ctx, user, amount=None):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        if user == ctx.author:
+            return await ctx.send("That's pointless.")
+
         try:
             amount = int(amount)
         except Exception:
@@ -392,8 +421,6 @@ class Trading(commands.Cog):
     async def pay_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}pay (user) (amount)`")
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send("I couldn't find that user.")
 
 
 def setup(bot):
