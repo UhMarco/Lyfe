@@ -933,8 +933,8 @@ class Economy(commands.Cog):
         if data is None:
             return await ctx.send("You haven't initialized your inventory yet.")
 
-        price = {"small": 500, "medium": 1000, "large": 3000, "massive": 10000}
-        stores = {"small": 5000, "medium":1000 , "large": 10000, "massive": 50000}
+        price = {"small": 1250, "medium": 2500, "large": 5000, "massive": 10000}
+        stores = {"small": 2500, "medium":7500 , "large": 20000, "massive": 50000}
 
         inventory = data["inventory"]
         bal = data["balance"]
