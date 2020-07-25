@@ -188,6 +188,11 @@ class Admin(commands.Cog):
         await self.bot.inventories.upsert({"_id": user.id, "balance": amount})
         await ctx.send(f"Set **{user.name}'s** balance to $`{amount}`")
 
+    @setbalance.error
+    async def setbalance_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}setbalance (user) (amount)`")
+
     @commands.command(aliases=['reset'])
     @is_dev()
     async def resetdata(self, ctx, user):
