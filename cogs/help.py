@@ -104,6 +104,7 @@ class Help(commands.Cog):
         elif section.lower() == "leaderboards" or section.lower() == "leaders":
             embed = discord.Embed(title=":medal: Leaderboards", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="Leaderboards command list")
+            embed.add_field(name=f"`{self.bot.prefix}leaderboard`", value="Show the top 10 players with the highest total value", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}baltop`", value="Show the top 10 total balances", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}frogtop`", value="Show the top 5 frog owners", inline=False)
             return await ctx.send(embed=embed)
