@@ -93,7 +93,7 @@ class Research(commands.Cog):
                 break
 
         output = ("```" + tabulate(entries, tablefmt="simple", headers=["Player", "Amount", "User ID"]) + "```")
-        embed = discord.Embed(title=f"{emoji} Owners of {name}s:", description=output, color=discord.Color.gold())
+        embed = discord.Embed(title=f"{emoji} Owners of {name}:", description=output, color=discord.Color.gold())
         await ctx.send(embed=embed)
 
     @find.error
