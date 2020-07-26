@@ -242,8 +242,8 @@ class Crime(commands.Cog):
 
         random1 = random.randint(0, 100)
 
-        if amount > 5000:
-            return await ctx.send("Don't be so greedy! The maxmimum is $`5000`")
+        if amount > 7500:
+            return await ctx.send("Don't be so greedy! The maxmimum is $`7500`")
         if amount < 500:
             return await ctx.send("What's the point of that? The minimum is $`500`")
 
