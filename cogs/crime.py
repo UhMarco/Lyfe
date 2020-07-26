@@ -247,7 +247,7 @@ class Crime(commands.Cog):
         if amount < 500:
             return await ctx.send("What's the point of that? The minimum is $`500`")
 
-        threshold = float((amount - 500) * 0.0003)
+        threshold = float((amount - 500) * 0.011)
 
         if random1 > float(85 - threshold):
             failureReasons = utils.json.read_json("robbery")
