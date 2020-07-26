@@ -242,12 +242,12 @@ class Crime(commands.Cog):
 
         random1 = random.randint(0, 100)
 
-        if amount > 5000:
-            return await ctx.send("Don't be so greedy! The maxmimum is $`5000`")
+        if amount > 7500:
+            return await ctx.send("Don't be so greedy! The maxmimum is $`7500`")
         if amount < 500:
             return await ctx.send("What's the point of that? The minimum is $`500`")
 
-        threshold = float((amount - 500) * 0.0003)
+        threshold = float((amount - 500) * 0.011)
 
         if random1 > float(85 - threshold):
             failureReasons = utils.json.read_json("robbery")

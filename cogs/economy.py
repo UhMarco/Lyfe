@@ -233,7 +233,7 @@ class Economy(commands.Cog):
 
 
     @commands.command()
-    @commands.cooldown(2, 10, commands.BucketType.user)
+    @commands.cooldown(2, 5, commands.BucketType.user)
     async def buy(self, ctx, item, quantity="1"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
@@ -466,7 +466,7 @@ class Economy(commands.Cog):
 
 
     @commands.command()
-    @commands.cooldown(2, 10, commands.BucketType.user)
+    @commands.cooldown(2, 5, commands.BucketType.user)
     async def sell(self, ctx, item, quantity="1"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
@@ -720,7 +720,7 @@ class Economy(commands.Cog):
             shop.append({"item": name.replace(" ", "").lower(), "price": price, "stock": quantity})
             await self.bot.playershops.upsert({"_id": ctx.author.id, "shop": shop})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-            await ctx.send(f"Added **{quantity} {emoji} {name}s**  to your shop.")
+            await ctx.send(f"Added **{quantity} **x** {emoji} {name}**  to your shop.")
 
         # REMOVE
 
@@ -766,7 +766,7 @@ class Economy(commands.Cog):
                 item["quantity"] = quantity
                 inventory.append(item)
 
-            await ctx.send(f"Removed {emoji} **{name}** from your shop.")
+            await ctx.send(f"Removed **{quantity} **x** {emoji} {name}** from your shop.")
             if len(shop) == 0:
                 await self.bot.playershops.delete(ctx.author.id)
             else:

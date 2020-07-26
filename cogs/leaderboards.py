@@ -24,12 +24,46 @@ class Leaderboards(commands.Cog):
     async def on_ready(self):
         print("+ Leaderboards Cog loaded")
 
+    @commands.command(aliases=['leaderboards', 'lb'])
+    async def leaderboard(self, ctx):
+        data = await self.bot.inventories.get_all()
+        items = await self.bot.items.find("items")
+        items = items["items"]
+        all = []
+        for i in data:
+            inv = i["inventory"]
+            value = 0
+            for x in inv:
+                value += x["quantity"] * items[x["name"].replace(" ", "").lower()]["value"]
+            total = i["balance"] + i["bankbalance"] + value
+            all.append({"id": i['_id'], "total": total})
+
+        sort = sorted(all, key=lambda k: k['total'], reverse=True)
+        places = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th']
+        entries = []
+        count = 0
+        for i in sort:
+            try:
+                user = self.bot.get_user(i['id'])
+                if user is None:
+                    count -= 1
+                else:
+                    entries.append([places[count], user.name, f"${i['total']}"])
+            except (KeyError, IndexError):
+                entries.append([places[count], "Invalid User", f"${0}"])
+            count += 1
+            if count == 10:
+                break
+
+        output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Total Value"]) + "```")
+        embed = discord.Embed(title=":trophy:  Total Leaderboard:", description=output, color=discord.Color.gold())
+        await ctx.send(embed=embed)
+
     @commands.command(aliases=['balancetop'])
     async def baltop(self, ctx):
         data = await self.bot.inventories.get_all()
 
-        data = sorted(data, key=lambda k: k['balance'] + k['bankbalance'])
-        data.reverse()
+        data = sorted(data, key=lambda k: k['balance'] + k['bankbalance'], reverse=True)
         places = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th']
         entries = []
 

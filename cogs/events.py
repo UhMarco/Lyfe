@@ -1,5 +1,6 @@
 import discord, random, datetime, asyncio
 from discord.ext import commands
+import utils.json
 
 class Events(commands.Cog):
 
@@ -13,7 +14,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         print(f"JOINED {guild.name} - Owner: {guild.owner} - Members: {len(guild.members)} - Now in {len(self.bot.guilds)} guilds.")
-        secret_file = json.load(open(cwd+"/bot_config/secrets.json"))
+        secret_file = utils.json.load(open(cwd+"/bot_config/secrets.json"))
         status = secret_file["status"]
         if status == "online":
             await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {self.bot.prefix}help in {len(self.bot.guilds)} servers"))
@@ -21,7 +22,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         print(f"LEFT {guild.name} - Owner: {guild.owner} - Members: {len(guild.members)} - Now in {len(self.bot.guilds)} guilds.")
-        secret_file = json.load(open(cwd+"/bot_config/secrets.json"))
+        secret_file = utils.json.load(open(cwd+"/bot_config/secrets.json"))
         status = secret_file["status"]
         if status == "online":
             await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {self.bot.prefix}help in {len(self.bot.guilds)} servers"))
@@ -36,7 +37,7 @@ class Events(commands.Cog):
 
         # Error handling
         if isinstance(error, commands.CommandOnCooldown):
-            if ctx.message.content == f"{self.bot.prefix}claim" or ctx.message.content == f"{self.bot.prefix}daily" or ctx.message.content == f"{self.bot.prefix}work":
+            if f"{self.bot.prefix}claim" in ctx.message.content or f"{self.bot.prefix}daily" in ctx.message.content or f"{self.bot.prefix}work" in ctx.message.content:
                 return
             m, s = divmod(error.retry_after, 60)
             h, m = divmod(m, 60)
