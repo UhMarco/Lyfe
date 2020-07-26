@@ -92,7 +92,7 @@ class Inventory(commands.Cog):
                                 nutembed = discord.Embed(
                                     title=":peanuts: Peanut Allergy",
                                     description=f"""
-                                                Oh No! You had an allergic reaction to some peanuts in your inventory.\nYou had to pay `${money}` for treatment.
+                                                Oh no! You had an allergic reaction to some peanuts in your inventory.\nYou had to pay `${money}` for treatment.
                                                 """,
                                     color=discord.Color.red()
                                 )

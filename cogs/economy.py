@@ -102,9 +102,9 @@ class Economy(commands.Cog):
 
 
             randomrarity = random.randint(1, 100)
-            if 0 < randomrarity <= 30:
+            if 0 < randomrarity <= 50:
                 randomrarity = "common"
-            elif 30 < randomrarity <= 80:
+            elif 50 < randomrarity <= 80:
                 randomrarity = "uncommon"
             else:
                 randomrarity = "rare"

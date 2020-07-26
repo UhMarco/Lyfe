@@ -48,7 +48,7 @@ class Leaderboards(commands.Cog):
                 if user is None:
                     count -= 1
                 else:
-                    entries.append([places[count], user.name, f"${i['total']}"])
+                    entries.append([places[count], user.name, "${:,}".format(i["total"])])
             except (KeyError, IndexError):
                 entries.append([places[count], "Invalid User", f"${0}"])
             count += 1
