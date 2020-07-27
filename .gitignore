@@ -1,5 +1,5 @@
 /bot_config/secrets.json
-/bot_config/items.json
+/bot_config/blacklist.json
 /cogs/__pycache__/
 /items/__pycache__/
 /utils/__pycache__/
