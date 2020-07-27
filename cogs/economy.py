@@ -61,6 +61,7 @@ class Economy(commands.Cog):
 
 
     @commands.command(aliases=['gambling'])
+    @commands.cooldown(20, 3600, commands.BucketType.user)
     async def gamble(self, ctx, game=None, amount="n"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:

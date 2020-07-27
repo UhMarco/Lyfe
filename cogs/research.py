@@ -25,6 +25,7 @@ class Research(commands.Cog):
         print("+ Research Cog loaded")
 
     @commands.command(aliases=['ii', 'getinfo'])
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def iteminfo(self, ctx, *, item):
         item = item.replace(" ", "").lower()
         items = await self.bot.items.find("items")
@@ -49,6 +50,7 @@ class Research(commands.Cog):
 
 
     @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def find(self, ctx, *, item):
         data = await self.bot.inventories.get_all()
         first, second, third, fourth, fifth = {}, {}, {}, {}, {}
