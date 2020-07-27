@@ -25,6 +25,7 @@ class Leaderboards(commands.Cog):
         print("+ Leaderboards Cog loaded")
 
     @commands.command(aliases=['leaderboards', 'lb'])
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def leaderboard(self, ctx):
         data = await self.bot.inventories.get_all()
         items = await self.bot.items.find("items")
@@ -60,6 +61,7 @@ class Leaderboards(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['balancetop'])
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def baltop(self, ctx):
         data = await self.bot.inventories.get_all()
 
@@ -94,6 +96,7 @@ class Leaderboards(commands.Cog):
 
 
     @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def frogtop(self, ctx):
         data = await self.bot.inventories.get_all()
 
