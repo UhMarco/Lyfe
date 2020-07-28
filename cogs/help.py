@@ -22,7 +22,7 @@ class Help(commands.Cog):
     # ----- ITEM LIST ----------------------------------------------------------
     # --------------------------------------------------------------------------
 
-    @commands.command()
+    @commands.command(aliases=['commands'])
     async def help(self, ctx, section=None):
         if section is None:
             pass
@@ -87,7 +87,7 @@ class Help(commands.Cog):
             return await ctx.send(embed=embed)
 
         elif section.lower() == "research":
-            embed = discord.Embed(title=":moneybag: Robbery Commands", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
+            embed = discord.Embed(title=":microscope: Research Commands", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="Research command list")
             embed.add_field(name=f"`{self.bot.prefix}iteminfo (item)`", value="Get information about an item", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}find (item)`", value="Find 5 random users and their IDs who own an item", inline=False)
