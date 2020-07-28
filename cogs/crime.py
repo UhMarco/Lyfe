@@ -426,5 +426,58 @@ class Crime(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}bomb (user)`")
 
+
+    @commands.command()
+    @commands.cooldown(1, 900, commands.BucketType.user)
+    async def axe(self, ctx, user, item):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        author_data = await self.bot.inventories.find(ctx.author.id)
+        author_inventory = author_data["inventory"]
+        found = False
+        for i in author_inventory:
+            if i["name"] == "Axe":
+                if i["quantity"] == 1:
+                    author_inventory.remove(i)
+                else:
+                    i["quantity"] -= 1
+                found = True
+
+        if not found:
+            return await ctx.send("An :axe: **Axe** is required for this.")
+
+        items = await self.bot.items.find("items")
+        items = items["items"]
+        if item.replace(" ", "").lower() not in items:
+            return await ctx.send("That item does not exist.")
+        item = items[item.replace(" ", "").lower()]
+        name, emoji = item["name"], item["emoji"]
+
+        user_data = await self.bot.inventories.find(user.id)
+        user_inventory = user_data["inventory"]
+        found = False
+        for i in user_inventory:
+            if i["name"] == name:
+                if i["locked"]:
+                    i["locked"] = False
+                else:
+                    return await ctx.send(f"{emoji} **{name}** is not locked in **{user.name}'s** inventory.'")
+                found = True
+
+        if not found:
+            return await ctx.send(f"**{user.name}** doesn't have {emoji} **{name}** in their inventory.")
+
+        await ctx.send(f"Unlocked {emoji} **{name}** in **{user.name}'s** inventory.'")
+        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": author_inventory})
+        await self.bot.inventories.upsert({"_id": user.id, "inventory": user_inventory})
+
 def setup(bot):
     bot.add_cog(Crime(bot))
