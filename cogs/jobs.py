@@ -264,7 +264,7 @@ class Jobs(commands.Cog):
                 # WORK
                 spells = utils.json.read_json("spells")
                 spell = random.choice(spells["spells"])
-                embed = discord.Embed(title=f"Type the spell `{spell}`", description="You will be rewarded 20% more if you spell it within 3 seconds.", color=discord.Color.greyple())
+                embed = discord.Embed(title=f"Type the spell `{spell}`", description="You will be rewarded 20% more if you spell it within 5 seconds.", color=discord.Color.greyple())
                 await ctx.send(embed=embed)
                 timer = time.time()
 
@@ -273,10 +273,10 @@ class Jobs(commands.Cog):
                 try:
                     message = await self.bot.wait_for('message', check=check, timeout=20)
 
-                    if message.content.replace(" ", "").lower() == spell.replace(" ", ""):
-                        if time.time() - timer <= 3:
+                    if spell.replace(" ", "") in message.content.replace(" ", "").lower():
+                        if time.time() - timer <= 5:
                             pay = int(pay * 1.2)
-                            await ctx.send(f"**Correct!** It took you less than 3 seconds to type the spell so you were paid extra and got $`{pay}`")
+                            await ctx.send(f"**Correct!** You were paid $`{pay}`")
                         else:
                             await ctx.send(f"**Correct!** You were paid $`{pay}`")
                     else:
