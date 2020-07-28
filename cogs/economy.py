@@ -144,8 +144,11 @@ class Economy(commands.Cog):
             except Exception:
                 return await ctx.send("Enter a valid amount.")
 
+            if amount > 10000:
+                return await ctx.send("The limit it $`10000`")
+
             if amount > balance:
-                return await ctx.send("You don't have that much money!")
+                return await ctx.send(f"Insufficient funds!")
 
             def check(m):
                 return m.channel == ctx.channel and m.author == ctx.author
@@ -195,6 +198,9 @@ class Economy(commands.Cog):
                     return await ctx.send("Please enter a valid amount.")
             except Exception:
                 return await ctx.send(f"Usage: `{self.bot.prefix}gamble coinflip (amount)`")
+
+            if amount > 10000:
+                return await ctx.send("The limit it $`10000`")
 
             if balance < amount:
                 return await ctx.send(f"Insufficient funds!")
