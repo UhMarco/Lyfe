@@ -26,6 +26,7 @@ class Inventory(commands.Cog):
 
 
     @commands.command(aliases=['inv', 'inventorysee', 'invsee'])
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def inventory(self, ctx, user=None, page="1"):
         if len(ctx.message.mentions) == 0:
             if user is None:

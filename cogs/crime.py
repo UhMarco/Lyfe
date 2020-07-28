@@ -306,6 +306,7 @@ class Crime(commands.Cog):
 
 
     @commands.command()
+    @commands.cooldown(1, 900, commands.BucketType.user)
     async def dynamite(self, ctx, user):
         if len(ctx.message.mentions) == 0:
             try:
@@ -368,6 +369,7 @@ class Crime(commands.Cog):
 
 
     @commands.command()
+    @commands.cooldown(1, 900, commands.BucketType.user)
     async def bomb(self, ctx, user):
         if len(ctx.message.mentions) == 0:
             try:
