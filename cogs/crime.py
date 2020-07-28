@@ -312,21 +312,26 @@ class Crime(commands.Cog):
             try:
                 user = self.bot.get_user(int(user))
                 if user is None:
+                    ctx.command.reset_cooldown(ctx)
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
+                ctx.command.reset_cooldown(ctx)
                 return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
         else:
             user = ctx.message.mentions[0]
 
         author_data = await self.bot.inventories.find(ctx.author.id)
         if author_data is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
 
         if user == ctx.author:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
 
         user_data = await self.bot.inventories.find(user.id)
         if user_data is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
 
         inventory = author_data["inventory"]
@@ -335,8 +340,10 @@ class Crime(commands.Cog):
 
         if balance < 10:
             if bankbal == 0:
+                ctx.command.reset_cooldown(ctx)
                 return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
             else:
+                ctx.command.reset_cooldown(ctx)
                 return await ctx.send(f"**{user.name}** doesn't have enough money in their inventory for you to blow up. Maybe check their bank account :smirk:")
 
         found = False
@@ -349,6 +356,7 @@ class Crime(commands.Cog):
                 found = True
 
         if not found:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You don't have a :firecracker: **Dynamite** in your inventory.")
 
         originalbalance = balance
@@ -365,6 +373,7 @@ class Crime(commands.Cog):
     @dynamite.error
     async def dynamite_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"Usage: `{self.bot.prefix}dynamite (user)`")
 
 
@@ -375,21 +384,26 @@ class Crime(commands.Cog):
             try:
                 user = self.bot.get_user(int(user))
                 if user is None:
+                    ctx.command.reset_cooldown(ctx)
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
+                ctx.command.reset_cooldown(ctx)
                 return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
         else:
             user = ctx.message.mentions[0]
 
         author_data = await self.bot.inventories.find(ctx.author.id)
         if author_data is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
 
         if user == ctx.author:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
 
         user_data = await self.bot.inventories.find(user.id)
         if user_data is None:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
 
         inventory = author_data["inventory"]
@@ -405,9 +419,11 @@ class Crime(commands.Cog):
                 found = True
 
         if not found:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("You don't have a :bomb: **Bomb** in your inventory.")
 
         if bankbal < 10:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
 
         originalbalance = bankbal
@@ -424,7 +440,84 @@ class Crime(commands.Cog):
     @bomb.error
     async def bomb_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"Usage: `{self.bot.prefix}bomb (user)`")
+
+
+    @commands.command()
+    @commands.cooldown(1, 900, commands.BucketType.user)
+    async def axe(self, ctx, user, *, item):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    ctx.command.reset_cooldown(ctx)
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                ctx.command.reset_cooldown(ctx)
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        if ctx.author == user:
+            return await ctx.send("That's rather a waste.")
+
+        author_data = await self.bot.inventories.find(ctx.author.id)
+        author_inventory = author_data["inventory"]
+        found = False
+        for i in author_inventory:
+            if i["name"] == "Axe":
+                if i["quantity"] == 1:
+                    author_inventory.remove(i)
+                else:
+                    i["quantity"] -= 1
+                found = True
+
+        if not found:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send("An :axe: **Axe** is required for this.")
+
+        items = await self.bot.items.find("items")
+        items = items["items"]
+        if item.replace(" ", "").lower() not in items:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send("That item does not exist.")
+        item = items[item.replace(" ", "").lower()]
+        name, emoji = item["name"], item["emoji"]
+
+        user_data = await self.bot.inventories.find(user.id)
+        user_inventory = user_data["inventory"]
+        found = False
+        for i in user_inventory:
+            if i["name"] == name:
+                if i["locked"]:
+                    i["locked"] = False
+                else:
+                    ctx.command.reset_cooldown(ctx)
+                    return await ctx.send(f"{emoji} **{name}** is not locked in **{user.name}'s** inventory.'")
+                found = True
+
+        if not found:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send(f"**{user.name}** doesn't have {emoji} **{name}** in their inventory.")
+
+        if random.randint(0, 100) > 25:
+            await self.bot.inventories.upsert({"_id": user.id, "inventory": user_inventory})
+            await ctx.send(f"Unlocked {emoji} **{name}** in **{user.name}'s** inventory.")
+            try:
+                await user.send(f"Heads up! **{ctx.author.name}** unlocked {emoji} **{name}** in your inventory.")
+            except discord.Forbidden:
+                pass
+        else:
+            await ctx.send(f"Unlocking failed! You lost your {emoji} **{name}**")
+
+        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": author_inventory})
+
+    @axe.error
+    async def axe_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send(f"Usage: `{self.bot.prefix}axe (user) (item)`")
 
 def setup(bot):
     bot.add_cog(Crime(bot))

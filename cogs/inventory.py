@@ -156,8 +156,10 @@ class Inventory(commands.Cog):
             randomrarity = "common"
         elif 50 < randomrarity <= 80:
             randomrarity = "uncommon"
-        else:
+        elif 80 < randomrarity <= 99:
             randomrarity = "rare"
+        else:
+            randomrarity = "ultra rare"
 
         while True:
             item = items[random.choice(list(items))]
@@ -213,8 +215,10 @@ class Inventory(commands.Cog):
             randomrarity = "common"
         elif 30 < randomrarity <= 80:
             randomrarity = "uncommon"
-        else:
+        elif 80 < randomrarity <= 95:
             randomrarity = "rare"
+        else:
+            randomrarity = "ultra rare"
 
         while True:
             item = items[random.choice(list(items))]
