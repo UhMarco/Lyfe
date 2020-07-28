@@ -459,6 +459,9 @@ class Crime(commands.Cog):
         else:
             user = ctx.message.mentions[0]
 
+        if ctx.author == user:
+            return await ctx.send("That's rather a waste.")
+
         author_data = await self.bot.inventories.find(ctx.author.id)
         author_inventory = author_data["inventory"]
         found = False
