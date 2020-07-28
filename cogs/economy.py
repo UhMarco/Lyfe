@@ -886,6 +886,12 @@ class Economy(commands.Cog):
                 await self.bot.playershops.upsert({"_id": user.id, "shop": shop})
             await ctx.send(embed=embed)
 
+            embed = discord.Embed(title=f"**{ctx.author}** bought from your shop!", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney gained: $`{price * quantity}`", color=discord.Color.gold())
+            embed.set_footer(text=f"ID: {ctx.author.id}")
+            try:
+                await user.send(embed=embed)
+            except discord.Forbidden:
+                pass
 
         # SPECIFIC
 
