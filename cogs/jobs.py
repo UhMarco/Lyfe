@@ -8,13 +8,6 @@ import utils.json
 from tabulate import tabulate
 from datetime import datetime, timedelta
 
-def is_dev():
-    def predictate(ctx):
-        devs = utils.json.read_json("devs")
-        if any(ctx.author.id for ele in devs):
-            return ctx.author.id
-    return commands.check(predictate)
-
 # Custom cooldown variables
 on_cooldown = {}
 last_command = {}

@@ -8,13 +8,6 @@ import utils.json
 from tabulate import tabulate
 from datetime import datetime, timedelta
 
-def is_dev():
-    def predictate(ctx):
-        devs = utils.json.read_json("devs")
-        if any(ctx.author.id for ele in devs):
-            return ctx.author.id
-    return commands.check(predictate)
-
 class Inventory(commands.Cog):
 
     def __init__(self, bot):
@@ -140,7 +133,6 @@ class Inventory(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(1, 3600, commands.BucketType.user)
     async def claim(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
@@ -162,7 +154,9 @@ class Inventory(commands.Cog):
                     await ctx.send(f':mailbox_with_no_mail: You must wait **{int(m)} minutes and {int(s)} seconds** to claim again.')
                 else:
                     await ctx.send(f':mailbox_with_no_mail: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to claim again.')
+
                 return
+
         except (KeyError, IndexError):
             await self.bot.cooldowns.upsert({"_id": ctx.author.id, "claim": datetime.now()})
 
@@ -250,7 +244,6 @@ class Inventory(commands.Cog):
             min = int(85 / a * (a - 1 / (a ** (streak / 7 - 8 / 7))))
         except ZeroDivisionError:
             min = 0
-        print(streak, min)
         randomrarity = random.randint(min, 100)
 
         if 0 < randomrarity <= 30:
