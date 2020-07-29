@@ -275,6 +275,7 @@ class Admin(commands.Cog):
         self.bot.blacklisted_users.append(member.id)
         utils.json.write_json(data, "blacklist")
         await ctx.send(f"Blacklisted **{member.name}**.")
+        print(f"{ctx.author} blacklisted {member}")
 
     @blacklist.error
     async def blacklist_error(self, ctx, error):
@@ -304,6 +305,7 @@ class Admin(commands.Cog):
         self.bot.blacklisted_users.remove(member.id)
         utils.json.write_json(data, "blacklist")
         await ctx.send(f"Unblacklisted **{member.name}**.")
+        print(f"{ctx.author} unblacklisted {member}")
 
 
     @unblacklist.error
