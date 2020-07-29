@@ -250,7 +250,6 @@ class Inventory(commands.Cog):
             min = int(85 / a * (a - 1 / (a ** (streak / 7 - 8 / 7))))
         except ZeroDivisionError:
             min = 0
-        print(streak, min)
         randomrarity = random.randint(min, 100)
 
         if 0 < randomrarity <= 30:
