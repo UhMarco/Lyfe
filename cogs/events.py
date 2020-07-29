@@ -31,7 +31,7 @@ class Events(commands.Cog):
 
         # Error handling
         if isinstance(error, commands.CommandOnCooldown):
-            if f"{self.bot.prefix}claim" in ctx.message.content or f"{self.bot.prefix}daily" in ctx.message.content or f"{self.bot.prefix}work" in ctx.message.content:
+            if f"{self.bot.prefix}claim" in ctx.message.content or f"{self.bot.prefix}work" in ctx.message.content:
                 return
             m, s = divmod(error.retry_after, 60)
             h, m = divmod(m, 60)
