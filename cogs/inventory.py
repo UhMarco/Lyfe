@@ -207,7 +207,7 @@ class Inventory(commands.Cog):
         streak = 1
         try:
             cooldowns = await self.bot.cooldowns.find(ctx.author.id)
-            if cooldowns is None or cooldowns["daily"] < datetime.now() - timedelta(daily=1):
+            if cooldowns is None or cooldowns["daily"] < datetime.now() - timedelta(days=1):
                 await self.bot.cooldowns.upsert({"_id": ctx.author.id, "daily": datetime.now()})
                 if cooldowns != None: # If it's not the first time
                     if not cooldowns["daily"] < datetime.now() - timedelta(days=2): # If it hasn't been more than 2 days
