@@ -21,6 +21,7 @@ bot.blacklisted_users = []
 bot.upsince = time.time()
 bot.maintenancemode = False
 bot.whitelisted = []
+bot.lockdown = False
 
 bot.errors = 0
 bot.important_errors = 0
@@ -55,6 +56,10 @@ async def on_ready():
 async def on_message(message):
     # Ignore bots
     if message.author.id == bot.user.id or message.author.bot:
+        return
+
+    # Lockdown system
+    if bot.lockdown and message.author.id not in json.load(open(cwd+"/bot_config/devs.json")):
         return
 
     # Blacklist system
