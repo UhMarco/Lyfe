@@ -133,7 +133,6 @@ class Inventory(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(1, 3600, commands.BucketType.user)
     async def claim(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
@@ -155,7 +154,9 @@ class Inventory(commands.Cog):
                     await ctx.send(f':mailbox_with_no_mail: You must wait **{int(m)} minutes and {int(s)} seconds** to claim again.')
                 else:
                     await ctx.send(f':mailbox_with_no_mail: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to claim again.')
+
                 return
+
         except (KeyError, IndexError):
             await self.bot.cooldowns.upsert({"_id": ctx.author.id, "claim": datetime.now()})
 
