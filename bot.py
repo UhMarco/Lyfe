@@ -30,9 +30,9 @@ async def on_ready():
     print(f"-----\n{bot.user.name} Online\n-----\nPrefix: {bot.prefix}\n-----")
     status = secret_file["status"]
     if status == "online":
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help in {len(bot.guilds)} servers"))
+        await bot.change_presence(activity=discord.Game(name=f"{bot.prefix}help in {len(bot.guilds)} servers"))
     elif status == "idle":
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"out for {bot.prefix}help"), status=discord.Status.idle)
+        await bot.change_presence(activity=discord.Game(name=f"{bot.prefix}help in {len(bot.guilds)} servers"), status=discord.Status.idle)
     elif status == "streaming":
         await bot.change_presence(activity=discord.Streaming(name=f"{bot.prefix}help", url="https://twitch.tv/discord"))
 
@@ -48,6 +48,7 @@ async def on_ready():
     bot.items = Document(bot.db, "items")
     bot.trades = Document(bot.db, "trades")
     bot.playershops = Document(bot.db, "playershops")
+    bot.cooldowns = Document(bot.db, "cooldowns")
     print("Initialized database\n-----")
 
 @bot.event
