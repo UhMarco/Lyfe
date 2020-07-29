@@ -6,7 +6,7 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 from tabulate import tabulate
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def is_dev():
     def predictate(ctx):
@@ -199,12 +199,28 @@ class Inventory(commands.Cog):
 
 
     @commands.command()
-    @commands.cooldown(1, 86400, commands.BucketType.user)
     async def daily(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
+
+        check = await self.bot.daily.find(ctx.author.id)
+        if check is None or check["value"] < datetime.now() - timedelta(days=1):
+            await self.bot.daily.upsert({"_id": ctx.author.id, "value": datetime.now()})
+            await self.bot.daily.upsert({"_id": ctx.author.id, "previous": check["value"]})
+        else:
+            difference = datetime.now() - check["value"]
+            retry_after = 86400 - difference.total_seconds()
+            m, s = divmod(retry_after, 60)
+            h, m = divmod(m, 60)
+            if int(h) == 0 and int(m) == 0:
+                await ctx.send(f':mailbox_with_no_mail: You must wait **{int(s)} seconds** to claim again.')
+            elif int(h) == 0 and int(m) != 0:
+                await ctx.send(f':mailbox_with_no_mail: You must wait **{int(m)} minutes and {int(s)} seconds** to claim again.')
+            else:
+                await ctx.send(f':mailbox_with_no_mail: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to claim again.')
+            return
 
         inventory = data["inventory"]
         items = await self.bot.items.find("items")
@@ -247,19 +263,6 @@ class Inventory(commands.Cog):
         await ctx.send(f":mailbox_with_mail: You got **{emoji} {name}** and $`{amount}`")
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
-
-    @daily.error
-    async def daily_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            m, s = divmod(error.retry_after, 60)
-            h, m = divmod(m, 60)
-            if int(h) == 0 and int(m) == 0:
-                await ctx.send(f':mailbox_with_no_mail: You must wait **{int(s)} seconds** to claim again.')
-            elif int(h) == 0 and int(m) != 0:
-                await ctx.send(f':mailbox_with_no_mail: You must wait **{int(m)} minutes and {int(s)} seconds** to claim again.')
-            else:
-                await ctx.send(f':mailbox_with_no_mail: You must wait **{int(h)} hours, {int(m)} minutes and {int(s)} seconds** to claim again.')
-            return
 
     @commands.command()
     async def lock(self, ctx, item):
