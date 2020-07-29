@@ -10,7 +10,7 @@ from tabulate import tabulate
 def is_dev():
     def predictate(ctx):
         devs = utils.json.read_json("devs")
-        if any(ctx.author.id for ele in devs):
+        if ctx.author.id in devs:
             return ctx.author.id
     return commands.check(predictate)
 
