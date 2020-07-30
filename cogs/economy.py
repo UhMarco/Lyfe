@@ -685,6 +685,8 @@ class Economy(commands.Cog):
                 quantity = int(cq2)
                 if quantity <= 0:
                     return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
+                if quantity > 15000:
+                    return await ctx.send("The limit is $`15000`")
             except Exception:
                 return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
