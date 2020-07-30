@@ -69,11 +69,8 @@ class Bot(commands.Cog):
             description=f"""
                 Uptime: `{uptime}`
                 Running: `python {platform.python_version()}`, `d.py {discord.__version__}`
-                Servers: `{len(self.bot.guilds)}`\n
-                <:github:731220198539133040> [Github](https://github.com/UhMarco)
-                <:trello:731219464758231080> [Trello](https://trello.com/b/vY8Vx2PW/lyfe-bot)
-                :mailbox_with_mail: [Bot Invite](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)
-                <:discord:733776804904697886> [Lyfé Server](https://discord.gg/zAZ3vKJ)
+                Servers: `{len(self.bot.guilds)}`
+                Invite: `{self.bot.prefix}invite`
                 """,
             color=discord.Color.purple()
         )
