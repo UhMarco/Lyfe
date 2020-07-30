@@ -113,6 +113,7 @@ class Help(commands.Cog):
         elif section.lower() == "bot":
             embed = discord.Embed(title=":robot: Bot", color=discord.Color.purple())
             embed.set_footer(text="Bot command list")
+            embed.add_field(name=f"`{self.bot.prefix}info`", value="See bot info", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}diagnose`", value="See which modules are online and check for errors", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}ping`", value="Pong!", inline=False)
             return await ctx.send(embed=embed)
