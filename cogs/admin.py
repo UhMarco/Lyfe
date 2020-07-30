@@ -33,6 +33,15 @@ class Admin(commands.Cog):
             pass
         print("+ Admin Cog loaded")
 
+    @commands.command()
+    @is_dev()
+    async def lockdown(self, ctx):
+        self.bot.lockdown = not self.bot.lockdown
+        if self.bot.lockdown:
+            await ctx.send("Lockdown initiated.")
+        else:
+            await ctx.send("Lockdown lifted.")
+
     @commands.command(aliases=['disconnect', 'stop', 's'])
     @is_dev()
     async def logout(self, ctx):
