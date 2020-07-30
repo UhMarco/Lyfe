@@ -52,10 +52,7 @@ class Economy(commands.Cog):
 
         embed = discord.Embed(
                 title=":moneybag: **Balance**",
-                description="""
-                :dollar: **{}**'s balance is $`{:,}`
-                :bank: $`{:,}`/`{:,}` is stored in {} bank
-                """.format(user.name, balance, bankbalance, banklimit, a),
+                description=":dollar: **{}**'s balance is $`{:,}`\n:bank: $`{:,}`/`{:,}` is stored in {} bank".format(user.name, balance, bankbalance, banklimit, a),
                 color=color
             )
         return await ctx.send(embed=embed)
