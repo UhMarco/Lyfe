@@ -454,5 +454,39 @@ class Admin(commands.Cog):
         self.bot.maintenancemode = not self.bot.maintenancemode
         await ctx.send(f"Maintenance-Mode set to **{self.bot.maintenancemode}**.")
 
+
+    @commands.command()
+    @is_dev()
+    async def addbeta(self, ctx, user):
+        await ctx.send("Please confirm.")
+        def check(m):
+            return m.channel == ctx.channel and m.author == ctx.author
+        message = await self.bot.wait_for('message', check=check)
+        if message.content.lower() == "confirm" or message.content.lower() == "yes":
+            pass
+        else:
+            return await ctx.send("Aborted.")
+            
+        if user == "all":
+            data = await self.bot.inventories.get_all()
+            for i in data:
+                await self.bot.inventories.upsert({"_id": i["_id"], "beta": True})
+            return await ctx.send("All current players now have beta.")
+
+        elif len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        if await self.bot.inventories.find(user.id) is None:
+            return await ctx.send("Inv not init.")
+        await self.bot.inventories.upsert({"_id": user.id, "beta": True})
+        await ctx.send(f"**{user.name}** given beta.")
+
 def setup(bot):
     bot.add_cog(Admin(bot))

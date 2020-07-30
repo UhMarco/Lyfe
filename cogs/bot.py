@@ -1,4 +1,4 @@
-import discord, platform, logging, random, os, asyncio
+import discord, platform, logging, random, os, asyncio, time
 from discord.ext import commands
 import platform
 from pathlib import Path
@@ -54,35 +54,28 @@ class Bot(commands.Cog):
 
         embed = discord.Embed(title="Diagnosis", description=f"**Extensions:**\n{message.join(modules)}\n**Errors since startup:** `{self.bot.important_errors}/{self.bot.errors}`", color=discord.Color.blue())
         await ctx.send(embed=embed)
+    @commands.command(aliases=['stats'])
+    async def info(self,ctx):
+        m, s = divmod(time.time() - self.bot.upsince, 60)
+        h, m = divmod(m, 60)
+        if int(h) == 0 and int(m) == 0:
+            uptime = f"{int(s)} seconds"
+        elif int(h) == 0 and int(m) != 0:
+            uptime = f"{int(m)} minutes and {int(s)} seconds"
+        else:
+            uptime = f"{int(h)} hours, {int(m)} minutes and {int(s)} seconds"
+        embed = discord.Embed(
+            title=":robot: Bot Info",
+            description=f"""
+                Uptime: `{uptime}`
+                Running: `python {platform.python_version()}`, `d.py {discord.__version__}`
+                Servers: `{len(self.bot.guilds)}`
+                Invite: `{self.bot.prefix}invite`
+                """,
+            color=discord.Color.purple()
+        )
+        embed.set_footer(text="Built by NotStealthy#0001, Spook#4177 and hypews#2401")
+        return await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Bot(bot))
-
-
-#elif section.lower() == "bot":
-#    m, s = divmod(time.time() - self.bot.upsince, 60)
-#    h, m = divmod(m, 60)
-#    if int(h) == 0 and int(m) == 0:
-#        uptime = f"{int(s)} seconds"
-#    elif int(h) == 0 and int(m) != 0:
-#        uptime = f"{int(m)} minutes and {int(s)} seconds"
-#    else:
-#        uptime = f"{int(h)} hours, {int(m)} minutes and {int(s)} seconds"
-#
-#    embed = discord.Embed(
-#        title=":robot: Bot Info",
-#        description=f"""
-#                    I need a head of marketing for a description lol
-#                    Lyfé is a discord bot to bring some fun to your server with a unique inventory system and interactions with others\n
-#                    Uptime: `{uptime}`
-#                    Running: `python {platform.python_version()}`, `dpy {discord.__version__}`
-#                    Servers: `{len(self.bot.guilds)}`\n
-#                    <:github:731220198539133040> [Github](https://github.com/UhMarco)
-#                    <:trello:731219464758231080> [Trello](https://trello.com/b/vY8Vx2PW/lyfe-bot)
-#                    :mailbox_with_mail: [Bot Invite](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)
-#                    <:discord:733776804904697886> [Lyfé Server](https://discord.gg/zAZ3vKJ)
-#                    """,
-#        color=discord.Color.purple()
-#    )
-#    embed.set_footer(text="Built by NotStealthy#0001, Spook#4177 and hypews#2401")
-#    return await ctx.send(embed=embed)

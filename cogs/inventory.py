@@ -97,6 +97,13 @@ class Inventory(commands.Cog):
         if pagelimit < len(inventory): pagelimit += 5
         pagelimit = int(pagelimit / 5)
 
+        star = ""
+        try:
+            if data["beta"]:
+                star = "**✪ Beta Player**\n"
+        except KeyError:
+            pass
+
         if page > pagelimit:
             if page == 1:
                 emptyembed = discord.Embed(
@@ -116,7 +123,7 @@ class Inventory(commands.Cog):
         else:
             color = discord.Color.red()
 
-        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=color)
+        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"{star}**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=color)
         count = 0
         for i in inventory:
             count += 1
@@ -276,7 +283,7 @@ class Inventory(commands.Cog):
             inventory.append(daily)
 
         balance = data["balance"]
-        amount = random.randint(100, 500)
+        amount = random.randint(100 + min * 5, 500 + min * 5)
         balance += amount
 
         if streak is None or streak == 1:

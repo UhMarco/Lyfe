@@ -37,7 +37,15 @@ class Economy(commands.Cog):
         balance = data["balance"]
         bankbalance = data["bankbalance"]
         banklimit = data["banklimit"]
-        await ctx.send(f"**{user.name}'s** balance is $`{balance}` and $`{bankbalance}`/`{banklimit}` is stored in their bank.")
+        embed = discord.Embed(
+            title=":moneybag: **Balance**",
+            description=f"""
+            :money_with_wings:**{user.name}'s** balance is **${balance}**
+:bank: with **${bankbalance}**/**{banklimit}** stored in their bank.
+            """, color=discord.Color.red())
+        return await ctx.send(embed=embed)
+
+        #await ctx.send(f"**{user.name}'s** balance is $`{balance}` and $`{bankbalance}`/`{banklimit}` is stored in their bank.")
 
     @balance.error
     async def balance_error(self, ctx, error):
@@ -50,7 +58,13 @@ class Economy(commands.Cog):
             balance = data["balance"]
             bankbalance = data["bankbalance"]
             banklimit = data["banklimit"]
-            await ctx.send(f"Your balance is $`{balance}` and $`{bankbalance}`/`{banklimit}` is stored in your bank.")
+            embed = discord.Embed(
+                title=":moneybag: **Balance**",
+                description=f"""
+                :money_with_wings: Your balance is **${balance}**
+:bank: with **${bankbalance}**/**{banklimit}** stored in their bank.
+                """, color=discord.Color.blue())
+            return await ctx.send(embed=embed)
 
 
     @commands.command(aliases=['gambling'])
@@ -685,6 +699,8 @@ class Economy(commands.Cog):
                 quantity = int(cq2)
                 if quantity <= 0:
                     return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
+                if quantity > 15000:
+                    return await ctx.send("The limit is $`15000`")
             except Exception:
                 return await ctx.send("Please enter a valid quantity.\n**Tip:** Items in commands generally don't contain spaces!")
 
