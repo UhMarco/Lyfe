@@ -18,8 +18,12 @@ class Economy(commands.Cog):
         print("+ Economy Cog loaded")
 
     @commands.command(aliases=['bal'])
-    async def balance(self, ctx, user):
-        if len(ctx.message.mentions) == 0:
+    async def balance(self, ctx, user=None):
+        color = discord.Color.red()
+        if user is None:
+            user = ctx.author
+            color = discord.Color.blue()
+        elif len(ctx.message.mentions) == 0:
             try:
                 user = self.bot.get_user(int(user))
                 if user is None:
@@ -32,39 +36,29 @@ class Economy(commands.Cog):
         data = await self.bot.inventories.find(user.id)
 
         if data is None:
-            return await ctx.send("This user hasn't initialized their inventory yet.")
+            if user != ctx.author:
+                return await ctx.send("This user hasn't initialized their inventory yet.")
+            else:
+                return await ctx.send("You haven't initialized your inventory yet.")
 
         balance = data["balance"]
         bankbalance = data["bankbalance"]
         banklimit = data["banklimit"]
+
+        a = "their"
+        if user == ctx.author:
+            color = discord.Color.blue()
+            a = "your"
+
         embed = discord.Embed(
-            title=":moneybag: **Balance**",
-            description=f"""
-            :money_with_wings:**{user.name}'s** balance is **${balance}**
-:bank: with **${bankbalance}**/**{banklimit}** stored in their bank.
-            """, color=discord.Color.red())
-        return await ctx.send(embed=embed)
-
-        #await ctx.send(f"**{user.name}'s** balance is $`{balance}` and $`{bankbalance}`/`{banklimit}` is stored in their bank.")
-
-    @balance.error
-    async def balance_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            data = await self.bot.inventories.find(ctx.author.id)
-
-            if data is None:
-                return await ctx.send("You haven't initialized your inventory yet.")
-
-            balance = data["balance"]
-            bankbalance = data["bankbalance"]
-            banklimit = data["banklimit"]
-            embed = discord.Embed(
                 title=":moneybag: **Balance**",
-                description=f"""
-                :money_with_wings: Your balance is **${balance}**
-:bank: with **${bankbalance}**/**{banklimit}** stored in their bank.
-                """, color=discord.Color.blue())
-            return await ctx.send(embed=embed)
+                description="""
+                :dollar: **{}**'s balance is $`{:,}`
+                :bank: $`{:,}`/`{:,}` is stored in {} bank
+                """.format(user.name, balance, bankbalance, banklimit, a),
+                color=color
+            )
+        return await ctx.send(embed=embed)
 
 
     @commands.command(aliases=['gambling'])
