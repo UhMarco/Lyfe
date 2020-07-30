@@ -85,9 +85,7 @@ class Inventory(commands.Cog):
                                 bal -= money
                                 nutembed = discord.Embed(
                                     title=":peanuts: Peanut Allergy",
-                                    description=f"""
-                                                Oh no! You had an allergic reaction to some peanuts in your inventory.\nYou had to pay `${money}` for treatment.
-                                                """,
+                                    description=f"Oh no! You had an allergic reaction to some peanuts in your inventory.\nYou had to pay $`{money}` for treatment.",
                                     color=discord.Color.red()
                                 )
                                 await ctx.send(embed=nutembed)
@@ -108,11 +106,7 @@ class Inventory(commands.Cog):
             if page == 1:
                 emptyembed = discord.Embed(
                     title=":wastebasket: Empty Inventory",
-                    description=f"""
-                                **{user.name}'s** inventory is empty!
-                                **Balance:** $`{bal}`
-                                **Bank:** $`{bankbal}`/`{banklimit}`
-                                """,
+                    description=f"**{user.name}'s** inventory is empty!\n**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`",
                     color=discord.Color.red()
                 )
                 return await ctx.send(embed=emptyembed)
