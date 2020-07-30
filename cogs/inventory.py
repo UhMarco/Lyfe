@@ -276,7 +276,7 @@ class Inventory(commands.Cog):
             inventory.append(daily)
 
         balance = data["balance"]
-        amount = random.randint(100, 500)
+        amount = random.randint(100 + min * 5, 500 + min * 5)
         balance += amount
 
         if streak is None or streak == 1:
