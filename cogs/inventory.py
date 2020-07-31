@@ -220,6 +220,8 @@ class Inventory(commands.Cog):
                             await self.bot.cooldowns.upsert({"_id": ctx.author.id, "dailystreak": 1})
                     else:
                         await self.bot.cooldowns.upsert({"_id": ctx.author.id, "dailystreak": 1})
+                else:
+                    await self.bot.cooldowns.upsert({"_id": ctx.author.id, "dailystreak": 1})
             else:
                 difference = datetime.now() - cooldowns["daily"]
                 retry_after = 86400 - difference.total_seconds()
