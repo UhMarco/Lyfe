@@ -972,52 +972,52 @@ class Economy(commands.Cog):
             cost = price["small"]
 
             if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+                return await ctx.send("$`{:,}` is required to purchase this. You only have $`{:,}` and need another $`{:,}` to afford this.".format(cost, bal, cost - bal))
 
             bal -= cost
             banklimit += stores["small"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Small Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description="Purchased: :bank: **Small Bank Slot**\nMoney spent: $`{:,}`\nNew balance: $`{:,}`".format(cost, bal), color=discord.Color.gold())
             await ctx.send(embed=embed)
 
         elif item == "mediumbankslot" or item == "mediumbank":
             cost = price["medium"]
 
             if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+                return await ctx.send("$`{:,}` is required to purchase this. You only have $`{:,}` and need another $`{:,}` to afford this.".format(cost, bal, cost - bal))
 
             bal -= cost
             banklimit += stores["medium"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Medium Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description="Purchased: :bank: **Medium Bank Slot**\nMoney spent: $`{:,}`\nNew balance: $`{:,}`".format(cost, bal), color=discord.Color.gold())
             await ctx.send(embed=embed)
 
         elif item == "largebankslot" or item == "largebank":
             cost = price["large"]
 
             if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+                return await ctx.send("$`{:,}` is required to purchase this. You only have $`{:,}` and need another $`{:,}` to afford this.".format(cost, bal, cost - bal))
 
             bal -= cost
             banklimit += stores["large"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Large Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description="Purchased: :bank: **Large Bank Slot**\nMoney spent: $`{:,}`\nNew balance: $`{:,}`".format(cost, bal), color=discord.Color.gold())
             await ctx.send(embed=embed)
 
         elif item == "massivebankslot" or item == "massivebank":
             cost = price["massive"]
 
             if bal < cost:
-                return await ctx.send(f"$`{cost}` is required to purchase this. You only have $`{bal}` and need another $`{cost - bal}` to afford this.")
+                return await ctx.send("$`{:,}` is required to purchase this. You only have $`{:,}` and need another $`{:,}` to afford this.".format(cost, bal, cost - bal))
 
             bal -= cost
             banklimit += stores["massive"]
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": bal})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": banklimit})
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: :bank: **Massive Bank Slot**\nMoney spent: $`{cost}`\nNew balance: $`{bal}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description="Purchased: :bank: **Massive Bank Slot**\nMoney spent: $`{:,}`\nNew balance: $`{:,}`".format(cost, bal), color=discord.Color.gold())
             await ctx.send(embed=embed)
 
         else:
@@ -1076,7 +1076,7 @@ class Economy(commands.Cog):
         bankbalance += amount
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "bankbalance": bankbalance})
-        embed = discord.Embed(title=":bank: Deposit Successful", description=f"$`{amount}` has been deposited\nBank balance: $`{bankbalance}`/`{banklimit}`\nBalance: $`{balance}`", color=discord.Color.gold())
+        embed = discord.Embed(title=":bank: Deposit Successful", description="$`{:,}` has been deposited\nBank balance: $`{:,}`/`{:,}`\nBalance: $`{:,}`".format(amount, bankbalance, banklimit, balance), color=discord.Color.gold())
         await ctx.send(embed=embed)
 
     @deposit.error
@@ -1119,7 +1119,7 @@ class Economy(commands.Cog):
         balance += amount
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "bankbalance": bankbalance})
-        embed = discord.Embed(title=":bank: Withdrawal Successful", description=f"$`{amount}` has been withdrawn\nBank balance: $`{bankbalance}`/`{banklimit}`\nBalance: $`{balance}`", color=discord.Color.gold())
+        embed = discord.Embed(title=":bank: Withdrawal Successful", description="$`{:,}` has been withdrawn\nBank balance: $`{:,}`/`{:,}`\nBalance: $`{:,}`".format(amount, bankbalance, banklimit, balance), color=discord.Color.gold())
         await ctx.send(embed=embed)
 
     @withdraw.error
