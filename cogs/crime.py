@@ -318,10 +318,6 @@ class Crime(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
 
-        if user == ctx.author:
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
-
         user_data = await self.bot.inventories.find(user.id)
         if user_data is None:
             ctx.command.reset_cooldown(ctx)
@@ -330,14 +326,6 @@ class Crime(commands.Cog):
         inventory = author_data["inventory"]
         balance = user_data["balance"]
         bankbal = user_data["bankbalance"]
-
-        if balance < 10:
-            if bankbal == 0:
-                ctx.command.reset_cooldown(ctx)
-                return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
-            else:
-                ctx.command.reset_cooldown(ctx)
-                return await ctx.send(f"**{user.name}** doesn't have enough money in their inventory for you to blow up. Maybe check their bank account :smirk:")
 
         found = False
         for i in inventory:
@@ -351,6 +339,18 @@ class Crime(commands.Cog):
         if not found:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("You don't have a :firecracker: **Dynamite** in your inventory.")
+
+        if user == ctx.author:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
+
+        if balance < 10:
+            if bankbal == 0:
+                ctx.command.reset_cooldown(ctx)
+                return await ctx.send(f"**{user.name}** is incredibly poor, leave them alone will ya?")
+            else:
+                ctx.command.reset_cooldown(ctx)
+                return await ctx.send(f"**{user.name}** doesn't have enough money in their inventory for you to blow up. Maybe check their bank account :smirk:")
 
         originalbalance = balance
         balance = int(balance * 0.8)
@@ -390,10 +390,6 @@ class Crime(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("You haven't initialized your inventory yet.")
 
-        if user == ctx.author:
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
-
         user_data = await self.bot.inventories.find(user.id)
         if user_data is None:
             ctx.command.reset_cooldown(ctx)
@@ -414,6 +410,10 @@ class Crime(commands.Cog):
         if not found:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("You don't have a :bomb: **Bomb** in your inventory.")
+
+        if user == ctx.author:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send("Consider yourself blown up. I'm not actually going to do anything though.")
 
         if bankbal < 10:
             ctx.command.reset_cooldown(ctx)
