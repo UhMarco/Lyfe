@@ -58,6 +58,14 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}withdraw (amoint)`", value="Withdraw from your bank", inline=False)
             return await ctx.send(embed=embed)
 
+        elif section.lower() == "profiles" or section.lower() == "profile":
+            embed = discord.Embed(title=":bust_in_silhouette: Profile Commands", color=discord.Color.purple())
+            embed.set_footer(text="Profile command list")
+            embed.add_field(name=f"`{self.bot.prefix}profile [user]`", value="View a profile", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}titles`", value="View your titles", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}title set [title]`", value="Set a title", inline=False)
+            return await ctx.send(embed=embed)
+
         elif section.lower() == "crime" or section.lower() == "robbery":
             embed = discord.Embed(title=":moneybag: Crime Commands", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="Crime command list")

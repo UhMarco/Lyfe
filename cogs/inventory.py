@@ -95,10 +95,10 @@ class Inventory(commands.Cog):
         if pagelimit < len(inventory): pagelimit += 5
         pagelimit = int(pagelimit / 5)
 
-        star = ""
+        titles = data["titles"]
+        title = ""
         try:
-            if data["beta"]:
-                star = "**✪ Beta Player**\n"
+            title = f"**{titles[0]}**\n"
         except KeyError:
             pass
 
@@ -117,7 +117,7 @@ class Inventory(commands.Cog):
         else:
             color = discord.Color.red()
 
-        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"{star}**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=color)
+        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"{title}**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=color)
         count = 0
         for i in inventory:
             count += 1
