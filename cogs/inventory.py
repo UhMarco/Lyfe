@@ -62,6 +62,7 @@ class Inventory(commands.Cog):
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": 0})
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "job": None})
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": data})
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "titles": []})
                 page = 1
             else:
                 return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
@@ -99,7 +100,7 @@ class Inventory(commands.Cog):
         title = ""
         try:
             title = f"**{titles[0]}**\n"
-        except KeyError:
+        except IndexError:
             pass
 
         if page > pagelimit:

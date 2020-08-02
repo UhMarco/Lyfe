@@ -57,8 +57,12 @@ class Profiles(commands.Cog):
         data = await self.bot.inventories.find(ctx.author.id)
         titles = data["titles"]
         if arg is None:
-            await ctx.send(titles)
-            # Do more later!
+            message = []
+            n = '\n'
+            for i in titles:
+                message.append(i)
+            embed = discord.Embed(title=f"**{ctx.author.name}**'s titles:", description=n.join(message))
+            await ctx.send(embed=embed)
 
         elif arg.lower() == "set":
             if title is None:
@@ -114,15 +118,63 @@ class Profiles(commands.Cog):
             titles.append("✦ Moderator")
         elif title == "dev" or title == "developer":
             titles.append("✚ Developer")
+        elif "beta" in title:
+            titles.append("✪ Beta Player")
         else:
             return await ctx.send("Not a valid title.")
 
         await self.bot.inventories.upsert({"_id": user.id, "titles": titles})
+        await ctx.send("Added")
 
     @addtitle.error
     async def addtitle_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}addtitle (user) (title)`")
+
+
+    @commands.command()
+    @is_dev()
+    async def removetitle(self, ctx, user, title):
+        if len(ctx.message.mentions) == 0:
+            if user is None:
+                page = 1
+                user = ctx.author
+            else:
+                try:
+                    if self.bot.get_user(int(user)) == None:
+                        page = user
+                        user = ctx.author
+                    else:
+                        user = self.bot.get_user(int(user))
+                except ValueError:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        title.lower()
+        data = await self.bot.inventories.find(user.id)
+        titles = data["titles"]
+
+        if title == "mod" or title == "moderator":
+            title = "✦ Moderator"
+        elif title == "dev" or title == "developer":
+            title = "✚ Developer"
+        elif "beta" in title:
+            title = "✪ Beta Player"
+        else:
+            return await ctx.send("Not a valid title.")
+
+        for i in titles:
+            if i == title:
+                titles.remove(i)
+
+        await ctx.send("Done")
+        await self.bot.inventories.upsert({"_id": user.id, "titles": titles})
+
+    @removetitle.error
+    async def removetitle_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}removetitle (user) (title)`")
 
 
 def setup(bot):
