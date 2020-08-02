@@ -101,8 +101,7 @@ class Profiles(commands.Cog):
             else:
                 try:
                     if self.bot.get_user(int(user)) == None:
-                        page = user
-                        user = ctx.author
+                        return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
                     else:
                         user = self.bot.get_user(int(user))
                 except ValueError:
@@ -142,8 +141,7 @@ class Profiles(commands.Cog):
             else:
                 try:
                     if self.bot.get_user(int(user)) == None:
-                        page = user
-                        user = ctx.author
+                        return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
                     else:
                         user = self.bot.get_user(int(user))
                 except ValueError:
