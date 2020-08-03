@@ -43,7 +43,7 @@ class Profiles(commands.Cog):
             except KeyError:
                 pass
             i["titles"] = ['✪ Beta Player']
-            await self.bot.inventories.delete(ctx.author.id)
+            await self.bot.inventories.delete(i["_id"])
             await self.bot.inventories.upsert({"_id": i["_id"], "balance": i["balance"]})
             await self.bot.inventories.upsert({"_id": i["_id"], "bankbalance": i["bankbalance"]})
             await self.bot.inventories.upsert({"_id": i["_id"], "banklimit": i["banklimit"]})
@@ -55,6 +55,8 @@ class Profiles(commands.Cog):
     @commands.command(aliases=['title'])
     async def titles(self, ctx, arg=None, title=None):
         data = await self.bot.inventories.find(ctx.author.id)
+        if data is None:
+            return await ctx.send("You haven't initialized your inventory yet.")
         titles = data["titles"]
         if arg is None:
             message = []
@@ -71,9 +73,9 @@ class Profiles(commands.Cog):
             found = False
 
             if title == "mod" or title == "moderator":
-                title = "✦ Moderator"
+                title = "》Moderator"
             elif title == "dev" or title == "developer":
-                title = "✚ Developer"
+                title = "✦ Developer"
             elif "beta" in title:
                 title = "✪ Beta Player"
             else:
@@ -114,9 +116,9 @@ class Profiles(commands.Cog):
         titles = data["titles"]
 
         if title == "mod" or title == "moderator":
-            titles.append("✦ Moderator")
+            titles.append("》Moderator")
         elif title == "dev" or title == "developer":
-            titles.append("✚ Developer")
+            titles.append("✦ Developer")
         elif "beta" in title:
             titles.append("✪ Beta Player")
         else:
@@ -154,9 +156,9 @@ class Profiles(commands.Cog):
         titles = data["titles"]
 
         if title == "mod" or title == "moderator":
-            title = "✦ Moderator"
+            title = "》Moderator"
         elif title == "dev" or title == "developer":
-            title = "✚ Developer"
+            title = "✦ Developer"
         elif "beta" in title:
             title = "✪ Beta Player"
         else:
