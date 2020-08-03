@@ -125,7 +125,7 @@ class Inventory(commands.Cog):
                 name, locked, quantity = i["name"], i["locked"], i["quantity"]
                 item = items[name.replace(" ", "").lower()]
                 desc, emoji, value = item["description"], item["emoji"], item["value"]
-                embed.add_field(name="{} {}", value="**Description:** `{}`\n**Locked:** `{}`\n**Value:** $`{:,}`\n**Quantity:** `{:,}`".format(emoji, name, desc, locked, value, quantity), inline=False)
+                embed.add_field(name="{} {}", value="**Description:** `{}`\n**Locked:** `{}`\n**Value:** $`{:,}`\n**Quantity:** `{}`".format(emoji, name, desc, locked, value, quantity), inline=False)
 
             if count == page * 5:
                 break
