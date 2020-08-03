@@ -422,7 +422,7 @@ class Crime(commands.Cog):
         originalbalance = bankbal
         bankbal = int(bankbal * 0.9)
 
-        await ctx.send(":bomb: You blew up $`{}` of **{}'s** money in their bank.".format(int(originalbalance * 0.1),user.name))
+        await ctx.send(":bomb: You blew up $`{:,}` of **{}'s** money in their bank.".format(int(originalbalance * 0.1),user.name))
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": user.id, "bankbalance": bankbal})
         try:
