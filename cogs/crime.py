@@ -247,7 +247,7 @@ class Crime(commands.Cog):
             failureReason = random.choice(failureReasons["failureReasons"])
             embed = discord.Embed(
                 title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
-                description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: Gun** while trying to steal $`{amount}` from **{user.name}**.",
+                description="{}\n**{}** lost **:gun: Gun** while trying to steal $`{:,}` from **{}**.".format(failureReason, ctx.author.name, amount, user.name),
                 color=discord.Color.red()
             )
             await ctx.send(embed=embed)
@@ -255,7 +255,7 @@ class Crime(commands.Cog):
             try:
                 embed = discord.Embed(
                     title=f":moneybag: {ctx.author.name} attempted to rob you!",
-                    description=f"{failureReason}\n**{ctx.author.name}** lost **:gun: Gun** while trying to steal $`{amount}` from **{user.name}**.",
+                    description="{}\n**{}** lost **:gun: Gun** while trying to steal $`{:,}` from **{}**.".format(failureReason, ctx.author.name, amount, user.name),
                     color=discord.Color.green()
                 )
                 await user.send(embed=embed)
@@ -273,7 +273,7 @@ class Crime(commands.Cog):
 
         embed = discord.Embed(
             title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
-            description=f"**{ctx.author.name}** stole $`{amount}` from **{user.name}** with a :gun: **Gun**.",
+            description="**{}** stole $`{:,}` from **{}** with a :gun: **Gun**.".format(ctx.author.name, amount, user.name),
             color=discord.Color.green()
         )
 
@@ -284,7 +284,7 @@ class Crime(commands.Cog):
         try:
             embed = discord.Embed(
                 title=f":moneybag: {ctx.author.name} has robbed you!",
-                description=f"**{ctx.author.name}** stole $`{amount}` from **{user.name}** with a :gun: **Gun**.",
+                description="**{}** stole $`{:,}` from **{}** with a :gun: **Gun**.".format(ctx.author.name, amount, user.name),
                 color=discord.Color.red()
             )
 
@@ -422,11 +422,11 @@ class Crime(commands.Cog):
         originalbalance = bankbal
         bankbal = int(bankbal * 0.9)
 
-        await ctx.send(f":bomb: You blew up $`{int(originalbalance * 0.1)}` of **{user.name}'s** money in their bank.")
+        await ctx.send(":bomb: You blew up $`{}` of **{}'s** money in their bank.".format(int(originalbalance * 0.1),user.name))
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": user.id, "bankbalance": bankbal})
         try:
-            await user.send(f"**{ctx.author}** blew up $`{int(originalbalance * 0.1)}` of your money in your bank!")
+            await user.send("**{}** blew up $`{}` of your money in your bank!".format(ctx.author, int(originalbalance * 0.1)))
         except discord.Forbidden:
             pass
 
