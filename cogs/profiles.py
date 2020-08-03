@@ -175,5 +175,32 @@ class Profiles(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}removetitle (user) (title)`")
 
 
+    @commands.command()
+    async def profile(self, ctx, user=None):
+        if len(ctx.message.mentions) == 0:
+            if user is None:
+                user = ctx.author
+            else:
+                try:
+                    if self.bot.get_user(int(user)) == None:
+                        user = ctx.author
+                    else:
+                        user = self.bot.get_user(int(user))
+                except ValueError:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        data = await self.bot.inventories.find(user.id)
+        if data is None:
+            return await ctx.send("You haven't initialized your inventory yet.")
+
+        # Profile title
+        # Custom title
+        # Leaderboard position
+        # Total inventory value
+
+
+
 def setup(bot):
     bot.add_cog(Profiles(bot))
