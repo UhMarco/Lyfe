@@ -117,7 +117,7 @@ class Inventory(commands.Cog):
         else:
             color = discord.Color.red()
 
-        embed = discord.Embed(title=":desktop: **{user.name}'s Inventory**", description="{}**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(star, bal, bankbal, banklimit), color=color)
+        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description="{}**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(star, bal, bankbal, banklimit), color=color)
         count = 0
         for i in inventory:
             count += 1
@@ -125,7 +125,7 @@ class Inventory(commands.Cog):
                 name, locked, quantity = i["name"], i["locked"], i["quantity"]
                 item = items[name.replace(" ", "").lower()]
                 desc, emoji, value = item["description"], item["emoji"], item["value"]
-                embed.add_field(name="{} {}", value="**Description:** `{}`\n**Locked:** `{}`\n**Value:** $`{:,}`\n**Quantity:** `{:,}`".format(emoji, name, desc, locked, value, quantity), inline=False)
+                embed.add_field(name=f"{emoji} {name}", value="**Description:** `{}`\n**Locked:** `{}`\n**Value:** $`{:,}`\n**Quantity:** `{:,}`".format(desc, locked, value, quantity), inline=False)
 
             if count == page * 5:
                 break
