@@ -133,6 +133,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
             embed.add_field(name=":page_facing_up: Inventory", value=f"`{self.bot.prefix}help inventory`", inline=False)
             embed.add_field(name=":credit_card: Economy", value=f"`{self.bot.prefix}help economy`", inline=False)
+            embed.add_field(name=":bust_in_silhouette: Profiles", value=f"`{self.bot.prefix}help profiles`", inline=False)
             embed.add_field(name=":moneybag: Crime", value=f"`{self.bot.prefix}help crime`", inline=False)
             embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
             embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)

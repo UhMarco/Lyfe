@@ -176,6 +176,7 @@ class Profiles(commands.Cog):
 
 
     @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def profile(self, ctx, user=None):
         if len(ctx.message.mentions) == 0:
             if user is None:
@@ -195,12 +196,69 @@ class Profiles(commands.Cog):
         if data is None:
             return await ctx.send("You haven't initialized your inventory yet.")
 
+        items = await self.bot.items.find("items")
+        items = items["items"]
+
+        description = []
         # Profile title
+        title = f"{user.name}'s Profile"
         # Custom title
+        color = discord.Color.green()
+        try:
+            insert = data["titles"][0]
+            description.append(f"**{insert}**")
+            if "beta" in insert.lower():
+                color = discord.Color.dark_green()
+            elif "mod" in insert.lower():
+                color = discord.Color.red()
+            else:
+                color = discord.Color.red()
+        except IndexError:
+            description.append("**Player**")
         # Leaderboard position
+        all = await self.bot.inventories.get_all()
+        lb = []
+        for i in all:
+            inv = i["inventory"]
+            value = 0
+            for x in inv:
+                value += x["quantity"] * items[x["name"].replace(" ", "").lower()]["value"]
+            total = i["balance"] + i["bankbalance"] + value
+            lb.append({"id": i['_id'], "total": total})
+
+        sort = sorted(lb, key=lambda k: k['total'], reverse=True)
+        count, lbpos = 0, 0
+        for i in sort:
+            count += 1
+            if i["id"] == user.id:
+                description.append(f"**#{count}** in leaderboard")
+                break
+
         # Total inventory value
+        inventory = data["inventory"]
+        value = 0
+        for i in inventory:
+            value += i["quantity"] * items[i["name"].replace(" ", "").lower()]["value"]
+        description.append("Inventory value of $`{:,}`".format(value))
 
+        # Highest value item
+        highest_item = None
+        highest_emoji = None
+        highest_value = 0
+        for i in inventory:
+            item = items[i["name"].replace(" ", "").lower()]
+            val = item["value"]
+            if val > highest_value:
+                highest_value = val
+                highest_item = item["name"]
+                highest_emoji = item["emoji"]
 
+        description.append(f"Best item is {highest_emoji} **{highest_item}**")
+
+        n = '\n'
+        embed = discord.Embed(title=title, description=n.join(description), color=color)
+        embed.set_thumbnail(url=user.avatar_url)
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Profiles(bot))
