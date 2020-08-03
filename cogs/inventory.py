@@ -106,7 +106,7 @@ class Inventory(commands.Cog):
             if page == 1:
                 emptyembed = discord.Embed(
                     title=":wastebasket: Empty Inventory",
-                    description=f"**{user.name}'s** inventory is empty!\n**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`",
+                    description="**{}'s** inventory is empty!\n**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(user.name, bal, bankbal, banklimit),
                     color=discord.Color.red()
                 )
                 return await ctx.send(embed=emptyembed)
@@ -117,7 +117,7 @@ class Inventory(commands.Cog):
         else:
             color = discord.Color.red()
 
-        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description=f"{star}**Balance:** $`{bal}`\n**Bank:** $`{bankbal}`/`{banklimit}`", color=color)
+        embed = discord.Embed(title=":desktop: **{user.name}'s Inventory**", description="{}**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(star, bal, bankbal, banklimit), color=color)
         count = 0
         for i in inventory:
             count += 1
@@ -125,7 +125,7 @@ class Inventory(commands.Cog):
                 name, locked, quantity = i["name"], i["locked"], i["quantity"]
                 item = items[name.replace(" ", "").lower()]
                 desc, emoji, value = item["description"], item["emoji"], item["value"]
-                embed.add_field(name=f"{emoji} {name}", value=f"**Description:** `{desc}`\n**Locked:** `{locked}`\n**Value:** $`{value}`\n**Quantity:** `{quantity}`", inline=False)
+                embed.add_field(name="{} {}", value="**Description:** `{}`\n**Locked:** `{}`\n**Value:** $`{:,}`\n**Quantity:** `{:,}`".format(emoji, name, desc, locked, value, quantity), inline=False)
 
             if count == page * 5:
                 break
@@ -283,9 +283,9 @@ class Inventory(commands.Cog):
         balance += amount
 
         if streak is None or streak == 1:
-            await ctx.send(f":mailbox_with_mail: You got **{emoji} {name}** and $`{amount}`")
+            await ctx.send(":mailbox_with_mail: You got **{} {}** and $`{:,}`".format(emoji, name, amount))
         else:
-            await ctx.send(f":mailbox_with_mail: You got **{emoji} {name}** and $`{amount}` - You're on a streak of :fire: **{streak}**!")
+            await ctx.send(":mailbox_with_mail: You got **{} {}** and $`{:,}` - You're on a streak of :fire: **{streak}**!".format(emoji, name, amount))
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 

@@ -31,7 +31,7 @@ class Research(commands.Cog):
         name, desc, emoji, value, rarity = item["name"], item["description"], item["emoji"], item["value"], item["rarity"]
         embed = discord.Embed(
             title=f"{emoji} **{name}**",
-            description=f"**Description:** `{desc}`\n**Rarity:** `{rarity}`\n**Value:** $`{value}`",
+            description="**Description:** `{}`\n**Rarity:** `{}`\n**Value:** $`{:,}`".format(desc, rarity, value),
             color=discord.Colour.purple()
         )
         await ctx.send(embed=embed)
