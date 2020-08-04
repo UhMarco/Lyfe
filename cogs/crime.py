@@ -473,9 +473,11 @@ class Crime(commands.Cog):
         name, emoji = item["name"], item["emoji"]
 
         if name == "Dragon" or name == "Evolved Dragon":
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("Let me stop you right there- Dragons are fireproof.")
         if name == "fire_extinguisher":
-            return await ctx.send("Sure, Like you can melt a fire extinguisher with the sheer heat of your flames. Let me stop you right there before you do anything stupid.")
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send("No-")
         found = False #checking for fire
         for i in inventory:
             if i["name"] == "Fire":
