@@ -727,7 +727,7 @@ class Economy(commands.Cog):
             shop.append({"item": name.replace(" ", "").lower(), "price": price, "stock": quantity})
             await self.bot.playershops.upsert({"_id": ctx.author.id, "shop": shop})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-            await ctx.send(f"Added **{quantity} **x** {emoji} {name}**  to your shop.")
+            await ctx.send("Added **{:,} **x** {} {}**  to your shop.".format(quantity, emoji, name))
 
         # REMOVE
 
@@ -773,7 +773,7 @@ class Economy(commands.Cog):
                 item["quantity"] = quantity
                 inventory.append(item)
 
-            await ctx.send(f"Removed **{quantity} **x** {emoji} {name}** from your shop.")
+            await ctx.send("Removed **{:,} **x** {} {}** from your shop.".format(quantity, emoji, name))
             if len(shop) == 0:
                 await self.bot.playershops.delete(ctx.author.id)
             else:
@@ -850,7 +850,7 @@ class Economy(commands.Cog):
             author_inventory = author_data["inventory"]
             author_balance = author_data["balance"]
             if author_balance < price * quantity:
-                return await ctx.send(f"$`{price * quantity}` is required to purchase this. You only have $`{author_balance}` and need another $`{price * quantity - author_balance}` to afford this.")
+                return await ctx.send("$`{:,}` is required to purchase this. You only have $`{:,}` and need another $`{:,}` to afford this.".format(price * quantity, author_balance, price * quantity - author_balance))
 
             # Set balances
             author_balance -= int(price * quantity)
@@ -876,7 +876,7 @@ class Economy(commands.Cog):
                     if i["stock"] == 0:
                         shop.remove(i)
 
-            embed = discord.Embed(title=f"Purchase Successful", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney spent: $`{price * quantity}`\nNew balance: $`{author_balance}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"Purchase Successful", description="Purchased: {} **{}**\nQuantity: `{:,}`\nMoney spent: $`{:,}`\nNew balance: $`{:,}`".format(emoji, name, quantity, price * quantity, author_balance), color=discord.Color.gold())
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": author_inventory})
             await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": author_balance})
             await self.bot.inventories.upsert({"_id": user.id, "balance": user_balance})
@@ -886,7 +886,7 @@ class Economy(commands.Cog):
                 await self.bot.playershops.upsert({"_id": user.id, "shop": shop})
             await ctx.send(embed=embed)
 
-            embed = discord.Embed(title=f"**{ctx.author}** bought from your shop!", description=f"Purchased: {emoji} **{name}**\nQuantity: `{quantity}`\nMoney gained: $`{price * quantity}`", color=discord.Color.gold())
+            embed = discord.Embed(title=f"**{ctx.author}** bought from your shop!", description="Purchased: {} **{}**\nQuantity: `{:,}`\nMoney gained: $`{:,}`".format(emoji, name, quantity, price * quantity), color=discord.Color.gold())
             embed.set_footer(text=f"ID: {ctx.author.id}")
             try:
                 await user.send(embed=embed)
@@ -1061,16 +1061,16 @@ class Economy(commands.Cog):
             return await ctx.send(f"A **:bank: Bank Slot** hasn't been bought yet. Do `{self.bot.prefix}banks`.")
 
         if bankbalance == banklimit:
-            return await ctx.send(f"Your bank balance is full with $`{bankbalance}`. Purchase a larger bank slot at `{self.bot.prefix}banks`.")
+            return await ctx.send("Your bank balance is full with $`{:,}`. Purchase a larger bank slot at `{}banks`.".format(bankbalance, self.bot.prefix))
 
         if balance == 0:
             return await ctx.send("Your balance is empty.")
 
         if amount + bankbalance > banklimit:
-            return await ctx.send(f"This would put your bank balance over $`{banklimit}` which is your limit. Increase this limit by purchasing a larger bank slot at `{self.bot.prefix}banks`.")
+            return await ctx.send("This would put your bank balance over $`{:,}` which is your limit. Increase this limit by purchasing a larger bank slot at `{}banks`.".format(banklimit,self.bot.prefix))
 
         if amount > balance:
-            return await ctx.send(f"You only have $`{balance}` available to deposit.")
+            return await ctx.send("You only have $`{:,}` available to deposit.".format(balance))
 
         balance -= amount
         bankbalance += amount
@@ -1113,7 +1113,7 @@ class Economy(commands.Cog):
             return await ctx.send(f"A **:bank: Bank Slot** hasn't been bought yet. Do `{self.bot.prefix}banks`.")
 
         if amount > bankbalance:
-            return await ctx.send(f"Insufficient funds. You only have $`{bankbalance}` stored in your bank.")
+            return await ctx.send("Insufficient funds. You only have $`{:,}` stored in your bank.".format(bankbalance))
 
         bankbalance -= amount
         balance += amount
