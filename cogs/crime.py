@@ -469,10 +469,13 @@ class Crime(commands.Cog):
         if item.lower() not in items:
             return await ctx.send("That item does not exist.")
 
-        inventory = author_data["inventory"] #setting up item stuff
         item = items[item.lower()]
         name, emoji = item["name"], item["emoji"]
 
+        if name == "Dragon" or name == "Evolved Dragon":
+            return await ctx.send("Let me stop you right there- Dragons are fireproof.")
+        if name == "fire_extinguisher":
+            return await ctx.send("Sure, Like you can melt a fire extinguisher with the sheer heat of your flames. Let me stop you right there before you do anything stupid.")
         found = False #checking for fire
         for i in inventory:
             if i["name"] == "Fire":
@@ -488,7 +491,7 @@ class Crime(commands.Cog):
 
         if user == ctx.author:
             ctx.command.reset_cooldown(ctx)
-            return await ctx.send("Do you wanna talk about it?") #i think they need a therapist
+            return await ctx.send("Burning yourself may not be the wisest choice, Do you wanna talk about it?") #i think they need a therapist
         safe = False #checking for fire extinguisher
         for i in targetInventory:
             if i["name"] == "Fire Extinguisher":
@@ -498,22 +501,22 @@ class Crime(commands.Cog):
                     targetInventory.remove(i)
                 safe = True
         if safe == True:
-            await ctx.send(f"Uh oh! **{user.name}** had a fire extinguisher and put the fire out!")
+            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory}) #updating the target inv and user inv
+            await self.bot.inventories.upsert({"_id": user.id, "inventory": targetInventory})
             try:
-                await user.send(f"**{ctx.author}** tried to burn your {name} but you extinguised the fire costing 1 Fire extinguisher :fire_extinguisher:")
+                await user.send(f"**{ctx.author}** tried to burn your **{name}** but you extinguised the fire costing **1 Fire extinguisher** :fire_extinguisher:")
             except discord.Forbidden:
                 pass
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory}) #updating the target inv and user inv
-            return await self.bot.inventories.upsert({"_id": user.id, "inventory": targetInventory})
+            return await ctx.send(f"Uh oh! **{user.name}** had a **:fire_extinguisher: Fire Extinguisher** and put the fire out!")
         change = False
         for i in targetInventory:#whatt no ofc i didnt steal this from admin.py
             if i["name"] == name:
                 quantity = i["quantity"]
-                if i["quantity"] == 1:
+                if quantity == 1:
                     targetInventory.remove(i)
                     change = True
                 else:#wish i could steal *this* from admin.py
-                    if i["quantity"] >= 10:
+                    if quantity >= 10:
                         rand = random.randint(1, i["quantity"]*.9)
                         i["quantity"] -= rand
                         change = True
@@ -531,9 +534,9 @@ class Crime(commands.Cog):
         return await self.bot.inventories.upsert({"_id": user.id, "inventory": targetInventory}) #oml you could burn somebody's dragon
         try:
             if quantity > 1:
-                await user.send(f"**{ctx.author}** burned {quantity} of your {emoji} {name}s :pensive:.")
+                await user.send(f"**{ctx.author}** burned **{quantity}** x {emoji} **{name}** :pensive:.")
             else:
-                await user.send(f"**{ctx.author}** burned your {emoji} {name} :pensive:.")
+                await user.send(f"**{ctx.author}** burned your {emoji} **{name}** :pensive:.")
 
         except discord.Forbidden:
             pass
@@ -541,9 +544,6 @@ class Crime(commands.Cog):
     @burn.error
     async def burn_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send(f"Usage: `{self.bot.prefix}burn (user) (item)`")
-        if isinstance(error, commands.BadArgument):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"Usage: `{self.bot.prefix}burn (user) (item)`")
 
