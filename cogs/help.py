@@ -65,7 +65,6 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}steal (user) (amount)`", value="Rob another player of money, requires a :gun: Gun, min=500 max=7500", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}dynamite (user)`", value="Blow up 20% of someone's balance, requires :firecracker: Dynamite", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}bomb (user)`", value="Blow up 10% of someone's bank balance, requires :bomb: Bomb", inline=False)
-            embed.add_field(name=f"`{self.bot.prefix}burn (user) (item)`", value="Burn another user's item, requires :fire: Fire", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}axe (user)`", value="Unlock another player's item, requires :axe: Axe", inline=False)
             return await ctx.send(embed=embed)
 
