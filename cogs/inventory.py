@@ -285,7 +285,7 @@ class Inventory(commands.Cog):
         if streak is None or streak == 1:
             await ctx.send(":mailbox_with_mail: You got **{} {}** and $`{:,}`".format(emoji, name, amount))
         else:
-            await ctx.send(":mailbox_with_mail: You got **{} {}** and $`{:,}` - You're on a streak of :fire: **{streak}**!".format(emoji, name, amount))
+            await ctx.send(":mailbox_with_mail: You got **{} {}** and $`{:,}` - You're on a streak of :fire: **{}**!".format(emoji, name, amount, streak))
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
