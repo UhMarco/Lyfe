@@ -469,7 +469,7 @@ class Crime(commands.Cog):
         if item.lower() not in items:
             return await ctx.send("That item does not exist.")
 
-        inventory = data["inventory"] #setting up item stuff
+        inventory = author_data["inventory"] #setting up item stuff
         item = items[item.lower()]
         name, emoji = item["name"], item["emoji"]
 
@@ -491,11 +491,11 @@ class Crime(commands.Cog):
             return await ctx.send("Do you wanna talk about it?") #i think they need a therapist
         safe = False #checking for fire extinguisher
         for i in targetInventory:
-            if i["name"] == "fireextinguisher":
+            if i["name"] == "Fire Extinguisher":
                 if i["quantity"] != 1:
                     i["quantity"] -= 1
                 else:
-                    inventory.remove(i)
+                    targetInventory.remove(i)
                 safe = True
         if safe == True:
             await ctx.send(f"Uh oh! **{user.name}** had a fire extinguisher and put the fire out!")
@@ -504,13 +504,13 @@ class Crime(commands.Cog):
             except discord.Forbidden:
                 pass
             await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory}) #updating the target inv and user inv
-            return await self.bot.inventories.upsert({"_id": user.id, "inventory": inventory})
+            return await self.bot.inventories.upsert({"_id": user.id, "inventory": targetInventory})
         change = False
-        for i in inventory:#whatt no ofc i didnt steal this from admin.py
+        for i in targetInventory:#whatt no ofc i didnt steal this from admin.py
             if i["name"] == name:
                 quantity = i["quantity"]
                 if i["quantity"] == 1:
-                    inventory.remove(i)
+                    targetInventory.remove(i)
                     change = True
                 else:#wish i could steal *this* from admin.py
                     if i["quantity"] >= 10:
@@ -525,10 +525,10 @@ class Crime(commands.Cog):
         if not change:
             return await ctx.send(f"**{user.name}** doesn't have a **{emoji} {name}**, silly.")
 
-        embed = discord.embed(title=":fire: You burned:", value=f"{quantity} of **{user.name}'s**\n**{emoji} {name}**")
-        return await ctx.send(embed=embed)
+        embed = discord.Embed(title=":fire: You burned:", description=f"{quantity} of **{user.name}'s**\n**{emoji} {name}**")
+        await ctx.send(embed=embed)
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory}) #updating the target inv and user inv
-        await self.bot.inventories.upsert({"_id": user.id, "inventory": inventory}) #oml you could burn somebody's dragon
+        return await self.bot.inventories.upsert({"_id": user.id, "inventory": targetInventory}) #oml you could burn somebody's dragon
         try:
             if quantity > 1:
                 await user.send(f"**{ctx.author}** burned {quantity} of your {emoji} {name}s :pensive:.")
