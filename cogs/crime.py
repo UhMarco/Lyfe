@@ -517,20 +517,21 @@ class Crime(commands.Cog):
                 if quantity == 1:
                     targetInventory.remove(i)
                     change = True
+                    rand = 1
                 else:#wish i could steal *this* from admin.py
                     if quantity >= 10:
-                        rand = random.randint(1, i["quantity"]*.9)
+                        rand = random.randint(1, quantity*.9)
                         i["quantity"] -= rand
                         change = True
                     else:
-                        rand = random.randint(1, i["quantity"])
+                        rand = random.randint(1, quantity)
                         i["quantity"] -= 1
                         change = True
 
         if not change:
             return await ctx.send(f"**{user.name}** doesn't have a **{emoji} {name}**, silly.")
 
-        embed = discord.Embed(title=":fire: You burned:", description=f"{quantity} of **{user.name}'s**\n**{emoji} {name}**")
+        embed = discord.Embed(title=":fire: You burned:", description=f"{rand} of **{user.name}'s**\n**{emoji} {name}**")
         await ctx.send(embed=embed)
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory}) #updating the target inv and user inv
         return await self.bot.inventories.upsert({"_id": user.id, "inventory": targetInventory}) #oml you could burn somebody's dragon
