@@ -62,6 +62,7 @@ class Inventory(commands.Cog):
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "banklimit": 0})
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "job": None})
                 await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": data})
+                await self.bot.inventories.upsert({"_id": ctx.author.id, "titles": []})
                 page = 1
             else:
                 return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
@@ -95,11 +96,11 @@ class Inventory(commands.Cog):
         if pagelimit < len(inventory): pagelimit += 5
         pagelimit = int(pagelimit / 5)
 
-        star = ""
+        titles = data["titles"]
+        title = ""
         try:
-            if data["beta"]:
-                star = "**✪ Beta Player**\n"
-        except KeyError:
+            title = f"**{titles[0]}**\n"
+        except IndexError:
             pass
 
         if page > pagelimit:
@@ -118,6 +119,7 @@ class Inventory(commands.Cog):
             color = discord.Color.red()
 
         embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description="{}**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(star, bal, bankbal, banklimit), color=color)
+
         count = 0
         for i in inventory:
             count += 1
