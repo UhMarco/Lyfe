@@ -101,6 +101,7 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}feed`", value="Feed a frog to a dragon, there's a 1% chance of something special happening", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}avatar [user]`", value="Display the avatar of a user in full size", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}8ball (question)`", value="8ball lol", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}cookie (user)`", value="Sends a user a cookie. Purely cosmetic and yields no item", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "leaderboards" or section.lower() == "leaders":
