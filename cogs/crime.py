@@ -426,7 +426,7 @@ class Crime(commands.Cog):
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
         await self.bot.inventories.upsert({"_id": user.id, "bankbalance": bankbal})
         try:
-            await user.send("**{:,}** blew up $`{}` of your money in your bank!".format(ctx.author, int(originalbalance * 0.1)))
+            await user.send("**{}** blew up $`{:,}` of your money in your bank!".format(ctx.author, int(originalbalance * 0.1)))
         except discord.Forbidden:
             pass
 
