@@ -137,6 +137,41 @@ class Misc(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}cookie (user)`")
 
+    @commands.command()
+    async def flower(self, ctx, user):
+        if len(ctx.message.mentions) == 0:
+            try:
+                user = self.bot.get_user(int(user))
+                if user is None:
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+            except ValueError:
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+        else:
+            user = ctx.message.mentions[0]
+
+        if user.id == ctx.author.id:
+            return await ctx.send(f"You have yourself a :rose: Flower!")
+
+        await ctx.send(f"You gave {user.name} a :rose: Flower!")
+        await user.send(f"{ctx.author} gave you a :rose: Flower from the server {ctx.author.guild}")
+
+    @flower.error
+    async def flower_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}flower (user)`")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def setup(bot):
     bot.add_cog(Misc(bot))
