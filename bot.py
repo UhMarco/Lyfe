@@ -80,6 +80,19 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+@bot.event
+async def on_guild_join(guild):
+    general = find(lambda x: x.name == 'general',  guild.text_channels)
+    if general and general.permissions_for(guild.me).send_messages:
+        imageURL = "https://images-ext-1.discordapp.net/external/rhRbquJhkxJMxDjv0uYMe6j0X9hoMJiFRROxJQMX1FA/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/730874220078170122/049bcf53fba266166c69b09e0f97dcab.webp?width=677&height=677"
+        welcomebed = discord.Embed(
+            title="Thank you for inviting me!",
+            description=f"A few things about myself: \n \nMy prefix is `{self.bot.prefix}`\nYou can find help by doing `{self.bot.prefix}help`\nYou can join the support server by doing `{self.bot.prefix}invite`",
+            color=discord.Color.green()
+        )
+        welcomebed.set_thumbnail(url=imageURL)
+        return await ctx.send(embed=welcomebed)
+
 if __name__ == '__main__':
     for file in os.listdir(cwd+"/cogs"):
         if file.endswith(".py") and not file.startswith("_"):
