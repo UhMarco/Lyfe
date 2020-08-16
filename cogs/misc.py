@@ -127,10 +127,10 @@ class Misc(commands.Cog):
             user = ctx.message.mentions[0]
 
         if user.id == ctx.author.id:
-            return await ctx.send("You gave yourself a :cookie: Cookie!")
+            return await ctx.send("You gave yourself a :cookie: **Cookie**!")
 
-        await ctx.send(f"You gave {user.name} a :cookie: Cookie!")
-        await user.send(f"**{ctx.author}** gave you a :cookie: Cookie from the server: {ctx.author.guild}")
+        await ctx.send(f"You gave {user.name} a :cookie: **Cookie**!")
+        await user.send(f"**{ctx.author}** gave you a :cookie: **Cookie** from the server: {ctx.author.guild}")
 
     @cookie.error
     async def cookie_error(self, ctx, error):
@@ -150,10 +150,10 @@ class Misc(commands.Cog):
             user = ctx.message.mentions[0]
 
         if user.id == ctx.author.id:
-            return await ctx.send(f"You gave yourself a :rose: Flower!")
+            return await ctx.send(f"You gave yourself a :rose: **Flower**!")
 
-        await ctx.send(f"You gave {user.name} a :rose: Flower!")
-        await user.send(f"{ctx.author} gave you a :rose: Flower from the server: {ctx.author.guild}")
+        await ctx.send(f"You gave {user.name} a :rose: **Flower**!")
+        await user.send(f"{ctx.author} gave you a :rose: **Flower** from the server: {ctx.author.guild}")
 
     @flower.error
     async def flower_error(self, ctx, error):
