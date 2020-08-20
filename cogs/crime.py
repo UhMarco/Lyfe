@@ -44,6 +44,7 @@ class Crime(commands.Cog):
 
         items = await self.bot.items.find("items")
         items = items["items"]
+        
         if not item:
             return await ctx.send(f"Usage: `{self.bot.prefix}robbery (victim) (tool) (item)`")
         if item.lower() not in items:
