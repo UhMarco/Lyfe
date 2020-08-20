@@ -160,18 +160,5 @@ class Misc(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}flower (user)`")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 def setup(bot):
     bot.add_cog(Misc(bot))

@@ -73,5 +73,17 @@ class Events(commands.Cog):
         raise error
         print("\n----------\n")
 
+    @commands.Cog.listener()
+    async def on_guild_join(guild):
+        general = find(lambda x: x.name == 'general',  guild.text_channels)
+        if general and general.permissions_for(guild.me).send_messages:
+            welcomebed = discord.Embed(
+                title="Thank you for inviting me!",
+                description=f"A few things about myself: \n \nMy prefix is `{self.bot.prefix}`\nYou can find help by doing `{self.bot.prefix}help`\nYou can join the support server by doing `{self.bot.prefix}invite`\nTo start your epic adventure, do `{self.bot.prefix}inv`",
+                color=discord.Color.green()
+            )
+            welcomebed.set_thumbnail(url=self.bot.user.avatar_url)
+            return await ctx.send(embed=welcomebed)
+
 def setup(bot):
     bot.add_cog(Events(bot))
