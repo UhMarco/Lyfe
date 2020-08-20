@@ -1,4 +1,4 @@
-import discord, platform, logging, random, os, asyncio
+import discord, platform, logging, random, os,time, asyncio
 from discord.ext import commands
 import platform
 from pathlib import Path
@@ -6,7 +6,7 @@ cwd = Path(__file__).parents[1]
 cwd = str(cwd)
 import utils.json
 from tabulate import tabulate
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Misc(commands.Cog):
 
@@ -115,6 +115,7 @@ class Misc(commands.Cog):
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
 
     @commands.command()
+    @commands.cooldown(1, 900, commands.BucketType.user)
     async def cookie(self, ctx, user):
         if len(ctx.message.mentions) == 0:
             try:
@@ -135,9 +136,11 @@ class Misc(commands.Cog):
     @cookie.error
     async def cookie_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"Usage: `{self.bot.prefix}cookie (user)`")
 
     @commands.command()
+    @commands.cooldown(1, 900, commands.BucketType.user)
     async def flower(self, ctx, user):
         if len(ctx.message.mentions) == 0:
             try:
@@ -158,6 +161,7 @@ class Misc(commands.Cog):
     @flower.error
     async def flower_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"Usage: `{self.bot.prefix}flower (user)`")
 
 def setup(bot):
