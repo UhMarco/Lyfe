@@ -74,7 +74,7 @@ class Bot(commands.Cog):
                 """,
             color=discord.Color.purple()
         )
-        embed.set_footer(text="Built by NotStealthy#0001, Spook#4177 and hypews#2401")
+        embed.set_footer(text="Built by NotStealthy#0001, Spook#4177 and hypews#0001")
         return await ctx.send(embed=embed)
 
 def setup(bot):

@@ -58,6 +58,14 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}withdraw (amoint)`", value="Withdraw from your bank", inline=False)
             return await ctx.send(embed=embed)
 
+        elif section.lower() == "profiles" or section.lower() == "profile":
+            embed = discord.Embed(title=":bust_in_silhouette: Profile Commands", color=discord.Color.purple())
+            embed.set_footer(text="Profile command list")
+            embed.add_field(name=f"`{self.bot.prefix}profile [user]`", value="View a profile", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}titles`", value="View your titles", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}title set [title]`", value="Set a title", inline=False)
+            return await ctx.send(embed=embed)
+
         elif section.lower() == "crime" or section.lower() == "robbery":
             embed = discord.Embed(title=":moneybag: Crime Commands", description="**Note:** Items in these commands don't contain spaces", color=discord.Color.purple())
             embed.set_footer(text="Crime command list")
@@ -100,6 +108,8 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}feed`", value="Feed a frog to a dragon, there's a 1% chance of something special happening", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}avatar [user]`", value="Display the avatar of a user in full size", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}8ball (question)`", value="8ball lol", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}cookie (user)`", value="Sends a user a cookie. Purely cosmetic and yields no item", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}flower (user)`", value="Sends a user a flower. Purely cosmetic and yields no item", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "leaderboards" or section.lower() == "leaders":
@@ -125,6 +135,7 @@ class Help(commands.Cog):
             embed = discord.Embed(title=":herb: Lyfé Command List", color=discord.Color.purple())
             embed.add_field(name=":page_facing_up: Inventory", value=f"`{self.bot.prefix}help inventory`", inline=False)
             embed.add_field(name=":credit_card: Economy", value=f"`{self.bot.prefix}help economy`", inline=False)
+            embed.add_field(name=":bust_in_silhouette: Profiles", value=f"`{self.bot.prefix}help profiles`", inline=False)
             embed.add_field(name=":moneybag: Crime", value=f"`{self.bot.prefix}help crime`", inline=False)
             embed.add_field(name=":card_box: Jobs", value=f"`{self.bot.prefix}help jobs`", inline=False)
             embed.add_field(name=":scales: Trading", value=f"`{self.bot.prefix}help trading`", inline=False)

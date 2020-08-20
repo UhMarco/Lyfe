@@ -69,7 +69,7 @@ class Jobs(commands.Cog):
             await ctx.send(embed=embed)
 
         elif job == "janitor":
-            embed = discord.Embed(title="You successfully became a :broom: **Janitor**", description="**Earns:** $`100` every `1 hour`", color=discord.Color.greyple())
+            embed = discord.Embed(title="You successfully became a :broom: **Janitor**", description="**Earns:** $`100` every `30 minutes`", color=discord.Color.greyple())
             await self.bot.inventories.upsert({"_id": ctx.author.id, "job": "janitor"})
             await ctx.send(embed=embed)
 
