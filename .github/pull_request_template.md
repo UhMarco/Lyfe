@@ -1,7 +1,7 @@
 ## Description
 Clearly and concisely describe the changes.
 
-## Noteable changes
+## Notable changes
 > Added this
 
 > Removed that
