@@ -118,7 +118,7 @@ class Inventory(commands.Cog):
         else:
             color = discord.Color.red()
 
-        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description="{}**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(star, bal, bankbal, banklimit), color=color)
+        embed = discord.Embed(title=f":desktop: **{user.name}'s Inventory**", description="{}**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(title, bal, bankbal, banklimit), color=color)
 
         count = 0
         for i in inventory:
