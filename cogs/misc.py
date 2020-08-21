@@ -155,7 +155,7 @@ class Misc(commands.Cog):
         if user.id == ctx.author.id:
             return await ctx.send(f"You gave yourself a :rose: **Flower**!")
 
-        await ctx.send(f"You gave {user.name} a :rose: **Flower**!")
+        await ctx.send(f"You gave **{user.name}** a :rose: **Flower**!")
         await user.send(f"**{ctx.author}** gave you a :rose: **Flower** from the server: {ctx.author.guild}")
 
     @flower.error
