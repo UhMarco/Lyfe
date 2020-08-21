@@ -122,15 +122,17 @@ class Misc(commands.Cog):
                 user = self.bot.get_user(int(user))
                 if user is None:
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+                    ctx.command.reset_cooldown(ctx)
             except ValueError:
                 return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+                ctx.command.reset_cooldown(ctx)
         else:
             user = ctx.message.mentions[0]
 
         if user.id == ctx.author.id:
             return await ctx.send("You gave yourself a :cookie: **Cookie**!")
 
-        await ctx.send(f"You gave {user.name} a :cookie: **Cookie**!")
+        await ctx.send(f"You gave **{user.name}** a :cookie: **Cookie**!")
         await user.send(f"**{ctx.author}** gave you a :cookie: **Cookie** from the server: {ctx.author.guild}")
 
     @cookie.error
@@ -147,8 +149,10 @@ class Misc(commands.Cog):
                 user = self.bot.get_user(int(user))
                 if user is None:
                     return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+                    ctx.command.reset_cooldown(ctx)
             except ValueError:
                 return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
+                ctx.command.reset_cooldown(ctx)
         else:
             user = ctx.message.mentions[0]
 
