@@ -156,7 +156,7 @@ class Misc(commands.Cog):
             return await ctx.send(f"You gave yourself a :rose: **Flower**!")
 
         await ctx.send(f"You gave {user.name} a :rose: **Flower**!")
-        await user.send(f"{ctx.author} gave you a :rose: **Flower** from the server: {ctx.author.guild}")
+        await user.send(f"**{ctx.author}** gave you a :rose: **Flower** from the server: {ctx.author.guild}")
 
     @flower.error
     async def flower_error(self, ctx, error):
