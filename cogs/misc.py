@@ -121,11 +121,11 @@ class Misc(commands.Cog):
             try:
                 user = self.bot.get_user(int(user))
                 if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
                     ctx.command.reset_cooldown(ctx)
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
                 ctx.command.reset_cooldown(ctx)
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id")
         else:
             user = ctx.message.mentions[0]
 
@@ -148,11 +148,11 @@ class Misc(commands.Cog):
             try:
                 user = self.bot.get_user(int(user))
                 if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
                     ctx.command.reset_cooldown(ctx)
+                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
             except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
                 ctx.command.reset_cooldown(ctx)
+                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
         else:
             user = ctx.message.mentions[0]
 
