@@ -15,15 +15,15 @@ class Events(commands.Cog):
     async def on_guild_join(self, guild):
         print(f"JOINED {guild.name} - Owner: {guild.owner} - Members: {len(guild.members)} - Now in {len(self.bot.guilds)} guilds.")
         await self.bot.change_presence(activity=discord.Game(name=f"{self.bot.prefix}help in {len(self.bot.guilds)} servers"))
-            general = find(lambda x: x.name == 'general',  guild.text_channels)
-            if general and general.permissions_for(guild.me).send_messages:
-                welcomebed = discord.Embed(
-                    title="Thank you for inviting me!",
-                    description=f"A few things about myself: \n \nMy prefix is `{self.bot.prefix}`\nYou can find help by doing `{self.bot.prefix}help`\nYou can join the support server by doing `{self.bot.prefix}invite`\nTo start your epic adventure, do `{self.bot.prefix}inv`",
-                    color=discord.Color.green()
-                )
-                welcomebed.set_thumbnail(url=self.bot.user.avatar_url)
-                return await general.send(embed=welcomebed)
+        general = find(lambda x: x.name == 'general',  guild.text_channels)
+        if general and general.permissions_for(guild.me).send_messages:
+            welcomebed = discord.Embed(
+                title="Thank you for inviting me!",
+                description=f"A few things about myself: \n \nMy prefix is `{self.bot.prefix}`\nYou can find help by doing `{self.bot.prefix}help`\nYou can join the support server by doing `{self.bot.prefix}invite`\nTo start your epic adventure, do `{self.bot.prefix}inv`",
+                color=discord.Color.green()
+            )
+            welcomebed.set_thumbnail(url=self.bot.user.avatar_url)
+            return await general.send(embed=welcomebed)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
