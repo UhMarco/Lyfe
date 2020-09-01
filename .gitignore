@@ -2,5 +2,5 @@
 /bot_config/blacklist.json
 /bot_config/whitelist.json
 /cogs/__pycache__/
-/items/__pycache__/
 /utils/__pycache__/
+.DS_Store
