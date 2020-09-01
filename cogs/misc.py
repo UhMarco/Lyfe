@@ -174,5 +174,16 @@ class Misc(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"Usage: `{self.bot.prefix}flower (user)`")
 
+    @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def welcome(self, ctx):
+        welcomebed = discord.Embed(
+            title="Thank you for inviting me!",
+            description=f"A few things about myself: \n \nMy prefix is `{self.bot.prefix}`\nYou can find help by doing `{self.bot.prefix}help`\nYou can join the support server by doing `{self.bot.prefix}invite`\nTo start your epic adventure, do `{self.bot.prefix}inv`\nTo view this message again, do `{self.bot.prefix}welcome`",
+            color=discord.Color.green()
+        )
+        welcomebed.set_thumbnail(url=self.bot.user.avatar_url)
+        return await ctx.send(embed=welcomebed)
+
 def setup(bot):
     bot.add_cog(Misc(bot))
