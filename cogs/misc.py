@@ -49,6 +49,7 @@ class Misc(commands.Cog):
         await ctx.send(f":8ball: **8Ball:** {wisdom}")
 
     @commands.command()
+    @commands.cooldown(5, 2, commands.BucketType.user)
     async def feed(self, ctx):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
