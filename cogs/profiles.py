@@ -23,35 +23,6 @@ class Profiles(commands.Cog):
     async def on_ready(self):
         print("+ Profiles Cog loaded")
 
-    @commands.command()
-    @is_dev()
-    async def pfsetup(self, ctx):
-        await ctx.send("Please confirm.")
-        def check(m):
-            return m.channel == ctx.channel and m.author == ctx.author
-        message = await self.bot.wait_for('message', check=check)
-        if message.content.lower() == "confirm" or message.content.lower() == "yes":
-            pass
-        else:
-            return await ctx.send("Aborted.")
-
-        msg = await ctx.send(embed=discord.Embed(title="Loading <a:loading:733746914109161542>"))
-        data = await self.bot.inventories.get_all()
-        for i in data:
-            try:
-                del i["beta"]
-            except KeyError:
-                pass
-            i["titles"] = ['✪ Beta Player']
-            await self.bot.inventories.delete(i["_id"])
-            await self.bot.inventories.upsert({"_id": i["_id"], "balance": i["balance"]})
-            await self.bot.inventories.upsert({"_id": i["_id"], "bankbalance": i["bankbalance"]})
-            await self.bot.inventories.upsert({"_id": i["_id"], "banklimit": i["banklimit"]})
-            await self.bot.inventories.upsert({"_id": i["_id"], "job": i["job"]})
-            await self.bot.inventories.upsert({"_id": i["_id"], "inventory": i["inventory"]})
-            await self.bot.inventories.upsert({"_id": i["_id"], "titles": i["titles"]})
-        await msg.edit(embed=discord.Embed(title="Done."))
-
     @commands.command(aliases=['title'])
     async def titles(self, ctx, arg=None, title=None):
         data = await self.bot.inventories.find(ctx.author.id)
