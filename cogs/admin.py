@@ -251,6 +251,7 @@ class Admin(commands.Cog):
         await self.bot.inventories.upsert({"_id": user.id, "banklimit": 0})
         await self.bot.inventories.upsert({"_id": user.id, "job": None})
         await self.bot.inventories.upsert({"_id": user.id, "inventory": data})
+        await self.bot.inventories.upsert({"_id": user.id, "titles": []})
         await message.edit(content=f"Resetting **{user.name}'s** data... **Done!**")
 
     @resetdata.error
@@ -466,7 +467,7 @@ class Admin(commands.Cog):
             pass
         else:
             return await ctx.send("Aborted.")
-            
+
         if user == "all":
             data = await self.bot.inventories.get_all()
             for i in data:
