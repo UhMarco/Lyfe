@@ -43,7 +43,7 @@ class Research(commands.Cog):
 
 
     @commands.command()
-    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def find(self, ctx, *, item):
         data = await self.bot.inventories.get_all()
         first, second, third, fourth, fifth = {}, {}, {}, {}, {}

@@ -20,7 +20,7 @@ class Events(commands.Cog):
         if general and general.permissions_for(guild.me).send_messages:
             welcomebed = discord.Embed(
                 title="Thank you for inviting me!",
-                description=f"A few things about myself: \n \nMy prefix is `{self.bot.prefix}`\nYou can find help by doing `{self.bot.prefix}help`\nYou can join the support server by doing `{self.bot.prefix}invite`\nTo start your epic adventure, do `{self.bot.prefix}inv`",
+                description=f"A few things about myself: \n \nMy prefix is `{self.bot.prefix}`\nYou can find help by doing `{self.bot.prefix}help`\nYou can join the support server by doing `{self.bot.prefix}invite`\nTo start your epic adventure, do `{self.bot.prefix}inv`\nTo start your epic adventure, do `{self.bot.prefix}inv`\nTo view this message again, do `{self.bot.prefix}welcome`",
                 color=discord.Color.green()
             )
             welcomebed.set_thumbnail(url=self.bot.user.avatar_url)
