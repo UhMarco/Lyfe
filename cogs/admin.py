@@ -105,7 +105,7 @@ class Admin(commands.Cog):
         await user.inventory.add(item)
 
         name, emoji = item["name"], item["emoji"]
-        await ctx.send(f"Given **{emoji} {name}** to **{user.name}**.")
+        await ctx.send(f"Given **{emoji} {name}** to **{user.discord.name}**.")
 
     @spawnitem.error
     async def spawnitem_error(self, ctx, error):
@@ -124,9 +124,13 @@ class Admin(commands.Cog):
         if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
         name, emoji = item["name"], item["emoji"]
-        if user.inventory.remove(item) is False: # This item is actually remove here!
-            return await ctx.send(f"**{user.name}** doesn't have a **{emoji} {name}**.")
-        await ctx.send(f"Removed **{emoji} {name}** from **{user.name}**.")
+
+        if not user.inventory.contains(item):
+            return await ctx.send(f"**{user.discord.name}** doesn't have a **{emoji} {name}**.")
+
+        await user.inventory.remove(item)
+
+        await ctx.send(f"Removed **{emoji} {name}** from **{user.discord.name}**.")
 
     @removeitem.error
     async def removeitem_error(self, ctx, error):

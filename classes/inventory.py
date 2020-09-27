@@ -15,7 +15,7 @@ class InventoryArray(list):
         super(InventoryArray, self).__init__(inventory)
         self.user = user
 
-    async def contains(self, item):
+    def contains(self, item):
         if self is None: return False
         for i in self:
             if i["name"].lower().replace(" ", "") == item["name"].lower():
@@ -40,15 +40,11 @@ class InventoryArray(list):
     @overrides
     async def remove(self, item):
         c = 0
-        done = False
         for i in self:
             if i["name"] == item["name"]:
                 if i["quantity"] == 1:
                     self.pop(c)
                 else:
                     i["quantity"] -= 1
-                change = True
             c += 1
-        if not change:
-            return False
         await bot.inventories.upsert({"_id": self.user.id, "inventory": self})

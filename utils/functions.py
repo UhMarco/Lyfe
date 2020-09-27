@@ -1,7 +1,10 @@
 from classes.user import User
 
 async def getUser(user):
-    user = bot.get_user(int(user.strip("<!@>")))
+    try:
+        user = bot.get_user(int(user.strip("<!@>")))
+    except Exception:
+        user = None
     if user is not None:
         user = await User(user)
     return user
