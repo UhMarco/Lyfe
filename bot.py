@@ -2,7 +2,7 @@ import discord, json, platform, logging, os, time, motor.motor_asyncio
 from discord.ext import commands
 from pathlib import Path
 
-import utils.json, utils.functions
+import utils.json, utils.functions, classes.user, classes.inventory
 from utils.mongo import Document
 
 cwd = Path(__file__).parents[0]
@@ -51,7 +51,7 @@ async def on_ready():
     bot.playershops = Document(bot.db, "playershops")
     bot.cooldowns = Document(bot.db, "cooldowns")
     print("Initialized database\n-----")
-    utils.functions.bot = bot
+    utils.functions.bot = classes.user.bot = classes.inventory.bot = bot
 
 @bot.event
 async def on_message(message):

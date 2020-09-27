@@ -1,5 +1,10 @@
+from classes.user import User
+
 async def getUser(user):
-    return bot.get_user(int(user.strip("<!@>")))
+    user = bot.get_user(int(user.strip("<!@>")))
+    if user is not None:
+        user = await User(user)
+    return user
 
 async def getInventory(user):
     data = await bot.inventories.find(user.id)

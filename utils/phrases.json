@@ -1,0 +1,6 @@
+{
+  "userNotFound": "I couldn't find that user.\n**Tip:** Mention them or use their id.",
+  "noInventory": "You haven't initialized your inventory yet.",
+  "otherNoInventory": "This user hasn't initialized their inventory yet.",
+  "itemDoesNotExist": "That item does not exist."
+}

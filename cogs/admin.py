@@ -1,11 +1,12 @@
-import discord, platform, logging, random, os, time, asyncio
+import discord, os, time, asyncio
 from discord.ext import commands
-import platform
 from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
-import utils.json
-from tabulate import tabulate
+import utils.json, utils.functions
+from classes.user import User
+from classes.phrases import Phrases
+phrases = Phrases()
 
 def is_dev():
     def predictate(ctx):
@@ -64,8 +65,7 @@ class Admin(commands.Cog):
     @commands.command(aliases=['li', 'listitems', 'il'])
     @is_dev()
     async def itemlist(self, ctx, page=1):
-        items = await self.bot.items.find("items")
-        items = items["items"]
+        items = await utils.functions.getAllItems()
         embed = discord.Embed(title="**Item List**", color=discord.Color.purple())
 
         pagelimit = 5 * round(len(items) / 5)
@@ -94,43 +94,18 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['si', 'gi'])
     @is_dev()
-    async def spawnitem(self, ctx, item, user):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
+    async def spawnitem(self, ctx, user, item):
+        user = await utils.functions.getUser(user)
+        if not user: return await ctx.send(phrases.userNotFound)
+        if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
-        data = await self.bot.inventories.find(user.id)
-        if data is None:
-            return await ctx.send("This user hasn't initialized their inventory yet.")
+        item = await utils.functions.getItem(item)
+        if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
-        items = await self.bot.items.find("items")
-        items = items["items"]
-        if item.lower() not in items:
-            return await ctx.send("That item does not exist.")
+        await user.inventory.add(item)
 
-        inventory = data["inventory"]
-        item = items[item.lower()]
         name, emoji = item["name"], item["emoji"]
-
-        found = False
-        for i in inventory:
-            if i["name"] == name:
-                i["quantity"] += 1
-                found = True
-
-        if not found:
-            del item["emoji"], item["value"], item["description"], item["rarity"]
-            item["locked"] = False
-            item["quantity"] = 1
-            inventory.append(item)
         await ctx.send(f"Given **{emoji} {name}** to **{user.name}**.")
-        await self.bot.inventories.upsert({"_id": user.id, "inventory": inventory})
 
     @spawnitem.error
     async def spawnitem_error(self, ctx, error):
@@ -140,43 +115,18 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['ri'])
     @is_dev()
-    async def removeitem(self, ctx, item, user):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
+    async def removeitem(self, ctx, user, item):
+        user = await utils.functions.getUser(user)
+        if not user: return await ctx.send(phrases.userNotFound)
+        if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
-        data = await self.bot.inventories.find(user.id)
-        if data is None:
-            return await ctx.send("This user hasn't initialized their inventory yet.")
+        item = await utils.functions.getItem(item)
+        if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
-        items = await self.bot.items.find("items")
-        items = items["items"]
-        if item.lower() not in items:
-            return await ctx.send("That item does not exist.")
-
-        inventory = data["inventory"]
-        item = items[item.lower()]
         name, emoji = item["name"], item["emoji"]
-
-        change = False
-        for i in inventory:
-            if i["name"] == name:
-                if i["quantity"] == 1:
-                    inventory.remove(i)
-                    change = True
-                else:
-                    i["quantity"] -= 1
-                    change = True
-        if not change:
+        if user.inventory.remove(item) is False: # This item is actually remove here!
             return await ctx.send(f"**{user.name}** doesn't have a **{emoji} {name}**.")
         await ctx.send(f"Removed **{emoji} {name}** from **{user.name}**.")
-        await self.bot.inventories.upsert({"_id": user.id, "inventory": inventory})
 
     @removeitem.error
     async def removeitem_error(self, ctx, error):
