@@ -3,16 +3,15 @@ from asyncinit import asyncinit
 from overrides import overrides
 
 @asyncinit
-class InventoryArray(list):
+class Inventory(list):
     async def __new__(cls, user):
         if user is not None:
-            inventory = await utils.functions.getInventory(user)
-            if inventory is not None:
-                return super(InventoryArray, cls).__new__(cls)
+            if await utils.functions.getData(user) is not None:
+                return super(Inventory, cls).__new__(cls)
 
     async def __init__(self, user):
         inventory = await utils.functions.getInventory(user)
-        super(InventoryArray, self).__init__(inventory)
+        super(Inventory, self).__init__(inventory)
         self.user = user
 
     def contains(self, item):
@@ -23,19 +22,20 @@ class InventoryArray(list):
         return False
 
     async def add(self, item):
+        added_item = dict(item)
         found = False
         for i in self:
-            if i["name"] == item["name"]:
+            if i["name"] == added_item["name"]:
                 i["quantity"] += 1
                 found = True
 
         if not found:
-            del item["emoji"], item["value"], item["description"], item["rarity"]
-            item["locked"] = False
-            item["quantity"] = 1
-            self.append(item)
+            del added_item["emoji"], added_item["value"], added_item["description"], added_item["rarity"]
+            added_item["locked"] = False
+            added_item["quantity"] = 1
+            self.append(added_item)
 
-        await bot.inventories.upsert({"_id": self.user.id, "inventory": self})
+        #await bot.inventories.upsert({"_id": self.user.id, "inventory": self})
 
     @overrides
     async def remove(self, item):
@@ -47,4 +47,4 @@ class InventoryArray(list):
                 else:
                     i["quantity"] -= 1
             c += 1
-        await bot.inventories.upsert({"_id": self.user.id, "inventory": self})
+        #await bot.inventories.upsert({"_id": self.user.id, "inventory": self})

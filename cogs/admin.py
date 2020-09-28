@@ -1,9 +1,8 @@
-import discord, os, time, asyncio
+import discord, os, time, asyncio, utils.json, utils.functions
 from discord.ext import commands
 from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
-import utils.json, utils.functions
 from classes.user import User
 from classes.phrases import Phrases
 phrases = Phrases()
@@ -49,14 +48,8 @@ class Admin(commands.Cog):
         if self.bot.maintenancemode:
             return
 
-        await ctx.send("Please confirm.")
-        def check(m):
-            return m.channel == ctx.channel and m.author == ctx.author
-        message = await self.bot.wait_for('message', check=check)
-        if message.content.lower() == "confirm" or message.content.lower() == "yes":
-            pass
-        else:
-            return await ctx.send("Aborted.")
+        if await utils.functions.confirm(ctx) is False:
+            return await ctx.send("Aborted")
 
         await ctx.send("Stopping.")
         await self.bot.logout()
@@ -95,7 +88,7 @@ class Admin(commands.Cog):
     @commands.command(aliases=['si', 'gi'])
     @is_dev()
     async def spawnitem(self, ctx, user, item):
-        user = await utils.functions.getUser(user)
+        user = await User(user)
         if not user: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
@@ -103,7 +96,7 @@ class Admin(commands.Cog):
         if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
         await user.inventory.add(item)
-
+        await user.update()
         name, emoji = item["name"], item["emoji"]
         await ctx.send(f"Given **{emoji} {name}** to **{user.discord.name}**.")
 
@@ -116,20 +109,19 @@ class Admin(commands.Cog):
     @commands.command(aliases=['ri'])
     @is_dev()
     async def removeitem(self, ctx, user, item):
-        user = await utils.functions.getUser(user)
-        if not user: return await ctx.send(phrases.userNotFound)
+        user = await User(user)
+        if user is None: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
         item = await utils.functions.getItem(item)
         if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
         name, emoji = item["name"], item["emoji"]
-
         if not user.inventory.contains(item):
             return await ctx.send(f"**{user.discord.name}** doesn't have a **{emoji} {name}**.")
 
         await user.inventory.remove(item)
-
+        await user.update()
         await ctx.send(f"Removed **{emoji} {name}** from **{user.discord.name}**.")
 
     @removeitem.error
@@ -138,30 +130,21 @@ class Admin(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}removeitem (item) (user)`")
 
 
-    @commands.command(aliases=['sb'])
+    @commands.command(aliases=['sb', 'setbal'])
     @is_dev()
-    async def setbalance(self, ctx, user, amount="n"):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
-
-        data = await self.bot.inventories.find(user.id)
-        if data is None:
-            return await ctx.send("This user hasn't initialized their inventory yet.")
+    async def setbalance(self, ctx, user, amount):
+        user = await User(user)
+        if user is None: return await ctx.send(phrases.userNotFound)
+        if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
         try:
             amount = int(amount)
         except Exception:
-            return await ctx.send("Enter a valid amount")
+            return await ctx.send("Enter a valid amount.")
 
-        await self.bot.inventories.upsert({"_id": user.id, "balance": amount})
-        await ctx.send(f"Set **{user.name}'s** balance to $`{amount}`")
+        user.balance = amount
+        await user.update()
+        await ctx.send(f"Set **{user.discord.name}**'s balance to $`{amount}`")
 
     @setbalance.error
     async def setbalance_error(self, ctx, error):
@@ -172,41 +155,16 @@ class Admin(commands.Cog):
     @commands.command(aliases=['reset'])
     @is_dev()
     async def resetdata(self, ctx, user):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
+        user = await User(user)
+        if user is None: return await ctx.send(phrases.userNotFound)
+        if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
-        await ctx.send("Please confirm.")
-        def check(m):
-            return m.channel == ctx.channel and m.author == ctx.author
-        message = await self.bot.wait_for('message', check=check)
-        if message.content.lower() == "confirm" or message.content.lower() == "yes":
-            pass
-        else:
-            return await ctx.send("Aborted.")
+        if await utils.functions.confirm(ctx) is False:
+            return await ctx.send("Aborted")
 
-        items = await self.bot.items.find("items")
-        items = items["items"]
-        data = []
-        message = await ctx.send(f"Resetting **{user.name}'s** data... <a:loading:733746914109161542>")
-        item = items["shoppingcart"]
-        del item["emoji"], item["value"], item["description"], item["rarity"]
-        item["locked"] = False
-        item["quantity"] = 1
-        data.append(item)
-        await self.bot.inventories.upsert({"_id": user.id, "balance": 100})
-        await self.bot.inventories.upsert({"_id": user.id, "bankbalance": 0})
-        await self.bot.inventories.upsert({"_id": user.id, "banklimit": 0})
-        await self.bot.inventories.upsert({"_id": user.id, "job": None})
-        await self.bot.inventories.upsert({"_id": user.id, "inventory": data})
-        await self.bot.inventories.upsert({"_id": user.id, "titles": []})
-        await message.edit(content=f"Resetting **{user.name}'s** data... **Done!**")
+        message = await ctx.send(f"Resetting **{user.discord.name}'s** data... <a:loading:733746914109161542>")
+        await user.setup()
+        await message.edit(content=f"Resetting **{user.discord.name}'s** data... **Done!**")
 
     @resetdata.error
     async def resetdata_error(self, ctx, error):
@@ -338,110 +296,9 @@ class Admin(commands.Cog):
 
     @commands.command()
     @is_dev()
-    async def load(self, ctx, module):
-        if self.bot.maintenancemode:
-            return
-
-        try:
-            self.bot.load_extension(f"cogs.{module.lower()}")
-            name = module.lower()
-            return await ctx.send(f"**{name[:1].upper()}{name[1:]}** has been loaded.")
-        except Exception as e:
-            return await ctx.send(e)
-
-    @load.error
-    async def load_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}load (module)`")
-
-
-    @commands.command()
-    @is_dev()
-    async def reload(self, ctx, module):
-        if self.bot.maintenancemode:
-            return
-        if module == "all":
-            start = time.time()
-            for file in os.listdir(cwd+"/cogs"):
-                if file.endswith(".py") and not file.startswith("_"):
-                    self.bot.reload_extension(f"cogs.{file[:-3]}")
-                    name = file[:-3].lower()
-
-            end = time.time()
-            return await ctx.send("Operation took: `{:.5f}` seconds".format(end - start))
-        try:
-            self.bot.reload_extension(f"cogs.{module.lower()}")
-            name = module.lower()
-            return await ctx.send(f"**{name[:1].upper()}{name[1:]}** has been reloaded.")
-        except Exception as e:
-            return await ctx.send(e)
-
-    @reload.error
-    async def reload_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}reload (module/all)`")
-
-
-    @commands.command()
-    @is_dev()
-    async def unload(self, ctx, module):
-        if self.bot.maintenancemode:
-            return
-        if module.lower() == "admin":
-            return await ctx.send("That's not a good idea...")
-
-        try:
-            self.bot.unload_extension(f"cogs.{module.lower()}")
-            name = module.lower()
-            return await ctx.send(f"**{name[:1].upper()}{name[1:]}** has been unloaded.")
-        except Exception as e:
-            return await ctx.send(e)
-
-    @unload.error
-    async def unload_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"Usage: `{self.bot.prefix}unload (module)`")
-
-
-    @commands.command()
-    @is_dev()
     async def maintenance(self, ctx):
         self.bot.maintenancemode = not self.bot.maintenancemode
         await ctx.send(f"Maintenance-Mode set to **{self.bot.maintenancemode}**.")
-
-
-    @commands.command()
-    @is_dev()
-    async def addbeta(self, ctx, user):
-        await ctx.send("Please confirm.")
-        def check(m):
-            return m.channel == ctx.channel and m.author == ctx.author
-        message = await self.bot.wait_for('message', check=check)
-        if message.content.lower() == "confirm" or message.content.lower() == "yes":
-            pass
-        else:
-            return await ctx.send("Aborted.")
-
-        if user == "all":
-            data = await self.bot.inventories.get_all()
-            for i in data:
-                await self.bot.inventories.upsert({"_id": i["_id"], "beta": True})
-            return await ctx.send("All current players now have beta.")
-
-        elif len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
-
-        if await self.bot.inventories.find(user.id) is None:
-            return await ctx.send("Inv not init.")
-        await self.bot.inventories.upsert({"_id": user.id, "beta": True})
-        await ctx.send(f"**{user.name}** given beta.")
 
 def setup(bot):
     bot.add_cog(Admin(bot))
