@@ -301,7 +301,7 @@ class Inventory(commands.Cog):
         items = items["items"]
         if item.lower() not in items:
             return await ctx.send("That item does not exist.")
-        elif item.lower() == "lock" or item.lower() == "key:
+        elif item.lower() == "lock" or item.lower() == "key":
             return await ctx.send("You can't lock this item.")
 
         inventory = data["inventory"]
