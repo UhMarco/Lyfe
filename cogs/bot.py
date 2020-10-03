@@ -54,6 +54,8 @@ class Bot(commands.Cog):
 
         embed = discord.Embed(title="Diagnosis", description=f"**Extensions:**\n{message.join(modules)}\n**Errors since startup:** `{self.bot.important_errors}/{self.bot.errors}`", color=discord.Color.blue())
         await ctx.send(embed=embed)
+
+
     @commands.command(aliases=['stats'])
     async def info(self,ctx):
         m, s = divmod(time.time() - self.bot.upsince, 60)
