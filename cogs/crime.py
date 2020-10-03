@@ -8,6 +8,11 @@ import utils.json
 from tabulate import tabulate
 from datetime import datetime
 
+import utils.functions
+from classes.user import User
+from classes.phrases import Phrases
+phrases = Phrases()
+
 robberytools = ["knife", "gun", "hammer"]
 
 class Crime(commands.Cog):
@@ -20,75 +25,37 @@ class Crime(commands.Cog):
         print("+ Crime Cog loaded")
 
     @commands.command(aliases=['rob', 'burgle'])
-    async def robbery(self, ctx, user, tool=None, item=None):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
+    async def robbery(self, ctx, user, tool, item):
+        user = await User(user)
+        if not user: return await ctx.send(phrases.userNotFound)
+        if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
-        if user.id == ctx.author.id:
+        if user.discord.id == ctx.author.id:
             return await ctx.send("You can't rob yourself.")
 
-        mydata = await self.bot.inventories.find(ctx.author.id)
-        if mydata is None:
-            return await ctx.send("You haven't initialized your inventory yet.")
+        author = await User(ctx.author)
+        if author.inventory is None: return await ctx.send(phrases.noInventory)
 
-        yourdata = await self.bot.inventories.find(user.id)
-        if yourdata is None:
-            return await ctx.send(f"**{user.name}** hasn't initialized their inventory yet.")
+        item = await utils.functions.getItem(item)
+        if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
-        items = await self.bot.items.find("items")
-        items = items["items"]
+        tool = await utils.functions.getItem(item)
+        if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
-        if not item:
-            return await ctx.send(f"Usage: `{self.bot.prefix}robbery (victim) (tool) (item)`")
-        if item.lower() not in items:
-            return await ctx.send("That item does not exist.")
-        if tool.lower() not in items:
-            return await ctx.send("That tool does not exist.")
-
-        if tool.lower() not in robberytools:
+        if tool["name"] not in robberytools:
             return await ctx.send("That is not a valid tool.")
 
-        item = items[item.lower()]
-        tool = items[tool.lower()]
-        myinventory = mydata["inventory"]
-        yourinventory = yourdata["inventory"]
-
         # Check if robber has the tool
-        found = False
-        for i in myinventory:
-            if i["name"] == tool["name"]:
-                found = True
-                break
-        if not found:
+        if not author.inventory.contains(tool):
             return await ctx.send("You don't have that tool in your inventory.")
 
+        emoji, name = item["emoji"], item["name"]
         # Check if victim has the item
-        found = False
-        for i in yourinventory:
-            if i["name"] == item["name"]:
-                if i["locked"]:
-                    emoji, name = item["emoji"], i["name"]
-                    return await ctx.send(f"**{emoji} {name}** has been locked in **{user.name}**'s inventory.")
-                found = True
-                break
-        if not found:
-            emoji, name = item["emoji"], item["name"]
-            return await ctx.send(f"**{user.name}** doesn't have **{emoji} {name}**.")
+        if not user.inventory.contains(item):
+            return await ctx.send(f"**{user.discord.name}** doesn't have **{emoji} {name}**.")
 
         # Robber's tool has been used
-        for i in myinventory:
-            if i["name"] == tool["name"]:
-                if i["quantity"] == 1:
-                    myinventory.remove(i)
-                else:
-                    i["quantity"] -= 1
+        await author.inventory.remove(tool)
 
         # Check probability of successful robbery
         rand = random.randint(0, 100)
@@ -98,24 +65,8 @@ class Crime(commands.Cog):
         toolemoji, itememoji = items[toolname.replace(" ", "").lower()]["emoji"], items[itemname.replace(" ", "").lower()]["emoji"]
 
         if rand <= chance: # Success
-            for i in yourinventory:
-                if i["name"] == item["name"]:
-                    if i["quantity"] == 1:
-                        yourinventory.remove(i)
-                    else:
-                        i["quantity"] -= 1
-
-            given = False
-            for i in myinventory:
-                if i["name"] == item["name"]:
-                    i["quantity"] += 1
-                    given = True
-
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                myinventory.append(item)
+            user.inventory.remove(item)
+            author.inventory.add(item)
 
             embed = discord.Embed(
                 title=f":moneybag: {ctx.author.name}'s robbery from {user.name}",
@@ -152,8 +103,8 @@ class Crime(commands.Cog):
             except discord.Forbidden:
                 pass
 
-        await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": myinventory})
-        await self.bot.inventories.upsert({"_id": user.id, "inventory": yourinventory})
+        await user.inventory.update()
+        await author.inventory.update()
 
     @robbery.error
     async def robbery_error(self, ctx, error):
@@ -511,7 +462,7 @@ class Crime(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"Usage: `{self.bot.prefix}axe (user) (item)`")
-            
+
 
     @commands.command()
     @commands.cooldown(1, 900, commands.BucketType.user)

@@ -95,7 +95,7 @@ class Admin(commands.Cog):
         item = await utils.functions.getItem(item)
         if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
-        await user.inventory.add(item)
+        user.inventory.add(item)
         await user.update()
         name, emoji = item["name"], item["emoji"]
         await ctx.send(f"Given **{emoji} {name}** to **{user.discord.name}**.")
@@ -120,7 +120,7 @@ class Admin(commands.Cog):
         if not user.inventory.contains(item):
             return await ctx.send(f"**{user.discord.name}** doesn't have a **{emoji} {name}**.")
 
-        await user.inventory.remove(item)
+        user.inventory.remove(item)
         await user.update()
         await ctx.send(f"Removed **{emoji} {name}** from **{user.discord.name}**.")
 

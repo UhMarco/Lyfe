@@ -1,6 +1,5 @@
 import asyncio, utils.functions
 from asyncinit import asyncinit
-from overrides import overrides
 
 @asyncinit
 class Inventory(list):
@@ -21,7 +20,7 @@ class Inventory(list):
                 return True
         return False
 
-    async def add(self, item):
+    def add(self, item):
         added_item = dict(item)
         found = False
         for i in self:
@@ -35,10 +34,7 @@ class Inventory(list):
             added_item["quantity"] = 1
             self.append(added_item)
 
-        #await bot.inventories.upsert({"_id": self.user.id, "inventory": self})
-
-    @overrides
-    async def remove(self, item):
+    def remove(self, item):
         c = 0
         for i in self:
             if i["name"] == item["name"]:
@@ -47,4 +43,3 @@ class Inventory(list):
                 else:
                     i["quantity"] -= 1
             c += 1
-        #await bot.inventories.upsert({"_id": self.user.id, "inventory": self})
