@@ -151,6 +151,38 @@ class Admin(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}setbalance (user) (amount)`")
 
+    @commands.command(aliases=['setbankbal', 'sbb'])
+    @is_dev()
+    async def setbankbalance(self, ctx, user, amount):
+        user = await User(user)
+        if user is None: return await ctx.send(phrases.userNotFound)
+        if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
+
+        try:
+            amount = int(amount)
+        except Exception:
+            return await ctx.send("Enter a valid amount.")
+
+        user.bank.balance = amount
+        await user.update()
+        await ctx.send(f"Set **{user.discord.name}**'s bank balance to $`{amount}`")
+
+    @commands.command(aliases=['setbanklim', 'sbl'])
+    @is_dev()
+    async def setbanklimit(self, ctx, user, amount):
+        user = await User(user)
+        if user is None: return await ctx.send(phrases.userNotFound)
+        if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
+
+        try:
+            amount = int(amount)
+        except Exception:
+            return await ctx.send("Enter a valid amount.")
+
+        user.bank.limit = amount
+        await user.update()
+        await ctx.send(f"Set **{user.discord.name}**'s bank limit to $`{amount}`")
+
 
     @commands.command(aliases=['reset'])
     @is_dev()
