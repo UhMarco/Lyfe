@@ -43,7 +43,7 @@ async def getAllItems():
 
 async def getItem(item):
     items = await getAllItems()
-    item.lower().replace(" ", "")
+    item = item.lower().replace(" ", "")
     if item not in items:
         return None
     return items[item]

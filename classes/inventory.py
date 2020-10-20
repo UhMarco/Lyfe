@@ -16,9 +16,16 @@ class Inventory(list):
     def contains(self, item):
         if self is None: return False
         for i in self:
-            if i["name"].lower().replace(" ", "") == item["name"].lower():
+            if i["name"].lower().replace(" ", "") == item["name"].lower().replace(" ", ""):
                 return True
         return False
+
+    def get(self, item):
+        if self is None: return None
+        for i in self:
+            if i["name"].lower().replace(" ", "") == item["name"].lower().replace(" ", ""):
+                return i
+        return None
 
     def add(self, item):
         added_item = dict(item)

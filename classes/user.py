@@ -7,14 +7,15 @@ from classes.bank import Bank
 class User:
     async def __new__(cls, user):
         try:
-            user = bot.get_user(int(user.strip("<!@>")))
+            user = bot.get_user(int(str(user).strip("<!@>")))
         except Exception:
-            user = None
+                user = None
+
         if user is not None:
             return super(User, cls).__new__(cls)
 
     async def __init__(self, user):
-        user = bot.get_user(int(user.strip("<!@>")))
+        user = bot.get_user(int(str(user).strip("<!@>")))
         await self.define(user)
 
     async def define(self, user):
