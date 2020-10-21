@@ -74,7 +74,7 @@ class Jobs(commands.Cog):
             await ctx.send(embed=embed)
 
         elif job == "mage":
-            embed = discord.Embed(title="You successfully became a :mage: **Mage**", description="**Earns:** $`150` every `45 minutes`", color=discord.Color.greyple())
+            embed = discord.Embed(title="You successfully became a :mage: **Mage**", description="**Earns:** $`150` every `1 hour`", color=discord.Color.greyple())
             await self.bot.inventories.upsert({"_id": ctx.author.id, "job": "mage"})
             await ctx.send(embed=embed)
 
