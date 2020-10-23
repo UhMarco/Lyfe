@@ -1,8 +1,5 @@
-import discord, os, time, asyncio, utils.json, utils.functions
+import discord, asyncio, utils.json, utils.functions
 from discord.ext import commands
-from pathlib import Path
-cwd = Path(__file__).parents[1]
-cwd = str(cwd)
 from classes.user import User
 from classes.phrases import Phrases
 phrases = Phrases()
@@ -87,9 +84,8 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['si', 'gi'])
     @is_dev()
-    async def spawnitem(self, ctx, user, item):
-        user = await User(user)
-        if not user: return await ctx.send(phrases.userNotFound)
+    async def spawnitem(self, ctx, user: discord.Member, item):
+        user = await User(user.id)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
         item = await utils.functions.getItem(item)
@@ -104,6 +100,8 @@ class Admin(commands.Cog):
     async def spawnitem_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}spawnitem (item) (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command(aliases=['ri'])
