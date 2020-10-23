@@ -81,7 +81,7 @@ class Admin(commands.Cog):
         embed.set_footer(text=f"Item List | Page: {page}/{pagelimit}")
         await ctx.send(embed=embed)
 
-
+    # I GOT THIS FAR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @commands.command(aliases=['si', 'gi'])
     @is_dev()
     async def spawnitem(self, ctx, user: discord.Member, item):
@@ -102,6 +102,8 @@ class Admin(commands.Cog):
             return await ctx.send(f"Usage: `{self.bot.prefix}spawnitem (item) (user)`")
         elif isinstance(error, commands.BadArgument):
             return await ctx.send(phrases.userNotFound)
+
+    # END TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
     @commands.command(aliases=['ri'])
