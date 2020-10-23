@@ -1,12 +1,8 @@
-import discord, platform, logging, random, os, asyncio, time
+import discord, random, os, asyncio, time, platform
 from discord.ext import commands
-import platform
 from pathlib import Path
 cwd = Path(__file__).parents[1]
 cwd = str(cwd)
-import utils.json
-from tabulate import tabulate
-from datetime import datetime
 
 class Bot(commands.Cog):
 
