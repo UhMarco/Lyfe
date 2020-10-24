@@ -35,7 +35,7 @@ class Events(commands.Cog):
     async def on_command_error(self, ctx, error):
         self.bot.errors += 1
         # Ignored errors
-        ignored = (commands.CommandNotFound, commands.MissingRequiredArgument)#, commands.BadArgument)#, commands.UserInputError
+        ignored = (commands.CommandNotFound, commands.MissingRequiredArgument, commands.BadArgument)#, commands.UserInputError
         if isinstance(error, ignored):
             return
 
