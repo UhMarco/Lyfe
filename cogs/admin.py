@@ -82,7 +82,7 @@ class Admin(commands.Cog):
         await ctx.send(embed=embed)
 
     # I GOT THIS FAR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    @commands.command(aliases=['si', 'gi'])
+    @commands.command(aliases=['si'])
     @is_dev()
     async def spawnitem(self, ctx, user: discord.Member, item):
         user = await User(user.id)
