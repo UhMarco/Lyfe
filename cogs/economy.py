@@ -1,12 +1,9 @@
-import discord, platform, logging, random, os, asyncio
+import discord, random, asyncio
 from discord.ext import commands
-import platform
-from pathlib import Path
-cwd = Path(__file__).parents[1]
-cwd = str(cwd)
-import utils.json
+from classes.user import User
 from tabulate import tabulate
-from datetime import datetime
+from classes.phrases import Phrases
+phrases = Phrases()
 
 class Economy(commands.Cog):
 
@@ -18,44 +15,41 @@ class Economy(commands.Cog):
         print("+ Economy Cog loaded")
 
     @commands.command(aliases=['bal'])
-    async def balance(self, ctx, user=None):
+    async def balance(self, ctx, user: discord.Member):
         color = discord.Color.red()
-        if user is None:
-            user = ctx.author
-            color = discord.Color.blue()
-        elif len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
 
-        data = await self.bot.inventories.find(user.id)
+        user = await User(user.id)
 
-        if data is None:
-            if user != ctx.author:
-                return await ctx.send("This user hasn't initialized their inventory yet.")
+        if user.inventory is None:
+            if user.discord != ctx.author:
+                return await ctx.send(phrases.otherNoInventory)
             else:
-                return await ctx.send("You haven't initialized your inventory yet.")
-
-        balance = data["balance"]
-        bankbalance = data["bankbalance"]
-        banklimit = data["banklimit"]
+                return await ctx.send(phrases.noInventory)
 
         a = "their"
-        if user == ctx.author:
+        if user.discord == ctx.author:
             color = discord.Color.blue()
             a = "your"
 
         embed = discord.Embed(
                 title=":moneybag: **Balance**",
-                description=":dollar: **{}**'s balance is $`{:,}`\n:bank: $`{:,}`/`{:,}` is stored in {} bank".format(user.name, balance, bankbalance, banklimit, a),
+                description=":dollar: **{}**'s balance is $`{:,}`\n:bank: $`{:,}`/`{:,}` is stored in {} bank".format(user.discord.name, user.balance, user.bank.balance, user.bank.limit, a),
                 color=color
             )
         return await ctx.send(embed=embed)
+
+    @balance.error
+    async def balance_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            user = await User(ctx.author.id)
+            embed = discord.Embed(
+                title=":moneybag: **Balance**",
+                description=":dollar: **{}**'s balance is $`{:,}`\n:bank: $`{:,}`/`{:,}` is stored in your bank".format(user.discord.name, user.balance, user.bank.balance, user.bank.limit),
+                color=discord.Color.blue()
+            )
+            return await ctx.send(embed=embed)
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command(aliases=['gambling'])
