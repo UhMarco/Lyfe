@@ -16,7 +16,7 @@ class User:
             return super(User, cls).__new__(cls)
     """
 
-    await def __init__(self, user):
+    async def __init__(self, user):
         await self.define(user)
 
     async def define(self, user):
