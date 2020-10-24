@@ -19,13 +19,13 @@ class Crime(commands.Cog):
         print("+ Crime Cog loaded")
 
     @commands.command(aliases=['rob', 'burgle'])
-    async def robbery(self, ctx, user, tool, item):
+    async def robbery(self, ctx, user: discord.Member, tool, item):
         author = await User(ctx.author.id)
         if author.inventory is None:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(phrases.noInventory)
 
-        user = await User(user)
+        user = await User(user.id)
         if not user:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(phrases.userNotFound)
@@ -146,8 +146,8 @@ class Crime(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 900, commands.BucketType.user)
-    async def dynamite(self, ctx, user):
-        user = await User(user)
+    async def dynamite(self, ctx, user: discord.Member):
+        user = await User(user.id)
         if not user:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(phrases.userNotFound)
@@ -198,8 +198,8 @@ class Crime(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 900, commands.BucketType.user)
-    async def bomb(self, ctx, user):
-        user = await User(user)
+    async def bomb(self, ctx, user: discord.Member):
+        user = await User(user.id)
         if not user:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(phrases.userNotFound)
@@ -243,8 +243,8 @@ class Crime(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 900, commands.BucketType.user)
-    async def axe(self, ctx, user, *, item):
-        user = await User(user)
+    async def axe(self, ctx, user: discord.Member, *, item):
+        user = await User(user.id)
         if user is None:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(phrases.userNotFound)
@@ -302,8 +302,8 @@ class Crime(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 900, commands.BucketType.user)
-    async def burn(self, ctx, user, item):
-        user = await User(user)
+    async def burn(self, ctx, user: discord.Member, item):
+        user = await User(user.id)
         if user is None:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(phrases.userNotFound)

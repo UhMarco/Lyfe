@@ -81,7 +81,6 @@ class Admin(commands.Cog):
         embed.set_footer(text=f"Item List | Page: {page}/{pagelimit}")
         await ctx.send(embed=embed)
 
-    # I GOT THIS FAR TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @commands.command(aliases=['si'])
     @is_dev()
     async def spawnitem(self, ctx, user: discord.Member, item):
@@ -103,13 +102,11 @@ class Admin(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             return await ctx.send(phrases.userNotFound)
 
-    # END TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
     @commands.command(aliases=['ri'])
     @is_dev()
-    async def removeitem(self, ctx, user, item):
-        user = await User(user)
+    async def removeitem(self, ctx, user: discord.Member, item):
+        user = await User(user.id)
         if user is None: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
@@ -128,12 +125,14 @@ class Admin(commands.Cog):
     async def removeitem_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}removeitem (item) (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command(aliases=['sb', 'setbal'])
     @is_dev()
-    async def setbalance(self, ctx, user, amount):
-        user = await User(user)
+    async def setbalance(self, ctx, user: discord.Member, amount):
+        user = await User(user.id)
         if user is None: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
@@ -150,11 +149,13 @@ class Admin(commands.Cog):
     async def setbalance_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}setbalance (user) (amount)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
     @commands.command(aliases=['setbankbal', 'sbb'])
     @is_dev()
-    async def setbankbalance(self, ctx, user, amount):
-        user = await User(user)
+    async def setbankbalance(self, ctx, user: discord.Member, amount):
+        user = await User(user.id)
         if user is None: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
@@ -167,10 +168,18 @@ class Admin(commands.Cog):
         await user.update()
         await ctx.send(f"Set **{user.discord.name}**'s bank balance to $`{amount}`")
 
+    @setbankbalance.error
+    async def setbankbalance_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}setbankbalance (user) (amount)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
+
+
     @commands.command(aliases=['setbanklim', 'sbl'])
     @is_dev()
-    async def setbanklimit(self, ctx, user, amount):
-        user = await User(user)
+    async def setbanklimit(self, ctx, user: discord.Member, amount):
+        user = await User(user.id)
         if user is None: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
@@ -183,11 +192,18 @@ class Admin(commands.Cog):
         await user.update()
         await ctx.send(f"Set **{user.discord.name}**'s bank limit to $`{amount}`")
 
+    @setbanklimit.error
+    async def setbanklimit_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"Usage: `{self.bot.prefix}setbanklimit (user) (amount)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
+
 
     @commands.command(aliases=['reset'])
     @is_dev()
     async def resetdata(self, ctx, user):
-        user = await User(user)
+        user = await User(user.id)
         if user is None: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
@@ -202,21 +218,13 @@ class Admin(commands.Cog):
     async def resetdata_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}reset (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command()
     @is_dev()
-    async def blacklist(self, ctx, member):
-        if len(ctx.message.mentions) == 0:
-            try:
-                member = self.bot.get_user(int(member))
-                if member is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            member = ctx.message.mentions[0]
-
+    async def blacklist(self, ctx, member: discord.Member):
         if ctx.message.author.id == member.id:
             return await ctx.send("You can't blacklist yourself.")
 
@@ -235,21 +243,13 @@ class Admin(commands.Cog):
     async def blacklist_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}blacklist (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command()
     @is_dev()
-    async def unblacklist(self, ctx, member):
-        if len(ctx.message.mentions) == 0:
-            try:
-                member = self.bot.get_user(int(member))
-                if member is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            member = ctx.message.mentions[0]
-
+    async def unblacklist(self, ctx, member: discord.Member):
         data = utils.json.read_json("blacklist")
 
         if member.id not in data["blacklistedUsers"]:
@@ -261,26 +261,17 @@ class Admin(commands.Cog):
         await ctx.send(f"Unblacklisted **{member.name}**.")
         print(f"{ctx.author} unblacklisted {member}")
 
-
     @unblacklist.error
     async def unblacklist_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}unblacklist (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command()
     @is_dev()
-    async def whitelist(self, ctx, member):
-        if len(ctx.message.mentions) == 0:
-            try:
-                member = self.bot.get_user(int(member))
-                if member is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            member = ctx.message.mentions[0]
-
+    async def whitelist(self, ctx, member: discord.Member):
         data = utils.json.read_json("whitelist")
 
         if member.id in data["whitelist"]:
@@ -295,21 +286,13 @@ class Admin(commands.Cog):
     async def whitelist_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}whitelist (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command()
     @is_dev()
-    async def unwhitelist(self, ctx, member):
-        if len(ctx.message.mentions) == 0:
-            try:
-                member = self.bot.get_user(int(member))
-                if member is None:
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            member = ctx.message.mentions[0]
-
+    async def unwhitelist(self, ctx, member: discord.Member):
         data = utils.json.read_json("whitelist")
 
         if member.id not in data["whitelist"]:
@@ -324,6 +307,8 @@ class Admin(commands.Cog):
     async def unwhitelist_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send(f"Usage: `{self.bot.prefix}whitelist (user)`")
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(phrases.userNotFound)
 
 
     @commands.command()

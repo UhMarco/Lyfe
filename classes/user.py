@@ -16,10 +16,11 @@ class User:
             return super(User, cls).__new__(cls)
     """
 
-    async def __init__(self, user):
-        await self.define(user)
+    async def __init__(self, id):
+        await self.define(id)
 
-    async def define(self, user):
+    async def define(self, id):
+        user = bot.get_user(id)
         # Extending discord.User stopped working for no reason so you'll need
         # to access it by using self.discord:
         self.discord = user
