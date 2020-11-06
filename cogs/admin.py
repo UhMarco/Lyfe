@@ -143,7 +143,7 @@ class Admin(commands.Cog):
 
         user.balance = amount
         await user.update()
-        await ctx.send(f"Set **{user.discord.name}**'s balance to $`{amount}`")
+        await ctx.send("Set **{}**'s balance to $`{:,}`".format(user.discord.name, amount))
 
     @setbalance.error
     async def setbalance_error(self, ctx, error):
@@ -166,7 +166,7 @@ class Admin(commands.Cog):
 
         user.bank.balance = amount
         await user.update()
-        await ctx.send(f"Set **{user.discord.name}**'s bank balance to $`{amount}`")
+        await ctx.send("Set **{}**'s bank balance to $`{:,}`".format(user.discord.name, amount))
 
     @setbankbalance.error
     async def setbankbalance_error(self, ctx, error):
@@ -190,7 +190,7 @@ class Admin(commands.Cog):
 
         user.bank.limit = amount
         await user.update()
-        await ctx.send(f"Set **{user.discord.name}**'s bank limit to $`{amount}`")
+        await ctx.send("Set **{}**'s bank limit to $`{:,}`".format(user.discord.name, amount))
 
     @setbanklimit.error
     async def setbanklimit_error(self, ctx, error):
