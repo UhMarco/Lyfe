@@ -11,7 +11,7 @@ cwd = str(cwd)
 secret_file = json.load(open(cwd+"/bot_config/secrets.json"))
 prefix = secret_file["prefix"]
 
-bot = commands.Bot(command_prefix=prefix, case_insensitive=True, owner_id=259740408462966786)
+bot = commands.Bot(command_prefix=prefix, case_insensitive=True, owner_id=259740408462966786, intents=discord.Intents.all())
 bot.remove_command("help")
 
 bot.config_token = secret_file["token"]
