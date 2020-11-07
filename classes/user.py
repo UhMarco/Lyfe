@@ -5,16 +5,6 @@ from classes.bank import Bank
 
 @asyncinit
 class User:
-    """
-    async def __new__(cls, user):
-        try:
-            user = bot.get_user(int(str(user).strip("<!@>")))
-        except Exception:
-                user = None
-
-        if user is not None:
-            return super(User, cls).__new__(cls)
-    """
 
     async def __init__(self, id):
         await self.define(id)
