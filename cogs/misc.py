@@ -116,66 +116,6 @@ class Misc(commands.Cog):
         await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
 
     @commands.command()
-    @commands.cooldown(1, 900, commands.BucketType.user)
-    async def cookie(self, ctx, user):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    ctx.command.reset_cooldown(ctx)
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                ctx.command.reset_cooldown(ctx)
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id")
-        else:
-            user = ctx.message.mentions[0]
-
-        if user.id == ctx.author.id:
-            return await ctx.send("You gave yourself a :cookie: **Cookie**!")
-
-        await ctx.send(f"You gave **{user.name}** a :cookie: **Cookie**!")
-        try:
-            await user.send(f"**{ctx.author}** gave you a :cookie: **Cookie** from the server: {ctx.author.guild}")
-        except discord.Forbidden:
-            pass
-
-    @cookie.error
-    async def cookie_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send(f"Usage: `{self.bot.prefix}cookie (user)`")
-
-    @commands.command()
-    @commands.cooldown(1, 900, commands.BucketType.user)
-    async def flower(self, ctx, user):
-        if len(ctx.message.mentions) == 0:
-            try:
-                user = self.bot.get_user(int(user))
-                if user is None:
-                    ctx.command.reset_cooldown(ctx)
-                    return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-            except ValueError:
-                ctx.command.reset_cooldown(ctx)
-                return await ctx.send("I couldn't find that user.\n**Tip:** Mention them or use their id.")
-        else:
-            user = ctx.message.mentions[0]
-
-        if user.id == ctx.author.id:
-            return await ctx.send(f"You gave yourself a :rose: **Flower**!")
-
-        await ctx.send(f"You gave **{user.name}** a :rose: **Flower**!")
-        try:
-            await user.send(f"**{ctx.author}** gave you a :rose: **Rose** from the server: {ctx.author.guild}")
-        except discord.Forbidden:
-            pass
-
-    @flower.error
-    async def flower_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send(f"Usage: `{self.bot.prefix}flower (user)`")
-
-    @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def welcome(self, ctx):
         welcomebed = discord.Embed(
