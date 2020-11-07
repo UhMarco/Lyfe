@@ -46,7 +46,7 @@ class Admin(commands.Cog):
             return
 
         if await utils.functions.confirm(ctx) is False:
-            return await ctx.send("Aborted")
+            return
 
         await ctx.send("Stopping.")
         await self.bot.logout()
