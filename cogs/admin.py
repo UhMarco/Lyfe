@@ -202,9 +202,8 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['reset'])
     @is_dev()
-    async def resetdata(self, ctx, user):
+    async def resetdata(self, ctx, user: discord.Member):
         user = await User(user.id)
-        if user is None: return await ctx.send(phrases.userNotFound)
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
         if await utils.functions.confirm(ctx) is False:
@@ -316,6 +315,16 @@ class Admin(commands.Cog):
     async def maintenance(self, ctx):
         self.bot.maintenancemode = not self.bot.maintenancemode
         await ctx.send(f"Maintenance-Mode set to **{self.bot.maintenancemode}**.")
+
+
+    @commands.command()
+    @is_dev()
+    async def giverandom(self, ctx, rarity=None):
+        author = await User(ctx.author.id)
+        item = await utils.functions.getRandomItem(rarity)
+        author.inventory.add(item)
+        await author.update()
+        await ctx.send(item)
 
 def setup(bot):
     bot.add_cog(Admin(bot))

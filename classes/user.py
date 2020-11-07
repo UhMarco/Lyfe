@@ -20,7 +20,7 @@ class User:
 
     async def setup(self):
         item = await utils.functions.getItem("shoppingcart")
-        await utils.functions.prepareItem(item)
+        utils.functions.prepareItem(item)
         await bot.inventories.upsert({
             "_id": self.discord.id,
             "inventory": [item],
@@ -30,7 +30,7 @@ class User:
             "job": None,
             "titles": []
         })
-        self.define(self.discord)
+        await self.define(self.discord)
 
     async def update(self):
         await bot.inventories.upsert({

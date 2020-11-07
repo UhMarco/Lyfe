@@ -1,4 +1,5 @@
 from classes.user import User
+import random
 
 async def confirm(ctx):
     message = ctx.message
@@ -47,6 +48,21 @@ async def getItem(item):
     if item not in items:
         return None
     return items[item]
+
+async def getRandomItem(rarity=None):
+    items = await getAllItems()
+    if rarity == None:
+        return await getItem(random.choice(list(items)))
+    else:
+        rarity.lower()
+        rarities = ['common', 'uncommon', 'rare', 'ultra rare', 'legendary', 'collectable']
+        if rarity in rarities:
+            while True:
+                item = await getItem(random.choice(list(items)))
+                if item["rarity"] == rarity:
+                    return item
+        else:
+            return None
 
 def prepareItem(item):
     try:
