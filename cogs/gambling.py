@@ -1,8 +1,8 @@
 import discord, random, asyncio
 from discord.ext import commands
 from classes.user import User
-from tabulate import tabulate
 from classes.phrases import Phrases
+import utils.functions
 phrases = Phrases()
 
 class Gambling(commands.Cog):
@@ -17,14 +17,8 @@ class Gambling(commands.Cog):
     @commands.command(aliases=['gambling'])
     @commands.cooldown(5, 600, commands.BucketType.user)
     async def gamble(self, ctx, game=None, amount="n"):
-        data = await self.bot.inventories.find(ctx.author.id)
-        if data is None:
-            return await ctx.send("You haven't initialized your inventory yet.")
-
-        inventory = data["inventory"]
-        balance = data["balance"]
-        items = await self.bot.items.find("items")
-        items = items["items"]
+        author = await User(ctx.author.id)
+        if author.inventory is None: return await ctx.send(phrases.noInventory)
 
         if game is None:
             embed = discord.Embed(title=":game_die: **Gambling**", description="Spend your money sensibly by doing some gambling!", color=discord.Color.dark_teal())
@@ -34,9 +28,8 @@ class Gambling(commands.Cog):
             return await ctx.send(embed=embed)
 
         elif game.replace(" ", "").lower() == "threeboxes" or game.replace(" ", "").lower() == "boxes" or game.replace(" ", "").lower() == "box":
-            if balance < 750:
-                return await ctx.send("Insufficient funds.")
-            balance -= 750
+            if author.balance < 750: return await ctx.send("Insufficient funds.")
+            author.balance -= 750
             await ctx.send("$`750` has been taken from your account\n**Three Boxes:**")
             await ctx.send(":package: :package: :package:")
             await ctx.send("**   1^             2^            3^**\nChoose a box:")
@@ -58,36 +51,18 @@ class Gambling(commands.Cog):
 
             randomrarity = random.randint(1, 100)
             if 0 < randomrarity <= 60:
-                randomrarity = "common"
+                item = await utils.functions.getRandomItem('common')
             elif 60 < randomrarity <= 90:
-                randomrarity = "uncommon"
+                item = await utils.functions.getRandomItem('uncommon')
             else:
-                randomrarity = "rare"
+                item = await utils.functions.getRandomItem('rare')
 
-            while True:
-                item = items[random.choice(list(items))]
-                if item["rarity"] == randomrarity:
-                    item = item
-                    break
-
+            author.inventory.add(item)
+            await author.update()
             name, emoji = item["name"], item["emoji"]
-
-            given = False
-            for i in inventory:
-                if i["name"] == name:
-                    i["quantity"] += 1
-                    given = True
-
-            if not given:
-                del item["emoji"], item["value"], item["description"], item["rarity"]
-                item["locked"] = False
-                item["quantity"] = 1
-                inventory.append(item)
 
             embed = discord.Embed(title=":package: **Three Boxes**", description=f"You got **{emoji} {name}**!", color=discord.Color.dark_teal())
             await ctx.send(embed=embed)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "inventory": inventory})
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
 
         elif game.replace(" ", "").lower() == "number" or game.replace(" ", "").lower() == "number guess":
@@ -96,12 +71,12 @@ class Gambling(commands.Cog):
                 if amount <= 0:
                     return await ctx.send("Please enter a valid amount.")
             except Exception:
-                return await ctx.send("Enter a valid amount.")
+                return await ctx.send("Please enter a valid amount.")
 
             if amount > 10000:
-                return await ctx.send("The limit it $`10000`")
+                return await ctx.send("The limit it $`10,000`")
 
-            if amount > balance:
+            if amount > author.balance:
                 return await ctx.send(f"Insufficient funds!")
 
             def check(m):
@@ -136,13 +111,14 @@ class Gambling(commands.Cog):
                     break
 
             if win:
-                balance += int(amount * 3)
+                author.balance += int(amount * 3)
                 embed = discord.Embed(title=":question: Number Guesser", description=f"**Correct!** Your earned $`{int(amount * 3)}`", color=discord.Color.dark_teal())
             else:
-                balance -= amount
+                author.balance -= amount
                 embed = discord.Embed(title=":question: Number Guesser", description=f"**Incorrect!** The number was `{num}`. Your lost $`{amount}`", color=discord.Color.dark_teal())
+
+            await author.update()
             await ctx.send(embed=embed)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
 
         elif game.replace(" ", "").lower() == "coinflip" or game.replace(" ", "").lower() == "coin" or game.replace(" ", "").lower() == "flip":
@@ -151,29 +127,28 @@ class Gambling(commands.Cog):
                 if amount <= 0:
                     return await ctx.send("Please enter a valid amount.")
             except Exception:
-                return await ctx.send(f"Usage: `{self.bot.prefix}gamble coinflip (amount)`")
+                return await ctx.send(f"Please enter a valid amount.")
 
             if amount > 10000:
-                return await ctx.send("The limit it $`10000`")
+                return await ctx.send("The limit it $`10,000`")
 
-            if balance < amount:
+            if author.balance < amount:
                 return await ctx.send(f"Insufficient funds!")
 
-            balance - amount
+            author.balance - amount
 
             embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount)}`", description=f"Flipping coin <a:loading:733746914109161542>", color=discord.Color.dark_teal())
             message = await ctx.send(embed=embed)
             await asyncio.sleep(2)
-            coin = ['heads', 'tails']
-            coin = random.choice(coin)
+            coin = random.choice(['heads', 'tails'])
             if coin == 'heads':
-                balance += amount
+                author.balance += amount
                 embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount)}`", description=f"Coin has been flipped! It's **heads**, you win! You gained $`{amount}`", color=discord.Color.dark_teal())
             else:
-                balance -= amount
+                author.balance -= amount
                 embed = discord.Embed(title=f"<:coin:733930163817152565> You have bet $`{int(amount)}`", description=f"Coin has been flipped! It's **tails**, you lose! You lost $`{amount}`", color=discord.Color.dark_teal())
+            await author.update()
             await message.edit(embed=embed)
-            await self.bot.inventories.upsert({"_id": ctx.author.id, "balance": balance})
 
 def setup(bot):
     bot.add_cog(Gambling(bot))
