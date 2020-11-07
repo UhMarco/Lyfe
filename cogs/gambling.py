@@ -15,7 +15,7 @@ class Gambling(commands.Cog):
         print("+ Gambling Cog loaded")
 
     @commands.command(aliases=['gambling'])
-    @commands.cooldown(20, 3600, commands.BucketType.user)
+    @commands.cooldown(5, 600, commands.BucketType.user)
     async def gamble(self, ctx, game=None, amount="n"):
         data = await self.bot.inventories.find(ctx.author.id)
         if data is None:
