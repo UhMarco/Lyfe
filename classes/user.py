@@ -17,6 +17,8 @@ class User:
         self.inventory = await Inventory(user)
         self.balance = await utils.functions.getBalance(user)
         self.bank = await Bank(user)
+        self.job = await utils.functions.getJob(user)
+        self.titles = await utils.functions.getTitles(user)
 
     async def setup(self):
         item = await utils.functions.getItem("shoppingcart")
@@ -30,7 +32,6 @@ class User:
             "job": None,
             "titles": []
         })
-        await self.define(self.discord)
 
     async def update(self):
         await bot.inventories.upsert({
@@ -38,5 +39,7 @@ class User:
             "inventory": self.inventory,
             "balance": self.balance,
             "bankbalance": self.bank.balance,
-            "banklimit": self.bank.limit
+            "banklimit": self.bank.limit,
+            "job": self.job,
+            "titles": self.titles
         })
