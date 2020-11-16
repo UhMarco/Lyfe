@@ -38,6 +38,18 @@ async def getBalance(user):
         data = data["balance"]
     return data
 
+async def getJob(user):
+    data = await bot.inventories.find(user.id)
+    if data is not None:
+        data = data["job"]
+    return data
+
+async def getTitles(user):
+    data = await bot.inventories.find(user.id)
+    if data is not None:
+        data = data["titles"]
+    return data
+
 async def getAllItems():
     items = await bot.items.find("items")
     return items["items"]
