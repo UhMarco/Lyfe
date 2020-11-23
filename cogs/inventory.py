@@ -105,12 +105,20 @@ class Inventory(commands.Cog):
 
         if page > pagelimit:
             if page == 1:
-                emptyembed = discord.Embed(
-                    title=":wastebasket: Empty Inventory",
-                    description="**{}'s** inventory is empty!\n**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(user.name, bal, bankbal, banklimit),
-                    color=discord.Color.red()
-                )
-                return await ctx.send(embed=emptyembed)
+                if user == ctx.author:
+                    emptyembed = discord.Embed(
+                        title=":wastebasket: Empty Inventory",
+                        description="Your inventory is empty!\n**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(bal, bankbal, banklimit),
+                        color=discord.Color.red()
+                    )
+                    return await ctx.send(embed=emptyembed)
+                else:
+                    emptyembed = discord.Embed(
+                        title=":wastebasket: Empty Inventory",
+                        description="**{}'s** inventory is empty!\n**Balance:** $`{:,}`\n**Bank:** $`{:,}`/`{:,}`".format(user.name, bal, bankbal, banklimit),
+                        color=discord.Color.red()
+                    )
+                    return await ctx.send(embed=emptyembed)
             return await ctx.send(f"**{user.name}** doesn't have that many pages!")
 
         if user == ctx.author:
