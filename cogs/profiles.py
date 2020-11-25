@@ -174,7 +174,10 @@ class Profiles(commands.Cog):
 
         description = []
         # Profile title
-        title = f"{user.name}'s Profile"
+        if user == ctx.author:
+            title = f"Your profile"
+        else:
+            title = f"{user.name}'s Profile"
         # Custom title
         color = discord.Color.green()
         try:
