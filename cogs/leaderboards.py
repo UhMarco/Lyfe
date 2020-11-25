@@ -128,5 +128,45 @@ class Leaderboards(commands.Cog):
         embed = discord.Emebd(title=":x: Leaderboard Error", description="There was an error fetching infortmation. If you wish, you may [report this](https://discord.gg/zAZ3vKJ).")
         await ctx.send(embed=embed)
 
+    @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    async def spongetop(self, ctx):
+        data = await self.bot.inventories.get_all()
+
+        all = {}
+        for item in data:
+            for i in item["inventory"]:
+                if i["name"] == "Sponge":
+                    all[item["_id"]] = i["quantity"]
+
+        all = sorted(all.items(), key=lambda k: k[1], reverse=True)
+        places = ['1st', '2nd', '3rd', '4th', '5th']
+        entries = []
+
+        count = 0
+        for i in all:
+            try:
+                user = self.bot.get_user(int(all[count][0]))
+                if user is None:
+                    count -= 1
+                else:
+                    entries.append([places[count], user, all[count][1]])
+            except (KeyError, IndexError):
+                entries.append([places[count], "Invalid User", 0])
+            count += 1
+            if count == 5:
+                break
+
+        output = ("```" + tabulate(entries, tablefmt="simple", headers=["#", "Player", "Amount"]) + "```")
+        embed = discord.Embed(title=":sponge: Most Sponges:", description=output, color=discord.Color.gold())
+        await ctx.send(embed=embed)
+
+    @spongetop.error
+    async def spongetop_error(self, ctx, error):
+        self.bot.errors += 1
+        self.bot.important_errors += 1
+        embed = discord.Emebd(title=":x: Leaderboard Error", description="There was an error fetching infortmation. If you wish, you may [report this](https://discord.gg/zAZ3vKJ).")
+        await ctx.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(Leaderboards(bot))
