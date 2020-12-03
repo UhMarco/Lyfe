@@ -68,7 +68,7 @@ async def on_message(message):
             else:
                 lockdownembed = discord.Embed(
                     title="Lyfe is currently in a lockdown",
-                    description=f"At the moment, commands will not work due to an error we have encountered.\nPlease join our support server by doing `{bot.prefix}invite` for more info.",
+                    description=f"At the moment, commands will not work due to an error we have encountered.\nPlease join our [Support Server](https://discord.gg/zAZ3vKJ)",
                     color=discord.Color.red()
                 )
                 lockdownembed.set_thumbnail(url=bot.user.avatar_url)
