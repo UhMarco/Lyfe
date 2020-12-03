@@ -119,6 +119,7 @@ class Help(commands.Cog):
             embed.add_field(name=f"`{self.bot.prefix}leaderboard`", value="Show the top 10 players with the highest total value", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}baltop`", value="Show the top 10 total balances", inline=False)
             embed.add_field(name=f"`{self.bot.prefix}frogtop`", value="Show the top 5 frog owners", inline=False)
+            embed.add_field(name=f"`{self.bot.prefix}spongetop`", value="Show the top 5 sponge owners", inline=False)
             return await ctx.send(embed=embed)
 
         elif section.lower() == "bot":

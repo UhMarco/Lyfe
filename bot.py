@@ -60,7 +60,19 @@ async def on_message(message):
 
     # Lockdown system
     if bot.lockdown and message.author.id not in json.load(open(cwd+"/bot_config/devs.json")):
-        return
+        ctx = await bot.get_context(message)
+        if ctx.valid:
+            if message.content.lower().find("invite") != -1:
+                embed = discord.Embed(title=":herb: Lyfé Invite Links", description=":mailbox_with_mail: [Invite me to other servers](https://discord.com/api/oauth2/authorize?client_id=730874220078170122&permissions=519232&scope=bot)\n<:discord:733776804904697886> [Lyfé Server](https://discord.gg/zAZ3vKJ)", color=discord.Color.purple())
+                return await ctx.send(embed=embed)
+            else:
+                lockdownembed = discord.Embed(
+                    title="Lyfe is currently in a lockdown",
+                    description=f"At the moment, commands will not work due to an error we have encountered.\nPlease join our [Support Server](https://discord.gg/zAZ3vKJ)",
+                    color=discord.Color.red()
+                )
+                lockdownembed.set_thumbnail(url=bot.user.avatar_url)
+                return await ctx.send(embed=lockdownembed)
 
     # Blacklist system
     if secret_file["status"] != "idle":

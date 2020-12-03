@@ -10,7 +10,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("- Events Cog loaded")
+        print("+ Events Cog loaded")
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
