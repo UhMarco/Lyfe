@@ -5,14 +5,15 @@ from classes.bank import Bank
 
 @asyncinit
 class User:
-
+    """
+    When creating a User object you must await it and input their id.
+    """
     async def __init__(self, id):
         await self.define(id)
 
     async def define(self, id):
         user = bot.get_user(id)
-        # Extending discord.User stopped working for no reason so you'll need
-        # to access it by using self.discord:
+        # Extending discord.User stopped working for no reason so you'll need to access it by using self.discord:
         self.discord = user
         self.inventory = await Inventory(user)
         self.balance = await utils.functions.getBalance(user)

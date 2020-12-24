@@ -13,6 +13,9 @@ class Inventory(list):
         super(Inventory, self).__init__(inventory)
         self.user = user
 
+    """
+    Returns True or False
+    """
     def contains(self, item):
         if self is None: return False
         for i in self:
@@ -20,6 +23,9 @@ class Inventory(list):
                 return True
         return False
 
+    """
+    Returns an item or None
+    """
     def get(self, item):
         if self is None: return None
         for i in self:
@@ -27,6 +33,9 @@ class Inventory(list):
                 return i
         return None
 
+    """
+    Returns nothing
+    """
     def add(self, item):
         added_item = dict(item)
         found = False
@@ -41,6 +50,10 @@ class Inventory(list):
             added_item["quantity"] = 1
             self.append(added_item)
 
+
+    """
+    Returns nothing
+    """
     def remove(self, item):
         c = 0
         for i in self:

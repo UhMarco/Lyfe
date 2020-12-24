@@ -4,17 +4,18 @@ from classes.user import User
 from classes.phrases import Phrases
 phrases = Phrases()
 
-def is_dev():
+def is_dev(): # Custom checker for devs
     def predictate(ctx):
-        devs = utils.json.read_json("devs")
+        devs = utils.json.read_json("devs") # Dev ids stored in /bot_config/devs.json
         if ctx.author.id in devs:
             return ctx.author.id
     return commands.check(predictate)
 
 class Admin(commands.Cog):
 
-    def __init__(self, bot):
-        self.bot = bot
+    # Self must be passed into every method within a cog
+    def __init__(self, bot): # bot object is stored in self for cogs
+        self.bot = bot # so hitherto do self.bot to get it
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -31,7 +32,7 @@ class Admin(commands.Cog):
         print("+ Admin Cog loaded")
 
     @commands.command()
-    @is_dev()
+    @is_dev() # This is where the is_dev() check goes
     async def lockdown(self, ctx):
         self.bot.lockdown = not self.bot.lockdown
         if self.bot.lockdown:
@@ -84,14 +85,14 @@ class Admin(commands.Cog):
     @commands.command(aliases=['si'])
     @is_dev()
     async def spawnitem(self, ctx, user: discord.Member, item):
-        user = await User(user.id)
+        user = await User(user.id) # This should be done whenever you want to access a user posession within the bot. Make sure to pass in their id
         if user.inventory is None: return await ctx.send(phrases.otherNoInventory)
 
         item = await utils.functions.getItem(item)
         if item is None: return await ctx.send(phrases.itemDoesNotExist)
 
         user.inventory.add(item)
-        await user.update()
+        await user.update() # This must be called and awaited if you wish to update user data in the database
         name, emoji = item["name"], item["emoji"]
         await ctx.send(f"Given **{emoji} {name}** to **{user.discord.name}**.")
 
@@ -326,5 +327,5 @@ class Admin(commands.Cog):
         await author.update()
         await ctx.send(item)
 
-def setup(bot):
+def setup(bot): # Every cog needs a setup function outside of the class
     bot.add_cog(Admin(bot))
